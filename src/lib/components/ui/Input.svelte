@@ -11,14 +11,38 @@
 	{#if label}
 		<label for={id} class="text-sm font-medium text-text-primary">{label}</label>
 	{/if}
-	<input
-		{id}
-		{type}
-		{placeholder}
-		{required}
-		bind:value
-		class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-		on:input
-		on:change
-	/>
+	{#if type === 'password'}
+		<input
+			{id}
+			type="password"
+			{placeholder}
+			{required}
+			bind:value
+			class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
+			on:input
+			on:change
+		/>
+	{:else if type === 'email'}
+		<input
+			{id}
+			type="email"
+			{placeholder}
+			{required}
+			bind:value
+			class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
+			on:input
+			on:change
+		/>
+	{:else}
+		<input
+			{id}
+			type="text"
+			{placeholder}
+			{required}
+			bind:value
+			class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
+			on:input
+			on:change
+		/>
+	{/if}
 </div>

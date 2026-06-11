@@ -1,12 +1,304 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { formatPrice } from '$lib/utils/format';
 	import * as m from '$lib/paraglide/messages';
+
+	export let data: {
+		listing: any;
+		mode: 'pay' | 'trade';
+		neighborhoods: readonly string[];
+	};
+	export let form: {
+		errors?: Record<string, string>;
+		values?: Record<string, any>;
+		error?: string;
+	} | null = null;
+
+	$: ({ listing, mode, neighborhoods } = data);
+	$: isTrade = mode === 'trade';
+	$: isRental = listing.type === 'tool_rental';
+	$: provider = listing.profiles;
+
+	$: v = form?.values ?? {};
+	$: errors = form?.errors ?? {};
+
+	$: quantity = parseFloat(v.quantity ?? '1') || 1;
+	$: subtotal = (() => {
+		if (isTrade) return 0;
+		if (listing.price_unit === 'flat') return listing.price;
+		return Math.round(listing.price * quantity);
+	})();
+	$: platformFee = isTrade ? 0 : Math.round(subtotal * 0.07);
+	$: deposit = isRental && !isTrade ? Math.round(subtotal * 0.2) : 0;
+	$: total = subtotal + platformFee;
+
+	let submitting = false;
+
+	function handleQuantityInput(e: Event) {
+		const val = (e.currentTarget as HTMLInputElement).value;
+		quantity = parseFloat(val) || 1;
+	}
+
+	// Get today's date as min value for date picker
+	const today = new Date().toISOString().split('T')[0];
+
+	function pageHeading() {
+		if (isTrade) return m.book_heading_trade();
+		if (isRental) return m.book_heading_rental();
+		return m.book_heading();
+	}
 </script>
 
 <svelte:head>
-	<title>{m.page_book_title()} · Cruz Trade</title>
+	<title>{pageHeading()} · Cruz Trade</title>
 </svelte:head>
 
-<div class="max-w-content mx-auto px-6 py-10">
-	<h1 class="text-xl font-bold text-text-primary mb-2">{m.page_book_title()}</h1>
-	<p class="text-text-muted">{m.page_book_tagline()}</p>
+<div class="max-w-3xl mx-auto px-6 py-8">
+
+	<!-- Back link -->
+	<a href="/listings/{listing.id}"
+		class="text-sm text-text-muted hover:text-primary transition-colors mb-6 inline-block">
+		← {listing.title}
+	</a>
+
+	<div class="mb-6">
+		<h1 class="text-2xl font-bold text-text-primary mb-1">{pageHeading()}</h1>
+		<p class="text-sm text-text-muted">
+			{m.book_subheading({ name: provider?.full_name ?? provider?.username ?? 'Provider' })}
+		</p>
+	</div>
+
+	{#if form?.error && !form?.errors}
+		<div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-6">
+			{form.error}
+		</div>
+	{/if}
+
+	<div class="flex flex-col lg:flex-row gap-8">
+
+		<!-- Form -->
+		<div class="flex-1 min-w-0">
+			<form
+				method="POST"
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+					};
+				}}
+				class="flex flex-col gap-6"
+			>
+				<input type="hidden" name="mode" value={mode} />
+
+				<!-- Job description / trade offer -->
+				<section>
+					<h2 class="text-sm font-bold text-text-primary mb-3">{m.book_section_details()}</h2>
+
+					{#if isTrade}
+						<div class="flex flex-col gap-1.5">
+							<label for="trade_offer" class="text-sm font-medium text-text-primary">
+								{m.book_trade_offer_label()}
+							</label>
+							<textarea
+								id="trade_offer"
+								name="trade_offer"
+								rows="4"
+								placeholder={m.book_trade_offer_placeholder()}
+								class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors resize-y
+									{errors.trade_offer ? 'border-red-400' : 'border-border'}"
+							>{v.trade_offer ?? ''}</textarea>
+							{#if errors.trade_offer}
+								<p class="text-xs text-red-600">{errors.trade_offer}</p>
+							{/if}
+						</div>
+					{:else}
+						<div class="flex flex-col gap-1.5">
+							<label for="job_description" class="text-sm font-medium text-text-primary">
+								{m.book_job_description_label()}
+							</label>
+							<textarea
+								id="job_description"
+								name="job_description"
+								rows="4"
+								placeholder={m.book_job_description_placeholder()}
+								class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors resize-y
+									{errors.job_description ? 'border-red-400' : 'border-border'}"
+							>{v.job_description ?? ''}</textarea>
+							{#if errors.job_description}
+								<p class="text-xs text-red-600">{errors.job_description}</p>
+							{/if}
+						</div>
+					{/if}
+				</section>
+
+				<!-- Schedule -->
+				<section>
+					<h2 class="text-sm font-bold text-text-primary mb-3">{m.book_section_schedule()}</h2>
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+						<!-- Date -->
+						<div class="flex flex-col gap-1.5">
+							<label for="scheduled_date" class="text-sm font-medium text-text-primary">
+								{m.book_date_label()}
+							</label>
+							<input
+								id="scheduled_date"
+								name="scheduled_date"
+								type="date"
+								min={today}
+								value={v.scheduled_date ?? ''}
+								class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+									{errors.scheduled_date ? 'border-red-400' : 'border-border'}"
+							/>
+							{#if errors.scheduled_date}
+								<p class="text-xs text-red-600">{errors.scheduled_date}</p>
+							{/if}
+						</div>
+
+						<!-- Hours or days -->
+						{#if !isTrade && listing.price_unit !== 'flat'}
+							<div class="flex flex-col gap-1.5">
+								<label for="quantity" class="text-sm font-medium text-text-primary">
+									{isRental ? m.book_days_label() : m.book_hours_label()}
+								</label>
+								<input
+									id="quantity"
+									name="quantity"
+									type="number"
+									min="0.5"
+									step={isRental ? '1' : '0.5'}
+									placeholder={isRental ? m.book_days_placeholder() : m.book_hours_placeholder()}
+									value={v.quantity ?? '1'}
+									on:input={handleQuantityInput}
+									class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+										{errors.quantity ? 'border-red-400' : 'border-border'}"
+								/>
+								{#if errors.quantity}
+									<p class="text-xs text-red-600">{errors.quantity}</p>
+								{/if}
+							</div>
+						{:else}
+							<!-- Hidden quantity=1 for flat-rate -->
+							<input type="hidden" name="quantity" value="1" />
+						{/if}
+					</div>
+				</section>
+
+				<!-- Neighborhood -->
+				<section>
+					<div class="flex flex-col gap-1.5">
+						<label for="neighborhood" class="text-sm font-medium text-text-primary">
+							{m.book_neighborhood_label()}
+						</label>
+						<select
+							id="neighborhood"
+							name="neighborhood"
+							class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+								{errors.neighborhood ? 'border-red-400' : 'border-border'}"
+						>
+							<option value="" disabled selected={!v.neighborhood}>{m.book_neighborhood_placeholder()}</option>
+							{#each neighborhoods as hood}
+								<option value={hood} selected={v.neighborhood === hood}>{hood}</option>
+							{/each}
+						</select>
+						{#if errors.neighborhood}
+							<p class="text-xs text-red-600">{errors.neighborhood}</p>
+						{/if}
+					</div>
+				</section>
+
+				<!-- Escrow / deposit notices -->
+				{#if !isTrade}
+					<div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+						<p class="text-xs text-blue-700 leading-relaxed">{m.book_payment_escrow()}</p>
+					</div>
+				{/if}
+				{#if isRental && !isTrade}
+					<div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+						<p class="text-xs text-amber-700 leading-relaxed">
+							{m.book_deposit_notice({ amount: formatPrice(deposit, 'flat') })}
+						</p>
+					</div>
+				{/if}
+
+				<!-- Submit -->
+				<button
+					type="submit"
+					disabled={submitting}
+					class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-base"
+				>
+					{submitting ? m.book_submitting() : isTrade ? m.book_submit_trade() : m.book_submit()}
+				</button>
+
+			</form>
+		</div>
+
+		<!-- Order summary sidebar -->
+		<aside class="lg:w-64 shrink-0">
+			<div class="bg-bg-card border border-border rounded-lg p-5 shadow-card sticky top-6">
+
+				<!-- Listing thumbnail info -->
+				<div class="flex items-start gap-3 pb-4 mb-4 border-b border-border">
+					<div class="flex-1 min-w-0">
+						<p class="text-xs text-text-muted mb-0.5">{m.book_summary_service()}</p>
+						<p class="text-sm font-semibold text-text-primary leading-snug">{listing.title}</p>
+					</div>
+				</div>
+
+				<div class="flex items-center justify-between mb-2">
+					<span class="text-xs text-text-muted">{m.book_summary_provider()}</span>
+					<span class="text-xs text-text-primary font-medium">
+						{provider?.full_name ?? provider?.username ?? 'Provider'}
+					</span>
+				</div>
+
+				<div class="border-t border-border my-3"></div>
+
+				{#if isTrade}
+					<div class="flex items-center justify-between">
+						<span class="text-sm font-semibold text-text-primary">{m.book_summary_trade()}</span>
+					</div>
+				{:else}
+					<!-- Price breakdown -->
+					<div class="flex flex-col gap-2 text-sm">
+						{#if listing.price_unit !== 'flat'}
+							<div class="flex justify-between text-text-muted">
+								<span>
+									{formatPrice(listing.price, 'flat')}
+									× {quantity}
+									{isRental ? 'day' : 'hr'}{quantity !== 1 ? 's' : ''}
+								</span>
+								<span>{formatPrice(subtotal, 'flat')}</span>
+							</div>
+						{:else}
+							<div class="flex justify-between text-text-muted">
+								<span>{m.book_summary_subtotal()}</span>
+								<span>{formatPrice(subtotal, 'flat')}</span>
+							</div>
+						{/if}
+
+						<div class="flex justify-between text-text-muted text-xs">
+							<span>{m.book_summary_platform_fee()}</span>
+							<span>{formatPrice(platformFee, 'flat')}</span>
+						</div>
+
+						{#if deposit > 0}
+							<div class="flex justify-between text-amber-600 text-xs">
+								<span>{m.book_summary_deposit()}</span>
+								<span>{formatPrice(deposit, 'flat')}</span>
+							</div>
+						{/if}
+
+						<div class="border-t border-border pt-2 flex justify-between font-bold text-text-primary">
+							<span>{m.book_summary_total()}</span>
+							<span>{formatPrice(total + deposit, 'flat')}</span>
+						</div>
+					</div>
+				{/if}
+
+			</div>
+		</aside>
+
+	</div>
 </div>
