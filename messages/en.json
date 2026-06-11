@@ -7,6 +7,8 @@
 	"nav_login": "Log In",
 	"nav_signup": "Sign Up",
 	"nav_language_toggle": "Español",
+	"nav_my_profile": "My Profile",
+	"nav_logout": "Log Out",
 
 	"page_home_title": "Cruz Trade",
 	"page_home_tagline": "Your neighborhood marketplace",
@@ -39,5 +41,45 @@
 	"page_login_tagline": "Welcome back",
 
 	"page_onboarding_title": "Welcome to Cruz Trade",
-	"page_onboarding_tagline": "Let’s get you set up"
+	"page_onboarding_tagline": "Let's get you set up",
+
+	"auth_email": "Email address",
+	"auth_password": "Password",
+	"auth_password_hint": "At least 8 characters",
+
+	"auth_signup_heading": "Create your account",
+	"auth_signup_subheading": "Join your neighborhood marketplace",
+	"auth_signup_submit": "Create Account",
+	"auth_signup_have_account": "Already have an account?",
+	"auth_signup_login_link": "Log in",
+	"auth_signup_success_heading": "Check your email",
+	"auth_signup_success_body": "We sent a confirmation link to {email}. Click it to activate your account.",
+
+	"auth_login_heading": "Welcome back",
+	"auth_login_subheading": "Log in to Cruz Trade",
+	"auth_login_submit": "Log In",
+	"auth_login_no_account": "Don't have an account?",
+	"auth_login_signup_link": "Sign up",
+	"auth_login_forgot": "Forgot password?",
+
+	"auth_onboarding_step_of": "Step {current} of {total}",
+	"auth_onboarding_step1_heading": "Tell us about yourself",
+	"auth_onboarding_step1_subheading": "This is what neighbors will see on your profile.",
+	"auth_onboarding_step2_heading": "Where are you located?",
+	"auth_onboarding_step2_subheading": "Listings are matched by neighborhood so neighbors can find you.",
+	"auth_onboarding_step3_heading": "You're all set!",
+	"auth_onboarding_step3_subheading": "Welcome to Cruz Trade. Ready to get started?",
+	"auth_onboarding_full_name": "Full name",
+	"auth_onboarding_username": "Username",
+	"auth_onboarding_username_hint": "Letters, numbers, and underscores only",
+	"auth_onboarding_bio": "Bio",
+	"auth_onboarding_bio_placeholder": "What skills do you offer? What tools do you have? What are you looking for?",
+	"auth_onboarding_neighborhood": "Neighborhood",
+	"auth_onboarding_neighborhood_placeholder": "Select your neighborhood",
+	"auth_onboarding_next": "Continue",
+	"auth_onboarding_post_first": "Post Your First Listing",
+	"auth_onboarding_browse_first": "Browse Listings",
+
+	"error_required": "This field is required",
+	"error_generic": "Something went wrong. Please try again."
 }

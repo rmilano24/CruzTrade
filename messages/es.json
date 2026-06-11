@@ -7,6 +7,8 @@
 	"nav_login": "Iniciar Sesión",
 	"nav_signup": "Registrarse",
 	"nav_language_toggle": "English",
+	"nav_my_profile": "Mi Perfil",
+	"nav_logout": "Cerrar Sesión",
 
 	"page_home_title": "Cruz Trade",
 	"page_home_tagline": "Tu mercado del vecindario",
@@ -39,5 +41,45 @@
 	"page_login_tagline": "Bienvenido de vuelta",
 
 	"page_onboarding_title": "Bienvenido a Cruz Trade",
-	"page_onboarding_tagline": "Vamos a configurar tu cuenta"
+	"page_onboarding_tagline": "Vamos a configurar tu cuenta",
+
+	"auth_email": "Correo electrónico",
+	"auth_password": "Contraseña",
+	"auth_password_hint": "Al menos 8 caracteres",
+
+	"auth_signup_heading": "Crea tu cuenta",
+	"auth_signup_subheading": "Únete a tu mercado del vecindario",
+	"auth_signup_submit": "Crear Cuenta",
+	"auth_signup_have_account": "¿Ya tienes una cuenta?",
+	"auth_signup_login_link": "Inicia sesión",
+	"auth_signup_success_heading": "Revisa tu correo",
+	"auth_signup_success_body": "Enviamos un enlace de confirmación a {email}. Haz clic para activar tu cuenta.",
+
+	"auth_login_heading": "Bienvenido de vuelta",
+	"auth_login_subheading": "Inicia sesión en Cruz Trade",
+	"auth_login_submit": "Iniciar Sesión",
+	"auth_login_no_account": "¿No tienes una cuenta?",
+	"auth_login_signup_link": "Regístrate",
+	"auth_login_forgot": "¿Olvidaste tu contraseña?",
+
+	"auth_onboarding_step_of": "Paso {current} de {total}",
+	"auth_onboarding_step1_heading": "Cuéntanos sobre ti",
+	"auth_onboarding_step1_subheading": "Esto es lo que verán tus vecinos en tu perfil.",
+	"auth_onboarding_step2_heading": "¿Dónde estás ubicado?",
+	"auth_onboarding_step2_subheading": "Los anuncios se emparejan por vecindario para que los vecinos puedan encontrarte.",
+	"auth_onboarding_step3_heading": "¡Todo listo!",
+	"auth_onboarding_step3_subheading": "Bienvenido a Cruz Trade. ¿Listo para empezar?",
+	"auth_onboarding_full_name": "Nombre completo",
+	"auth_onboarding_username": "Nombre de usuario",
+	"auth_onboarding_username_hint": "Solo letras, números y guiones bajos",
+	"auth_onboarding_bio": "Biografía",
+	"auth_onboarding_bio_placeholder": "¿Qué habilidades ofreces? ¿Qué herramientas tienes? ¿Qué buscas?",
+	"auth_onboarding_neighborhood": "Vecindario",
+	"auth_onboarding_neighborhood_placeholder": "Selecciona tu vecindario",
+	"auth_onboarding_next": "Continuar",
+	"auth_onboarding_post_first": "Publica tu Primer Anuncio",
+	"auth_onboarding_browse_first": "Ver Anuncios",
+
+	"error_required": "Este campo es obligatorio",
+	"error_generic": "Algo salió mal. Por favor intenta de nuevo."
 }
