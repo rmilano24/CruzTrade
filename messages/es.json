@@ -76,7 +76,9 @@
 	"auth_onboarding_bio_placeholder": "¿Qué habilidades ofreces? ¿Qué herramientas tienes? ¿Qué buscas?",
 	"auth_onboarding_neighborhood": "Vecindario",
 	"auth_onboarding_neighborhood_placeholder": "Selecciona tu vecindario",
+	"auth_onboarding_language_preference": "Idioma preferido",
 	"auth_onboarding_next": "Continuar",
+	"auth_onboarding_skip": "Omitir por ahora",
 	"auth_onboarding_post_first": "Publica tu Primer Anuncio",
 	"auth_onboarding_browse_first": "Ver Anuncios",
 

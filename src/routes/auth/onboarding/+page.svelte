@@ -5,12 +5,11 @@
 
 	export let form: { step?: number; error?: string; success?: boolean } | null = null;
 
-	// Advance to next step when server confirms success
 	let step = 1;
+	let loading = false;
+
 	$: if (form?.success && form.step === 1) step = 2;
 	$: if (form?.success && form.step === 2) step = 3;
-
-	let loading = false;
 </script>
 
 <svelte:head>
@@ -20,33 +19,26 @@
 <div class="min-h-screen bg-bg flex items-center justify-center px-4 py-16">
 	<div class="w-full max-w-md">
 
-		<!-- Logo -->
-		<a href="/" class="block text-center text-xl font-bold text-text-primary mb-8">
-			Cruz Trade
-		</a>
+		<a href="/" class="block text-center text-xl font-bold text-text-primary mb-8">Cruz Trade</a>
 
 		<!-- Step indicator -->
 		{#if step < 3}
 			<div class="flex items-center justify-center gap-2 mb-8">
 				{#each [1, 2] as s}
-					<div class="flex items-center gap-2">
-						<div
-							class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors
-								{s <= step ? 'bg-primary text-white' : 'bg-bg-secondary text-text-muted'}"
-						>
-							{s}
-						</div>
-						{#if s < 2}
-							<div class="w-8 h-px {step > s ? 'bg-primary' : 'bg-border'}"></div>
-						{/if}
+					<div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors
+						{s <= step ? 'bg-primary text-white' : 'bg-bg-secondary text-text-muted'}">
+						{s}
 					</div>
+					{#if s < 2}
+						<div class="w-8 h-px {step > s ? 'bg-primary' : 'bg-border'}"></div>
+					{/if}
 				{/each}
 			</div>
 		{/if}
 
 		<div class="bg-bg-card border border-border rounded-lg p-8 shadow-card">
 
-			<!-- Step 1: Profile info -->
+			<!-- ── Step 1: Profile info ────────────────────────────────────── -->
 			{#if step === 1}
 				<h1 class="text-lg font-bold text-text-primary mb-1">{m.auth_onboarding_step1_heading()}</h1>
 				<p class="text-sm text-text-muted mb-6">{m.auth_onboarding_step1_subheading()}</p>
@@ -62,10 +54,7 @@
 					action="?/profile"
 					use:enhance={() => {
 						loading = true;
-						return async ({ update }) => {
-							await update({ reset: false });
-							loading = false;
-						};
+						return async ({ update }) => { await update({ reset: false }); loading = false; };
 					}}
 					class="flex flex-col gap-4"
 				>
@@ -73,56 +62,60 @@
 						<label for="full_name" class="text-sm font-medium text-text-primary">
 							{m.auth_onboarding_full_name()} <span class="text-error">*</span>
 						</label>
-						<input
-							id="full_name"
-							name="full_name"
-							type="text"
-							autocomplete="name"
-							required
+						<input id="full_name" name="full_name" type="text" autocomplete="name" required
 							placeholder="Maria Garcia"
-							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-						/>
+							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors" />
 					</div>
 
 					<div class="flex flex-col gap-1.5">
 						<label for="username" class="text-sm font-medium text-text-primary">
 							{m.auth_onboarding_username()} <span class="text-error">*</span>
 						</label>
-						<input
-							id="username"
-							name="username"
-							type="text"
-							autocomplete="username"
-							required
+						<input id="username" name="username" type="text" autocomplete="username" required
 							placeholder="mariagarcia"
-							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-						/>
+							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors" />
 						<p class="text-xs text-text-muted">{m.auth_onboarding_username_hint()}</p>
 					</div>
 
 					<div class="flex flex-col gap-1.5">
-						<label for="bio" class="text-sm font-medium text-text-primary">
-							{m.auth_onboarding_bio()}
-						</label>
-						<textarea
-							id="bio"
-							name="bio"
-							rows="3"
+						<label for="bio" class="text-sm font-medium text-text-primary">{m.auth_onboarding_bio()}</label>
+						<textarea id="bio" name="bio" rows="3"
 							placeholder={m.auth_onboarding_bio_placeholder()}
-							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors resize-none"
-						></textarea>
+							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors resize-none"></textarea>
 					</div>
 
-					<button
-						type="submit"
-						disabled={loading}
-						class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2"
-					>
+					<!-- Language preference -->
+					<div class="flex flex-col gap-2">
+						<p class="text-sm font-medium text-text-primary">
+							{m.auth_onboarding_language_preference()} <span class="text-error">*</span>
+						</p>
+						<div class="flex gap-4">
+							<label class="flex items-center gap-2 cursor-pointer">
+								<input type="radio" name="language_preference" value="en" required
+									class="accent-primary w-4 h-4" />
+								<span class="text-sm text-text-primary">English</span>
+							</label>
+							<label class="flex items-center gap-2 cursor-pointer">
+								<input type="radio" name="language_preference" value="es"
+									class="accent-primary w-4 h-4" />
+								<span class="text-sm text-text-primary">Español</span>
+							</label>
+						</div>
+					</div>
+
+					<button type="submit" disabled={loading}
+						class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 mt-2">
 						{loading ? '…' : m.auth_onboarding_next()}
 					</button>
 				</form>
 
-			<!-- Step 2: Neighborhood -->
+				<p class="text-center mt-4">
+					<a href="/" class="text-xs text-text-muted hover:text-text-primary transition-colors">
+						{m.auth_onboarding_skip()} →
+					</a>
+				</p>
+
+			<!-- ── Step 2: Neighborhood ────────────────────────────────────── -->
 			{:else if step === 2}
 				<h1 class="text-lg font-bold text-text-primary mb-1">{m.auth_onboarding_step2_heading()}</h1>
 				<p class="text-sm text-text-muted mb-6">{m.auth_onboarding_step2_subheading()}</p>
@@ -138,10 +131,7 @@
 					action="?/neighborhood"
 					use:enhance={() => {
 						loading = true;
-						return async ({ update }) => {
-							await update({ reset: false });
-							loading = false;
-						};
+						return async ({ update }) => { await update({ reset: false }); loading = false; };
 					}}
 					class="flex flex-col gap-4"
 				>
@@ -149,12 +139,8 @@
 						<label for="neighborhood" class="text-sm font-medium text-text-primary">
 							{m.auth_onboarding_neighborhood()} <span class="text-error">*</span>
 						</label>
-						<select
-							id="neighborhood"
-							name="neighborhood"
-							required
-							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-						>
+						<select id="neighborhood" name="neighborhood" required
+							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
 							<option value="" disabled selected>{m.auth_onboarding_neighborhood_placeholder()}</option>
 							{#each SANTA_CRUZ_NEIGHBORHOODS as hood}
 								<option value={hood}>{hood}</option>
@@ -162,16 +148,19 @@
 						</select>
 					</div>
 
-					<button
-						type="submit"
-						disabled={loading}
-						class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2"
-					>
+					<button type="submit" disabled={loading}
+						class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 mt-2">
 						{loading ? '…' : m.auth_onboarding_next()}
 					</button>
 				</form>
 
-			<!-- Step 3: Done -->
+				<p class="text-center mt-4">
+					<a href="/" class="text-xs text-text-muted hover:text-text-primary transition-colors">
+						{m.auth_onboarding_skip()} →
+					</a>
+				</p>
+
+			<!-- ── Step 3: Done ───────────────────────────────────────────── -->
 			{:else}
 				<div class="text-center py-4">
 					<div class="w-14 h-14 bg-bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
@@ -181,18 +170,13 @@
 					</div>
 					<h1 class="text-lg font-bold text-text-primary mb-2">{m.auth_onboarding_step3_heading()}</h1>
 					<p class="text-sm text-text-muted mb-8">{m.auth_onboarding_step3_subheading()}</p>
-
 					<div class="flex flex-col gap-3">
-						<a
-							href="/post"
-							class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors text-center"
-						>
+						<a href="/post"
+							class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors text-center">
 							{m.auth_onboarding_post_first()}
 						</a>
-						<a
-							href="/browse"
-							class="w-full border border-border text-text-primary font-semibold py-2.5 rounded-md hover:bg-bg-secondary transition-colors text-center"
-						>
+						<a href="/browse"
+							class="w-full border border-border text-text-primary font-semibold py-2.5 rounded-md hover:bg-bg-secondary transition-colors text-center">
 							{m.auth_onboarding_browse_first()}
 						</a>
 					</div>

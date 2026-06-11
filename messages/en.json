@@ -76,7 +76,9 @@
 	"auth_onboarding_bio_placeholder": "What skills do you offer? What tools do you have? What are you looking for?",
 	"auth_onboarding_neighborhood": "Neighborhood",
 	"auth_onboarding_neighborhood_placeholder": "Select your neighborhood",
+	"auth_onboarding_language_preference": "Preferred language",
 	"auth_onboarding_next": "Continue",
+	"auth_onboarding_skip": "Skip for now",
 	"auth_onboarding_post_first": "Post Your First Listing",
 	"auth_onboarding_browse_first": "Browse Listings",
 

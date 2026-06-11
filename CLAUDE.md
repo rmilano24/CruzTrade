@@ -105,6 +105,14 @@ deposit_amount integer  -- cents, tool rentals only
 deposit_status text  -- 'none' | 'held' | 'released' | 'forfeited'
 status text  -- 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'disputed'
 scheduled_date date
+-- Phase 2 columns (add now, use later)
+pickup_photos text[]         -- Supabase Storage URLs for tool condition docs
+return_photos text[]
+condition_notes text
+is_recurring boolean default false
+recurrence_interval text     -- 'weekly' | 'biweekly' | 'monthly'
+recurrence_end_date date
+parent_transaction_id uuid   -- links recurring instances
 created_at timestamptz
 updated_at timestamptz
 ```
@@ -129,6 +137,9 @@ recipient_id uuid FK -> profiles
 listing_id uuid FK -> listings (nullable)
 transaction_id uuid FK -> transactions (nullable)
 body text
+body_original text       -- add now, used by Phase 2 auto-translation
+body_translated text     -- add now, used by Phase 2 auto-translation
+original_language text   -- 'en' | 'es' — add now
 is_read boolean default false
 created_at timestamptz
 ```
@@ -203,6 +214,52 @@ Build these, nothing else:
 - Pro Profile / SEO mini-website (Phase 2)
 - Verification / ID check
 - Demand-side notifications / digest email (manual until Phase 2)
+
+---
+
+## Phase 2 Feature Roadmap
+
+All of these are designed for — schema columns added now where noted — but not built until after MVP is live and validated.
+
+### AI Features
+- **Trade matching** — pgvector nearest-neighbor queries on listings embeddings. Weekly "matches for you" notification. Column `embedding vector(1536)` already on listings table.
+- **"Neighbors near you"** — surface 5 active nearby providers on new user dashboard
+- **"You might need this"** — related listings based on browse/booking history
+- **Demand signals** — "12 people in Westside are looking for plumbers" shown to providers
+- **Auto-translation in messaging** — Claude Haiku detects language, translates messages for recipient automatically. Add `body_original`, `body_translated`, `original_language` columns to messages table from day one.
+- **AI moderation** — Claude reviews new listings for quality, flags disputes, detects suspicious patterns
+
+### Engagement & Retention
+- **Demand-side "Need a Hand" posts** — buyers post what they need, providers respond. New `requests` table. This is the single biggest missing feature from MVP.
+- **Weekly neighborhood digest email** — new listings, new providers, seasonal prompts. Resend + Supabase Edge Function. EN and ES versions.
+- **Transactional email/SMS notifications** — new message, booking confirmed, deposit released. Resend for email, Twilio for SMS opt-in.
+- **Referral program** — invite a neighbor, both get first transaction fee waived. New `referrals` table.
+- **Recurring bookings** — hire someone on a repeating schedule. Add `is_recurring`, `recurrence_interval`, `recurrence_end_date`, `parent_transaction_id` to transactions.
+
+### Trust & Safety
+- **Community vouching** — neighbors vouch for each other before reviews accumulate. New `vouches` table.
+- **Tool condition documentation** — photo evidence at rental pickup and return. Add `pickup_photos`, `return_photos`, `condition_notes` to transactions.
+- **Verified identity & background checks** — Stripe Identity or Persona. Verified badge on profiles.
+
+### Provider Tools
+- **Portfolio / past work photos** — photo gallery on provider profile. New `portfolio_images` table.
+- **Availability calendar** — providers set available days/times. New `availability` table.
+- **"Teach Me" listing type** — third listing type for teaching/workshops. Add `teaching` to listings type enum, add `max_students` column.
+
+### Monetization
+- **Pro Profile mini-website** — SEO page at `/pro/[slug]`, ~$12–15/month subscription
+- **Subscription tiers** — Free / Pro ($12–15/mo) / Pro+ ($25/mo)
+- **Native iOS app** — Swift + Supabase Swift SDK, Phase 3 decision based on traction
+
+### New Tables to Add in Phase 2
+```sql
+requests          -- demand-side "Need a Hand" posts
+notifications     -- log of all sent notifications
+referrals         -- referral program tracking
+vouches           -- community vouching
+portfolio_images  -- provider past work photos
+availability      -- provider availability calendar
+```
 
 ---
 

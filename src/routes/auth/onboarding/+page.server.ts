@@ -4,16 +4,6 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user } = await locals.safeGetSession();
 	if (!user) redirect(303, '/auth/login');
-
-	// Already onboarded — skip
-	const { data: profile } = await locals.supabase!
-		.from('profiles')
-		.select('username')
-		.eq('id', user.id)
-		.single();
-
-	if (profile?.username) redirect(303, '/');
-
 	return {};
 };
 
@@ -26,14 +16,17 @@ export const actions: Actions = {
 		const full_name = (form.get('full_name') as string)?.trim();
 		const username = (form.get('username') as string)?.trim().toLowerCase();
 		const bio = (form.get('bio') as string)?.trim();
+		const language_preference = form.get('language_preference') as string;
 
 		if (!full_name) return fail(400, { step: 1, error: 'Full name is required' });
 		if (!username) return fail(400, { step: 1, error: 'Username is required' });
 		if (!/^[a-z0-9_]+$/.test(username)) {
 			return fail(400, { step: 1, error: 'Username can only contain letters, numbers, and underscores' });
 		}
+		if (!['en', 'es'].includes(language_preference)) {
+			return fail(400, { step: 1, error: 'Please select a language preference' });
+		}
 
-		// Check username availability
 		const { data: existing } = await locals.supabase
 			.from('profiles')
 			.select('id')
@@ -45,7 +38,7 @@ export const actions: Actions = {
 
 		const { error } = await locals.supabase
 			.from('profiles')
-			.update({ full_name, username, bio: bio || null })
+			.update({ full_name, username, bio: bio || null, language_preference })
 			.eq('id', user.id);
 
 		if (error) return fail(500, { step: 1, error: error.message });
