@@ -1,0 +1,43 @@
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+
+	"nav_browse": "Browse",
+	"nav_post": "Post a Service",
+	"nav_messages": "Messages",
+	"nav_login": "Log In",
+	"nav_signup": "Sign Up",
+	"nav_language_toggle": "Español",
+
+	"page_home_title": "Cruz Trade",
+	"page_home_tagline": "Your neighborhood marketplace",
+
+	"page_browse_title": "Browse Listings",
+	"page_browse_tagline": "Find services and tools near you",
+
+	"page_listing_title": "Listing Detail",
+	"page_listing_tagline": "Loading listing…",
+
+	"page_book_title": "Book / Hire",
+	"page_book_tagline": "Complete your booking",
+
+	"page_book_confirm_title": "Booking Confirmed",
+	"page_book_confirm_tagline": "Your booking has been confirmed",
+
+	"page_post_title": "Post a Service",
+	"page_post_tagline": "Share your skills or rent your tools",
+
+	"page_profile_title": "Provider Profile",
+	"page_profile_tagline": "Loading profile…",
+
+	"page_messages_title": "Messages",
+	"page_messages_tagline": "Your conversations",
+
+	"page_signup_title": "Create Account",
+	"page_signup_tagline": "Join Cruz Trade",
+
+	"page_login_title": "Log In",
+	"page_login_tagline": "Welcome back",
+
+	"page_onboarding_title": "Welcome to Cruz Trade",
+	"page_onboarding_tagline": "Let’s get you set up"
+}
