@@ -3,7 +3,7 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/publi
 import { sequence } from '@sveltejs/kit/hooks';
 import { i18n } from '$lib/i18n';
 import type { Handle } from '@sveltejs/kit';
-
+import ws from 'ws';
 
 const supabase: Handle = async ({ event, resolve }) => {
 	// Skip Supabase init until env vars are configured
@@ -16,7 +16,9 @@ const supabase: Handle = async ({ event, resolve }) => {
 						event.cookies.set(name, value, { ...options, path: '/' })
 					);
 				}
-			}
+			},
+			// Node 20 has no native WebSocket — provide the ws polyfill
+			realtime: { transport: ws }
 		});
 	}
 
