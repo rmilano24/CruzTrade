@@ -236,6 +236,64 @@ RLS is enabled on every table from day one. The service role key (used only in t
 
 ---
 
+## Google OAuth Setup
+
+Cruz Trade supports "Continue with Google" on the sign-in and sign-up pages. Setup is a one-time process per environment.
+
+**1. Create a Google Cloud project**
+
+1. Go to [console.cloud.google.com](https://console.cloud.google.com) — use a personal Gmail account (Workspace accounts may lack org-level permissions)
+2. Create a new project named `CruzTrade`
+
+**2. Create OAuth credentials**
+
+1. Go to **APIs & Services → Credentials → + Create Credentials → OAuth client ID**
+2. Application type: **Web application**, name it `Cruz Trade Web`
+3. Under **Authorized redirect URIs**, add:
+   - `https://[your-supabase-project-ref].supabase.co/auth/v1/callback`
+   - `http://localhost:5173/auth/callback` (local dev)
+4. Click **Create** — immediately **Download JSON** from the creation modal (the only time the secret is shown cleanly)
+5. From the JSON, copy `client_id` and `client_secret`
+
+**3. Enable Google in Supabase**
+
+1. Go to Supabase → **Authentication → Providers → Google**
+2. Toggle on, paste Client ID and Client Secret, save
+3. Copy the **Callback URL** shown — verify it matches what you added in step 2
+
+**4. Add test users (while app is in Testing mode)**
+
+1. Go to Google Cloud → **Google Auth Platform → Audience**
+2. Scroll to **Test users → + Add users**
+3. Add any Gmail addresses that need to sign in before the app is published
+
+**5. Add localhost to Supabase redirect allowlist**
+
+In Supabase → **Authentication → URL Configuration → Redirect URLs**, add:
+```
+http://localhost:5173/auth/callback
+```
+
+> **Production note:** When ready to go live, publish the OAuth app in Google Cloud (**Audience → Publish app**) so any Google account can sign in — not just test users. You'll need to complete Google's verification form if requesting sensitive scopes (we only use email + profile, so verification is not required).
+
+---
+
+## Supabase Storage Setup
+
+Listing images are stored in Supabase Storage under a public bucket called `listing-images`.
+
+**Create the bucket (one-time):**
+
+1. Go to Supabase → **Storage → New bucket**
+2. Name: `listing-images`
+3. Toggle **Public bucket** on (images are publicly readable by URL)
+4. Leave file size limit blank (5 MB limit is enforced server-side in `src/routes/post/+page.server.ts`)
+5. Save
+
+No additional RLS policies are needed — the bucket is public for reads, and uploads go through the authenticated server action which uses the service role key.
+
+---
+
 ## i18n (Bilingual EN/ES)
 
 All user-facing strings go through [paraglide-js](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) — never hardcode English text directly in components.
@@ -286,13 +344,23 @@ Design tokens live in `tailwind.config.js`. Use Tailwind classes exclusively —
 
 Checklist before flipping live:
 
+**Supabase**
 - [ ] Run `supabase/schema.sql` + `supabase/migrations/001_phase2_columns.sql` on the production Supabase project
-- [ ] Add your production domain to Supabase **Authentication → URL Configuration** redirect URLs
+- [ ] Add your production domain to Supabase **Authentication → URL Configuration** redirect URLs (e.g. `https://yourdomain.com/auth/callback`)
+- [ ] Create `listing-images` storage bucket (public) in the production Supabase project
+
+**Google OAuth**
+- [ ] Add production redirect URI to Google Cloud OAuth credentials: `https://yourdomain.com/auth/callback` (alongside the Supabase one)
+- [ ] Publish the OAuth app in Google Cloud (**Audience → Publish app**) so all Google accounts can sign in
+
+**Stripe**
 - [ ] Switch Stripe keys from `sk_test_` / `pk_test_` to `sk_live_` / `pk_live_`
 - [ ] Create a permanent webhook endpoint in Stripe dashboard → **Developers → Webhooks → Add destination**, pointing to `https://yourdomain.com/api/stripe/webhook`, listening for `checkout.session.completed`, `checkout.session.expired`, `payment_intent.payment_failed`
 - [ ] Update `STRIPE_WEBHOOK_SECRET` in production env to the new `whsec_` from the permanent endpoint
 - [ ] Complete Stripe account verification (**Verify your business** in Stripe dashboard) before going live
-- [ ] Seed at least 20 real listings before public launch
+
+**Launch**
+- [ ] Seed at least 20 real listings before public marketing
 
 ---
 
