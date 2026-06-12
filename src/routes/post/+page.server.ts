@@ -49,6 +49,36 @@ export const actions: Actions = {
 
 		const priceCents = Math.round(priceNum * 100);
 
+		// Handle optional image upload
+		const imageFile = form.get('image') as File | null;
+		let image_url: string | null = null;
+
+		if (imageFile && imageFile.size > 0) {
+			if (imageFile.size > 5 * 1024 * 1024) {
+				return fail(400, { error: 'Image must be under 5 MB', values: { type, title, description, category, price: priceRaw, price_unit, neighborhood, language, accepts_trade, trade_description } });
+			}
+			const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+			if (!allowed.includes(imageFile.type)) {
+				return fail(400, { error: 'Image must be a JPG, PNG, or WebP', values: { type, title, description, category, price: priceRaw, price_unit, neighborhood, language, accepts_trade, trade_description } });
+			}
+			const ext = imageFile.name.split('.').pop() ?? 'jpg';
+			const path = `${user.id}/${Date.now()}.${ext}`;
+			const buffer = await imageFile.arrayBuffer();
+
+			const { error: uploadError } = await locals.supabase.storage
+				.from('listing-images')
+				.upload(path, buffer, { contentType: imageFile.type, upsert: false });
+
+			if (uploadError) {
+				return fail(500, { error: `Image upload failed: ${uploadError.message}`, values: { type, title, description, category, price: priceRaw, price_unit, neighborhood, language, accepts_trade, trade_description } });
+			}
+
+			const { data: { publicUrl } } = locals.supabase.storage
+				.from('listing-images')
+				.getPublicUrl(path);
+			image_url = publicUrl;
+		}
+
 		const { data: listing, error } = await locals.supabase
 			.from('listings')
 			.insert({
@@ -63,6 +93,7 @@ export const actions: Actions = {
 				language,
 				accepts_trade,
 				trade_description: accepts_trade ? trade_description : null,
+				image_url,
 				region: 'santa-cruz',
 				is_active: true
 			})

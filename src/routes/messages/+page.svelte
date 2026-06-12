@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
-	import { afterUpdate } from 'svelte';
+	import { afterUpdate, onMount, onDestroy } from 'svelte';
+	import { createClient } from '@supabase/supabase-js';
+	import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 	import * as m from '$lib/paraglide/messages';
-
 	import { formatPrice } from '$lib/utils/format';
 
 	export let data: {
@@ -15,7 +16,6 @@
 	};
 
 	$: reviewed = $page.url.searchParams.get('reviewed') === '1';
-
 	$: ({ threads, activeThreadId, activeMessages, activeTransaction, userId } = data);
 
 	// The other party in the active thread
@@ -42,6 +42,87 @@
 		cancelled: 'text-error',
 		disputed: 'text-error'
 	}[tx.status as string] ?? 'text-text-muted' : null;
+
+	// ── Realtime ──────────────────────────────────────────────────────────────
+	// realtimeExtra holds messages received live that aren't yet in server data
+	let realtimeExtra: any[] = [];
+	$: displayMessages = [
+		...(activeMessages ?? []),
+		...realtimeExtra.filter((r: any) => !(activeMessages ?? []).find((m: any) => m.id === r.id))
+	];
+
+	let supabaseBrowser: ReturnType<typeof createClient> | null = null;
+	let channel: any = null;
+	let subscribedThreadId: string | null = null;
+	const profileCache = new Map<string, any>();
+
+	onMount(async () => {
+		supabaseBrowser = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
+
+		const session = $page.data.session;
+		if (session?.access_token) {
+			await supabaseBrowser.auth.setSession({
+				access_token: session.access_token,
+				refresh_token: session.refresh_token
+			});
+		}
+
+		// Seed profile cache from existing messages
+		for (const msg of activeMessages ?? []) {
+			if (msg.sender?.id) profileCache.set(msg.sender.id, msg.sender);
+		}
+
+		if (activeThreadId) subscribeToThread(activeThreadId);
+	});
+
+	onDestroy(() => {
+		if (channel && supabaseBrowser) supabaseBrowser.removeChannel(channel);
+	});
+
+	function subscribeToThread(threadId: string) {
+		if (!supabaseBrowser) return;
+		if (channel) supabaseBrowser.removeChannel(channel);
+		realtimeExtra = [];
+		subscribedThreadId = threadId;
+
+		channel = supabaseBrowser
+			.channel(`messages:${threadId}`)
+			.on('postgres_changes', {
+				event: 'INSERT',
+				schema: 'public',
+				table: 'messages',
+				filter: `thread_id=eq.${threadId}`
+			}, handleNewMessage)
+			.subscribe();
+	}
+
+	async function handleNewMessage(payload: any) {
+		const newMsg = payload.new;
+		// Dedup against both server data and already-appended realtime messages
+		if ((activeMessages ?? []).find((m: any) => m.id === newMsg.id)) return;
+		if (realtimeExtra.find((m: any) => m.id === newMsg.id)) return;
+
+		let sender = profileCache.get(newMsg.sender_id) ?? null;
+		if (!sender && supabaseBrowser) {
+			const { data: profile } = await supabaseBrowser
+				.from('profiles')
+				.select('id, username, full_name, avatar_url')
+				.eq('id', newMsg.sender_id)
+				.single();
+			if (profile) {
+				sender = profile;
+				profileCache.set(profile.id, profile);
+			}
+		}
+
+		realtimeExtra = [...realtimeExtra, { ...newMsg, sender }];
+	}
+
+	// Re-subscribe when thread changes (after mount)
+	$: if (supabaseBrowser && activeThreadId && activeThreadId !== subscribedThreadId) {
+		subscribeToThread(activeThreadId);
+	}
+	// ─────────────────────────────────────────────────────────────────────────
 
 	let sending = false;
 	let completing = false;
@@ -254,7 +335,7 @@
 
 					<!-- Messages -->
 					<div class="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3" bind:this={messagesEl}>
-						{#each activeMessages as msg (msg.id)}
+						{#each displayMessages as msg (msg.id)}
 							{@const isMine = msg.sender_id === userId}
 							<div class="flex {isMine ? 'justify-end' : 'justify-start'} gap-2">
 								{#if !isMine && msg.sender?.avatar_url}

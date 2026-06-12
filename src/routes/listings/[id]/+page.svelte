@@ -56,6 +56,14 @@
 		<!-- Main content -->
 		<div class="flex-1 min-w-0">
 
+			<!-- Hero image -->
+			{#if listing.image_url}
+				<div class="w-full h-64 rounded-lg overflow-hidden bg-bg-secondary mb-6">
+					<img src={listing.image_url} alt={listing.title}
+						class="w-full h-full object-cover" />
+				</div>
+			{/if}
+
 			<!-- Badges -->
 			<div class="flex items-center gap-2 flex-wrap mb-3">
 				<span class="bg-bg-secondary text-text-muted text-xs px-2.5 py-1 rounded-full">

@@ -83,6 +83,14 @@
 					<span class="hidden sm:block">{displayName}</span>
 				</a>
 
+				<!-- Settings -->
+				<a
+					href="/settings"
+					class="text-xs text-text-muted hover:text-text-primary transition-colors"
+				>
+					{m.nav_settings()}
+				</a>
+
 				<!-- Log out -->
 				<form method="POST" action="/auth/logout" use:enhance>
 					<button

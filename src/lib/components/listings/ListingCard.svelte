@@ -13,6 +13,7 @@
 		accepts_trade: boolean;
 		neighborhood: string | null;
 		language: string;
+		image_url?: string | null;
 		profiles: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
 	};
 
@@ -29,6 +30,14 @@
 	href="/listings/{listing.id}"
 	class="group flex flex-col bg-bg-card border border-border rounded-lg shadow-card hover:shadow-modal hover:-translate-y-0.5 transition-all duration-150"
 >
+	<!-- Image -->
+	{#if listing.image_url}
+		<div class="w-full h-40 overflow-hidden rounded-t-lg bg-bg-secondary">
+			<img src={listing.image_url} alt={listing.title}
+				class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+		</div>
+	{/if}
+
 	<!-- Card body -->
 	<div class="p-4 flex flex-col flex-1 gap-3">
 

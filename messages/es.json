@@ -8,6 +8,7 @@
 	"nav_signup": "Registrarse",
 	"nav_language_toggle": "English",
 	"nav_my_profile": "Mi Perfil",
+	"nav_settings": "Configuración",
 	"nav_logout": "Cerrar Sesión",
 
 	"page_home_title": "Cruz Trade",
@@ -235,6 +236,10 @@
 	"post_trade_toggle": "Estoy abierto a intercambios / trueque",
 	"post_trade_description_label": "¿Por qué intercambiarías?",
 	"post_trade_description_placeholder": "ej. Ayuda en el jardín, comida casera, diseño web…",
+	"post_image_label": "Foto (opcional)",
+	"post_image_prompt": "Haz clic para subir una foto",
+	"post_image_hint": "JPG, PNG o WebP · Máx 5 MB",
+	"post_image_change": "Haz clic para cambiar la foto",
 	"post_submit": "Publicar Anuncio",
 	"post_success_notice": "¡Tu anuncio está en línea!",
 
@@ -256,6 +261,12 @@
 	"listing_tool_rental": "Renta de herramienta",
 	"listing_deposit_notice": "Se retiene un depósito vía Stripe y se devuelve cuando la herramienta es regresada en buen estado.",
 	"listing_sign_in_to_book": "Inicia sesión para reservar",
+
+	"settings_heading": "Configuración de cuenta",
+	"settings_subheading": "Actualiza la información de tu perfil",
+	"settings_save": "Guardar cambios",
+	"settings_saved": "¡Cambios guardados!",
+	"settings_view_profile": "Ver mi perfil →",
 
 	"error_required": "Este campo es obligatorio",
 	"error_generic": "Algo salió mal. Por favor intenta de nuevo."

@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		.select(
 			`id, type, title, description, category, price, price_unit,
 			 accepts_trade, trade_description, neighborhood, language,
-			 is_active, created_at,
+			 image_url, is_active, created_at,
 			 profiles!user_id(id, username, full_name, avatar_url, bio, neighborhood, is_verified, created_at)`
 		)
 		.eq('id', params.id)

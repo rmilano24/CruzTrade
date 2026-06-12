@@ -17,9 +17,18 @@
 	const categories = Object.entries(CATEGORY_LABELS);
 
 	let submitting = false;
+	let imagePreview: string | null = null;
 
 	function handleToggle(e: Event) {
 		showTrade = (e.currentTarget as HTMLInputElement).checked;
+	}
+
+	function handleImageChange(e: Event) {
+		const file = (e.currentTarget as HTMLInputElement).files?.[0];
+		if (!file) { imagePreview = null; return; }
+		const reader = new FileReader();
+		reader.onload = (ev) => { imagePreview = ev.target?.result as string; };
+		reader.readAsDataURL(file);
 	}
 </script>
 
@@ -42,6 +51,7 @@
 
 	<form
 		method="POST"
+		enctype="multipart/form-data"
 		use:enhance={() => {
 			submitting = true;
 			return async ({ update }) => {
@@ -234,6 +244,26 @@
 					/>
 				</div>
 			{/if}
+		</div>
+
+		<!-- Photo -->
+		<div class="flex flex-col gap-1.5">
+			<label class="text-sm font-medium text-text-primary">{m.post_image_label()}</label>
+			<label class="flex flex-col items-center justify-center gap-2 bg-bg-secondary border-2 border-dashed border-border rounded-lg p-6 cursor-pointer hover:border-primary transition-colors text-center">
+				<input type="file" name="image" accept="image/jpeg,image/png,image/webp"
+					class="sr-only" on:change={handleImageChange} />
+				{#if imagePreview}
+					<img src={imagePreview} alt="Preview" class="w-full max-h-48 object-cover rounded-md" />
+					<span class="text-xs text-text-muted">{m.post_image_change()}</span>
+				{:else}
+					<svg class="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+							d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+					</svg>
+					<span class="text-sm text-text-muted">{m.post_image_prompt()}</span>
+					<span class="text-xs text-text-muted">{m.post_image_hint()}</span>
+				{/if}
+			</label>
 		</div>
 
 		<!-- Submit -->

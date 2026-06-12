@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		.from('listings')
 		.select(
 			`id, type, title, description, category, price, price_unit,
-			 accepts_trade, neighborhood, language, created_at,
+			 accepts_trade, neighborhood, language, image_url, created_at,
 			 profiles!user_id(id, username, full_name, avatar_url)`
 		)
 		.eq('is_active', true)

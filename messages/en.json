@@ -8,6 +8,7 @@
 	"nav_signup": "Sign Up",
 	"nav_language_toggle": "Español",
 	"nav_my_profile": "My Profile",
+	"nav_settings": "Settings",
 	"nav_logout": "Log Out",
 
 	"page_home_title": "Cruz Trade",
@@ -235,6 +236,10 @@
 	"post_trade_toggle": "I'm open to trades / barter",
 	"post_trade_description_label": "What would you trade for?",
 	"post_trade_description_placeholder": "e.g. Garden help, home cooked meals, web design…",
+	"post_image_label": "Photo (optional)",
+	"post_image_prompt": "Click to upload a photo",
+	"post_image_hint": "JPG, PNG, or WebP · Max 5 MB",
+	"post_image_change": "Click to change photo",
 	"post_submit": "Post Listing",
 	"post_success_notice": "Your listing is live!",
 
@@ -256,6 +261,12 @@
 	"listing_tool_rental": "Tool Rental",
 	"listing_deposit_notice": "A deposit is held via Stripe and returned after the tool is returned in good condition.",
 	"listing_sign_in_to_book": "Sign in to book",
+
+	"settings_heading": "Account Settings",
+	"settings_subheading": "Update your profile information",
+	"settings_save": "Save changes",
+	"settings_saved": "Changes saved!",
+	"settings_view_profile": "View my profile →",
 
 	"error_required": "This field is required",
 	"error_generic": "Something went wrong. Please try again."
