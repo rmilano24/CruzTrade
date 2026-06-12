@@ -33,5 +33,17 @@ export const actions: Actions = {
 		}
 
 		return { success: true, email };
+	},
+
+	google: async ({ locals, url }) => {
+		if (!locals.supabase) return fail(500, { error: 'Service unavailable' });
+
+		const { data, error } = await locals.supabase.auth.signInWithOAuth({
+			provider: 'google',
+			options: { redirectTo: `${url.origin}/auth/callback` }
+		});
+
+		if (error) return fail(500, { error: error.message });
+		if (data.url) redirect(303, data.url);
 	}
 };
