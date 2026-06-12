@@ -1,5 +1,5 @@
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { error, fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!locals.supabase) error(503, 'Database unavailable');
@@ -38,4 +38,36 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		reviews: reviews ?? [],
 		otherListings: otherListings ?? []
 	};
+};
+
+export const actions: Actions = {
+	delete: async ({ locals, params }) => {
+		const { user } = await locals.safeGetSession();
+		if (!user || !locals.supabase) return fail(401, { error: 'Not authenticated' });
+
+		// Verify ownership before deactivating
+		const { data: listing } = await locals.supabase
+			.from('listings')
+			.select('user_id')
+			.eq('id', params.id)
+			.single();
+
+		if (!listing) return fail(404, { error: 'Listing not found' });
+		if (listing.user_id !== user.id) return fail(403, { error: 'Not your listing' });
+
+		const { error: err } = await locals.supabase
+			.from('listings')
+			.update({ is_active: false })
+			.eq('id', params.id)
+			.eq('user_id', user.id);
+
+		if (err) return fail(500, { error: err.message });
+
+		redirect(303, '/profile/' + (await locals.supabase
+			.from('profiles')
+			.select('username')
+			.eq('id', user.id)
+			.single()
+			.then(r => r.data?.username ?? '')));
+	}
 };

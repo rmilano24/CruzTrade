@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { formatPrice, categoryLabel } from '$lib/utils/format';
 	import { languageTag } from '$lib/paraglide/runtime';
 	import { page } from '$app/stores';
@@ -12,6 +13,8 @@
 
 	$: ({ listing, reviews, otherListings } = data);
 	$: user = $page.data.user;
+	$: isOwner = user?.id === listing.profiles?.id;
+	let confirmDelete = false;
 	$: lang = languageTag() as 'en' | 'es';
 	$: justPosted = $page.url.searchParams.get('posted') === '1';
 	$: provider = listing.profiles;
@@ -194,6 +197,35 @@
 					</a>
 				{/if}
 			</div>
+
+			<!-- Owner controls -->
+			{#if isOwner}
+				<div class="bg-bg-card border border-border rounded-lg p-4 shadow-card">
+					<p class="text-xs font-semibold text-text-primary mb-3">Manage listing</p>
+					{#if !confirmDelete}
+						<button
+							on:click={() => confirmDelete = true}
+							class="w-full text-center border border-red-200 text-red-600 font-semibold text-sm px-4 py-2 rounded-md hover:bg-red-50 transition-colors">
+							Remove listing
+						</button>
+					{:else}
+						<p class="text-xs text-text-muted mb-3">Are you sure? This will remove the listing from browse. Past bookings are not affected.</p>
+						<div class="flex gap-2">
+							<form method="POST" action="?/delete" use:enhance class="flex-1">
+								<button type="submit"
+									class="w-full text-center bg-red-600 text-white font-semibold text-sm px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+									Yes, remove
+								</button>
+							</form>
+							<button
+								on:click={() => confirmDelete = false}
+								class="flex-1 border border-border text-text-primary font-semibold text-sm px-4 py-2 rounded-md hover:bg-bg-secondary transition-colors">
+								Cancel
+							</button>
+						</div>
+					{/if}
+				</div>
+			{/if}
 
 			<!-- Provider Card -->
 			<div class="bg-bg-card border border-border rounded-lg p-5 shadow-card">
