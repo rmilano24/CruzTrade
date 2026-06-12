@@ -57,6 +57,17 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		activeMessages = msgs ?? [];
 		activeTransaction = txRow ?? null;
 
+		// Check if buyer has already reviewed this transaction
+		if (txRow?.status === 'completed' && txRow?.buyer_id === user.id) {
+			const { data: existingReview } = await locals.supabase
+				.from('reviews')
+				.select('id')
+				.eq('transaction_id', activeThreadId)
+				.eq('reviewer_id', user.id)
+				.single();
+			(activeTransaction as any).hasReview = !!existingReview;
+		}
+
 		// Mark unread messages in this thread as read
 		await locals.supabase
 			.from('messages')

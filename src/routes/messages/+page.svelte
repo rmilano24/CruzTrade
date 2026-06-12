@@ -14,6 +14,8 @@
 		userId: string;
 	};
 
+	$: reviewed = $page.url.searchParams.get('reviewed') === '1';
+
 	$: ({ threads, activeThreadId, activeMessages, activeTransaction, userId } = data);
 
 	// The other party in the active thread
@@ -88,6 +90,15 @@
 
 <div class="max-w-content mx-auto px-6 py-6">
 	<h1 class="text-xl font-bold text-text-primary mb-4">{m.messages_heading()}</h1>
+
+	{#if reviewed}
+		<div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
+			<svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+			</svg>
+			{m.review_submitted()}
+		</div>
+	{/if}
 
 	{#if threads.length === 0}
 		<!-- Empty state -->
@@ -223,12 +234,20 @@
 							{/if}
 
 							{#if tx.status === 'completed'}
-								<span class="text-xs text-success font-semibold flex items-center gap-1">
-									<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-										<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-									</svg>
-									Job complete
-								</span>
+								<div class="flex items-center gap-3">
+									<span class="text-xs text-success font-semibold flex items-center gap-1">
+										<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+											<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+										</svg>
+										Job complete
+									</span>
+									{#if isBuyer && !tx.hasReview}
+										<a href="/reviews/{tx.id}"
+											class="text-xs bg-primary text-white font-semibold px-3 py-1.5 rounded-md hover:bg-primary-hover transition-colors whitespace-nowrap">
+											{m.review_leave()}
+										</a>
+									{/if}
+								</div>
 							{/if}
 						</div>
 					{/if}
