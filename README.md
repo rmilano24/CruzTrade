@@ -148,6 +148,58 @@ The generated `src/lib/paraglide/` directory is gitignored — it's compiled aut
 
 ---
 
+## Stripe Setup
+
+Cruz Trade uses [Stripe Connect](https://stripe.com/connect) for marketplace payments. You need a Stripe account with Connect enabled.
+
+**1. Get your API keys**
+
+In the Stripe dashboard go to **Developers → API keys** and copy your publishable and secret keys into `.env`.
+
+**2. Start the local webhook listener**
+
+Stripe needs to notify your app when payments complete. In a **separate terminal tab** (keep it running alongside `npm run dev`):
+
+```bash
+# Install Stripe CLI (first time only)
+brew install stripe/stripe-cli/stripe
+
+# Log in (first time only — opens browser to authorize)
+stripe login
+
+# Forward webhook events to your local dev server
+stripe listen --forward-to localhost:5173/api/stripe/webhook
+```
+
+The command will print a signing secret:
+```
+> Ready! Your webhook signing secret is whsec_abc123...
+```
+
+Copy that value into `.env`:
+```env
+STRIPE_WEBHOOK_SECRET=whsec_abc123...
+```
+
+Then restart `npm run dev` to pick up the new secret.
+
+> **Note:** The `whsec_` key from `stripe listen` expires after 90 days. Re-run `stripe login` when it does. For production, create a permanent webhook endpoint in the Stripe dashboard pointing to `https://yourdomain.com/api/stripe/webhook` and use that `whsec_` key instead.
+
+**3. Provider Stripe Connect onboarding**
+
+Providers connect their Stripe account to receive payouts by visiting their profile page and clicking **Connect Stripe**. This starts a Stripe Express onboarding flow. In test mode, use Stripe's test data to complete it.
+
+**Test card numbers (test mode only):**
+
+| Card | Use |
+|---|---|
+| `4242 4242 4242 4242` | Successful payment |
+| `4000 0000 0000 9995` | Declined payment |
+
+Use any future expiry date and any 3-digit CVC.
+
+---
+
 ## Database Setup
 
 The full schema is documented in [`CLAUDE.md`](./CLAUDE.md). To set up a fresh Supabase project:
