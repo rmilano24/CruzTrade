@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 	import { formatPrice } from '$lib/utils/format';
 	import * as m from '$lib/paraglide/messages';
 
@@ -15,6 +16,7 @@
 	} | null = null;
 
 	$: ({ listing, mode, neighborhoods } = data);
+	$: cancelled = $page.url.searchParams.get('cancelled') === '1';
 	$: isTrade = mode === 'trade';
 	$: isRental = listing.type === 'tool_rental';
 	$: provider = listing.profiles;
@@ -67,6 +69,15 @@
 			{m.book_subheading({ name: provider?.full_name ?? provider?.username ?? 'Provider' })}
 		</p>
 	</div>
+
+	{#if cancelled}
+		<div class="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
+			<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+			</svg>
+			Payment was cancelled — your booking was not confirmed. Fill out the form below to try again.
+		</div>
+	{/if}
 
 	{#if form?.error && !form?.errors}
 		<div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-6">

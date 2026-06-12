@@ -4,14 +4,17 @@
 	import { afterUpdate } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
 
+	import { formatPrice } from '$lib/utils/format';
+
 	export let data: {
 		threads: any[];
 		activeThreadId: string | null;
 		activeMessages: any[];
+		activeTransaction: any | null;
 		userId: string;
 	};
 
-	$: ({ threads, activeThreadId, activeMessages, userId } = data);
+	$: ({ threads, activeThreadId, activeMessages, activeTransaction, userId } = data);
 
 	// The other party in the active thread
 	$: activeThread = threads.find((t) => t.thread_id === activeThreadId);
@@ -21,7 +24,25 @@
 			: activeThread.sender
 		: null;
 
+	$: tx = activeTransaction;
+	$: isBuyer = tx?.buyer_id === userId;
+	$: txStatusLabel = tx ? {
+		pending: 'Pending payment',
+		confirmed: 'Paid — awaiting completion',
+		completed: 'Completed',
+		cancelled: 'Cancelled',
+		disputed: 'Disputed'
+	}[tx.status as string] ?? tx.status : null;
+	$: txStatusColor = tx ? {
+		pending: 'text-warning',
+		confirmed: 'text-info',
+		completed: 'text-success',
+		cancelled: 'text-error',
+		disputed: 'text-error'
+	}[tx.status as string] ?? 'text-text-muted' : null;
+
 	let sending = false;
+	let completing = false;
 	let bodyInput = '';
 	let messagesEl: HTMLElement;
 
@@ -167,6 +188,50 @@
 							</a>
 						{/if}
 					</div>
+
+					<!-- Transaction status bar -->
+					{#if tx}
+						<div class="px-5 py-2.5 border-b border-border bg-bg-card flex items-center justify-between gap-4 shrink-0 flex-wrap">
+							<div class="flex items-center gap-3 text-xs flex-wrap">
+								<span class="font-medium text-text-primary">
+									{tx.type === 'trade' ? 'Trade' : formatPrice(tx.amount, 'flat')}
+								</span>
+								{#if tx.scheduled_date}
+									<span class="text-text-muted">
+										{new Date(tx.scheduled_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+									</span>
+								{/if}
+								<span class="font-semibold {txStatusColor}">{txStatusLabel}</span>
+							</div>
+
+							{#if tx.status === 'confirmed' && isBuyer}
+								<form method="POST" action="?/complete" use:enhance={() => {
+									completing = true;
+									return async ({ update }) => {
+										completing = false;
+										await update();
+									};
+								}}>
+									<input type="hidden" name="transaction_id" value={tx.id} />
+									<button
+										type="submit"
+										disabled={completing}
+										class="bg-success text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
+										{completing ? 'Saving…' : '✓ Mark job complete'}
+									</button>
+								</form>
+							{/if}
+
+							{#if tx.status === 'completed'}
+								<span class="text-xs text-success font-semibold flex items-center gap-1">
+									<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+									</svg>
+									Job complete
+								</span>
+							{/if}
+						</div>
+					{/if}
 
 					<!-- Messages -->
 					<div class="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3" bind:this={messagesEl}>

@@ -28,22 +28,34 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		return true;
 	});
 
-	// Load active thread messages if a thread_id is in the URL
+	// Load active thread messages + transaction if a thread_id is in the URL
 	const activeThreadId = url.searchParams.get('thread') || null;
 	let activeMessages: any[] = [];
+	let activeTransaction: any = null;
 
 	if (activeThreadId) {
-		const { data: msgs } = await locals.supabase
-			.from('messages')
-			.select(
-				`id, body, created_at, sender_id,
-				 sender:profiles!sender_id(id, username, full_name, avatar_url)`
-			)
-			.eq('thread_id', activeThreadId)
-			.or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
-			.order('created_at', { ascending: true });
+		const [{ data: msgs }, { data: txRow }] = await Promise.all([
+			locals.supabase
+				.from('messages')
+				.select(
+					`id, body, created_at, sender_id,
+					 sender:profiles!sender_id(id, username, full_name, avatar_url)`
+				)
+				.eq('thread_id', activeThreadId)
+				.or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
+				.order('created_at', { ascending: true }),
+
+			// The thread_id on messages matches the transaction id
+			locals.supabase
+				.from('transactions')
+				.select('id, status, type, amount, platform_fee, scheduled_date, buyer_id, seller_id, listing_id')
+				.eq('id', activeThreadId)
+				.or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
+				.single()
+		]);
 
 		activeMessages = msgs ?? [];
+		activeTransaction = txRow ?? null;
 
 		// Mark unread messages in this thread as read
 		await locals.supabase
@@ -58,12 +70,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		threads: dedupedThreads,
 		activeThreadId,
 		activeMessages,
+		activeTransaction,
 		userId: user.id
 	};
 };
 
 export const actions: Actions = {
-	send: async ({ request, locals, url }) => {
+	send: async ({ request, locals }) => {
 		const { user } = await locals.safeGetSession();
 		if (!user || !locals.supabase) return fail(401, { error: 'Not authenticated' });
 
@@ -90,5 +103,35 @@ export const actions: Actions = {
 		if (insertErr) return fail(500, { error: insertErr.message });
 
 		return { sent: true };
+	},
+
+	complete: async ({ request, locals }) => {
+		const { user } = await locals.safeGetSession();
+		if (!user || !locals.supabase) return fail(401, { error: 'Not authenticated' });
+
+		const form = await request.formData();
+		const transaction_id = form.get('transaction_id') as string;
+
+		if (!transaction_id) return fail(400, { error: 'Missing transaction ID' });
+
+		// Only the buyer can mark complete, and only if status is 'confirmed'
+		const { data: tx } = await locals.supabase
+			.from('transactions')
+			.select('id, status, buyer_id')
+			.eq('id', transaction_id)
+			.single();
+
+		if (!tx) return fail(404, { error: 'Transaction not found' });
+		if (tx.buyer_id !== user.id) return fail(403, { error: 'Only the buyer can mark a job complete' });
+		if (tx.status !== 'confirmed') return fail(400, { error: 'This booking cannot be marked complete' });
+
+		const { error: updateErr } = await locals.supabase
+			.from('transactions')
+			.update({ status: 'completed' })
+			.eq('id', transaction_id);
+
+		if (updateErr) return fail(500, { error: updateErr.message });
+
+		return { completed: true };
 	}
 };
