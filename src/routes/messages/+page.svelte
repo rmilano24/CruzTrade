@@ -6,6 +6,11 @@
 	import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 	import * as m from '$lib/paraglide/messages';
 	import { formatPrice } from '$lib/utils/format';
+	import { notifications } from '$lib/stores/notifications';
+
+	function markThreadRead(threadId: string) {
+		notifications.update((n) => n.filter((notif) => notif.thread_id !== threadId));
+	}
 
 	export let data: {
 		threads: any[];
@@ -206,9 +211,11 @@
 				{#each threads as thread (thread.thread_id)}
 					{@const other = thread.sender_id === userId ? thread.recipient : thread.sender}
 					{@const isActive = thread.thread_id === activeThreadId}
-					{@const isUnread = !thread.is_read && thread.recipient_id === userId}
+					{@const isUnread = (!thread.is_read && thread.recipient_id === userId) ||
+						!!$notifications.find((n) => n.thread_id === thread.thread_id)}
 					<a
 						href="/messages?thread={thread.thread_id}"
+						on:click={() => markThreadRead(thread.thread_id)}
 						class="flex items-start gap-3 px-4 py-3.5 border-b border-border transition-colors
 							{isActive ? 'bg-orange-50' : 'hover:bg-bg-card'}"
 					>
