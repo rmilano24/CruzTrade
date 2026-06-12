@@ -14,6 +14,8 @@
 	$: ({ profile, listings, reviews, avgRating } = data);
 	$: lang = languageTag() as 'en' | 'es';
 	$: isOwnProfile = $page.data.user?.id === profile.id;
+	$: stripeStatus = $page.url.searchParams.get('stripe');
+	$: stripeConnected = !!profile.stripe_account_id;
 	$: memberYear = profile.created_at ? new Date(profile.created_at).getFullYear() : null;
 	$: initials = (profile.full_name ?? profile.username ?? 'U')
 		.split(' ')
@@ -102,6 +104,33 @@
 						class="w-full text-center bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors mt-1">
 						{m.profile_contact({ name: profile.full_name ?? profile.username })}
 					</a>
+				{/if}
+
+				<!-- Stripe Connect panel (own profile only) -->
+				{#if isOwnProfile}
+					<div class="w-full border-t border-border pt-4 mt-1 flex flex-col gap-2">
+						{#if stripeStatus === 'connected' || stripeConnected}
+							<div class="flex items-center gap-2 text-xs text-success font-medium">
+								<svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+								</svg>
+								Stripe connected — you can receive payments
+							</div>
+						{:else}
+							{#if stripeStatus === 'incomplete'}
+								<p class="text-xs text-warning">Stripe setup incomplete — finish to receive payments.</p>
+							{:else}
+								<p class="text-xs text-text-muted">Connect Stripe to receive payments from bookings.</p>
+							{/if}
+							<a href="/api/stripe/connect"
+								class="w-full text-center bg-[#635bff] text-white font-semibold text-xs px-4 py-2 rounded-md hover:bg-[#4f46e5] transition-colors flex items-center justify-center gap-2">
+								<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+									<path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/>
+								</svg>
+								Connect Stripe
+							</a>
+						{/if}
+					</div>
 				{/if}
 			</div>
 		</aside>

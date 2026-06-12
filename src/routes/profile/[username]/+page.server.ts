@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const { data: profile, error: err } = await locals.supabase
 		.from('profiles')
-		.select('id, username, full_name, avatar_url, bio, neighborhood, is_verified, created_at')
+		.select('id, username, full_name, avatar_url, bio, neighborhood, is_verified, created_at, stripe_account_id')
 		.eq('username', params.username)
 		.single();
 
