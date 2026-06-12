@@ -25,7 +25,8 @@ A hyperlocal skill trade and tool rental marketplace for Santa Cruz County, CA. 
 - Node.js 18+
 - npm 9+
 - A [Supabase](https://supabase.com) project
-- A [Stripe](https://stripe.com) account (for payment features)
+- A [Stripe](https://stripe.com) account with Connect enabled
+- [Stripe CLI](https://stripe.com/docs/stripe-cli) (for local webhook testing)
 
 ---
 
@@ -45,7 +46,7 @@ npm install
 cp .env.example .env
 ```
 
-Open `.env` and fill in your keys:
+Open `.env` and fill in your keys (see the Stripe Setup and Database Setup sections below for how to get each one):
 
 ```env
 PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -54,17 +55,42 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-PUBLIC_MAPBOX_TOKEN=pk.eyJ1...
-ANTHROPIC_API_KEY=sk-ant-...
+PUBLIC_MAPBOX_TOKEN=         # optional — maps not yet wired
+ANTHROPIC_API_KEY=           # optional — AI matching is Phase 2
 ```
 
-> The app runs without Supabase/Stripe keys during early development — those features will simply be inactive.
+**3. Set up the database**
 
-**3. Start the dev server**
+In the Supabase SQL editor, run these two files in order:
+1. `supabase/schema.sql` — creates all tables, enables pgvector, sets up RLS
+2. `supabase/migrations/001_phase2_columns.sql` — adds Phase 2 columns
 
+To load test listings (required for local dev):
+3. `supabase/seed.sql` — creates seed user `seed@cruztrade.test` / `SeedPass123!` with 5 sample listings
+
+**4. Configure Supabase auth redirect**
+
+In the Supabase dashboard go to **Authentication → URL Configuration** and add:
+```
+http://localhost:5173/auth/callback
+```
+to the **Redirect URLs** list. Without this, email confirmation links will fail.
+
+**5. Run the dev servers**
+
+You need **two terminal tabs** running at the same time:
+
+*Terminal 1 — app server:*
 ```bash
 npm run dev
 ```
+
+*Terminal 2 — Stripe webhook listener:*
+```bash
+stripe listen --forward-to localhost:5173/api/stripe/webhook
+```
+
+The `stripe listen` command prints a `whsec_...` signing secret — paste it into `.env` as `STRIPE_WEBHOOK_SECRET`, then restart `npm run dev`.
 
 Open [http://localhost:5173](http://localhost:5173).
 
@@ -82,45 +108,131 @@ Open [http://localhost:5173](http://localhost:5173).
 
 ---
 
+## Screens
+
+| Route | Screen |
+|---|---|
+| `/` | Landing page — hero, how it works, featured listings |
+| `/browse` | Browse listings — filter by category, type, neighborhood |
+| `/listings/[id]` | Listing detail — description, provider, Hire/Trade/Message CTAs |
+| `/listings/[id]/book` | Booking form — pay or trade, date, job description |
+| `/listings/[id]/book/confirmation` | Booking confirmation — receipt, escrow notice |
+| `/post` | Post a listing — service or tool rental form |
+| `/profile/[username]` | Provider profile — listings, reviews, Stripe connect |
+| `/messages` | Messaging — thread list + conversation view |
+| `/auth/signup` | Sign up |
+| `/auth/login` | Log in |
+| `/auth/onboarding` | 3-step onboarding — profile, neighborhood, first listing |
+
+All routes available in English and Spanish (`/es/` prefix for Spanish).
+
+---
+
 ## Project Structure
 
 ```
 src/
-├── app.html                  # Root HTML template (sets lang attr via paraglide)
-├── app.css                   # Tailwind directives + Inter font imports
-├── app.d.ts                  # TypeScript ambient types (Supabase locals)
-├── hooks.ts                  # Universal hooks — paraglide reroute (/es/* URLs)
-├── hooks.server.ts           # Server hooks — Supabase session + i18n handle
+├── hooks.ts                      # Universal hooks — paraglide reroute (/es/* URLs)
+├── hooks.server.ts               # Server hooks — Supabase session + i18n handle
 └── lib/
-    ├── i18n.ts               # paraglide createI18n instance
+    ├── i18n.ts                   # paraglide createI18n instance
+    ├── neighborhoods.ts          # Santa Cruz County neighborhood list
+    ├── utils/format.ts           # formatPrice, categoryLabel, typeLabel helpers
     ├── server/
-    │   ├── db.ts             # Supabase server client factory
-    │   └── stripe.ts         # Stripe Connect helpers (stub)
+    │   ├── db.ts                 # Supabase client factory (SSR-aware + admin)
+    │   └── stripe.ts             # Stripe client + platformFee/depositAmount helpers
     └── components/
-        ├── ui/               # Button, Input, Card, Badge, Avatar, Nav
-        ├── listings/         # ListingCard, ListingGrid, ListingDetail
-        ├── booking/          # BookingForm, OrderSummary, BookingConfirmation
-        └── messages/         # ThreadList, MessageBubble
+        ├── ui/Nav.svelte         # Top navigation with auth state
+        └── listings/ListingCard.svelte
 
-routes/
-├── +layout.svelte            # Root layout — Nav + ParaglideJS wrapper
-├── +page.svelte              # Landing page
-├── browse/                   # Browse listings
-├── listings/[id]/            # Listing detail
-├── listings/[id]/book/       # Booking flow
-├── listings/[id]/book/confirmation/
-├── post/                     # Post a service or tool rental
-├── profile/[username]/       # Public provider profile
-├── messages/                 # In-app messaging
-└── auth/
-    ├── signup/
-    ├── login/
-    └── onboarding/
+src/routes/
+├── +page.svelte / +page.server.ts          # Landing
+├── browse/                                 # Browse listings
+├── listings/[id]/                          # Listing detail
+├── listings/[id]/book/                     # Booking form
+├── listings/[id]/book/confirmation/        # Booking confirmation
+├── post/                                   # Post a listing
+├── profile/[username]/                     # Provider profile
+├── messages/                              # Messaging
+├── auth/signup|login|onboarding|callback/ # Auth flow
+└── api/stripe/
+    ├── connect/    # Start Stripe Express onboarding (GET → redirect to Stripe)
+    ├── return/     # Stripe redirects here after provider onboarding
+    └── webhook/    # Receives Stripe events, updates transaction status
 
 messages/
-├── en.json                   # English strings (source language)
-└── es.json                   # Spanish strings
+├── en.json         # English strings (source language)
+└── es.json         # Spanish strings
+
+supabase/
+├── schema.sql                      # Full database schema
+├── migrations/001_phase2_columns.sql
+└── seed.sql                        # Test data (5 listings, 1 user)
 ```
+
+---
+
+## Stripe Setup
+
+Cruz Trade uses [Stripe Connect](https://stripe.com/connect) for marketplace payments (7% platform fee, 20% deposit for tool rentals).
+
+**1. Enable Connect**
+
+In the Stripe dashboard go to **More → Connect → Get started** and enable Connect for your account.
+
+**2. Get your API keys**
+
+Go to **Developers → API keys** and copy your publishable and secret keys into `.env`.
+
+**3. Local webhook listener**
+
+Stripe needs to notify your app when payments complete. Keep this running alongside `npm run dev`:
+
+```bash
+# Install Stripe CLI (first time only)
+brew install stripe/stripe-cli/stripe
+
+# Log in (first time only)
+stripe login
+
+# Forward webhook events to local dev server
+stripe listen --forward-to localhost:5173/api/stripe/webhook
+```
+
+Copy the printed `whsec_...` value into `.env` as `STRIPE_WEBHOOK_SECRET`, then restart `npm run dev`.
+
+> **Note:** The `whsec_` key from `stripe listen` expires after 90 days — re-run `stripe login` when it does. For production, create a permanent webhook endpoint in the Stripe dashboard pointing to `https://yourdomain.com/api/stripe/webhook`.
+
+**4. Provider onboarding**
+
+Providers connect their Stripe account to receive payouts from their profile page (**Connect Stripe** button). This uses Stripe Express — in test mode, Stripe provides pre-filled test data to complete onboarding.
+
+**Test card numbers:**
+
+| Card | Use |
+|---|---|
+| `4242 4242 4242 4242` | Successful payment |
+| `4000 0000 0000 9995` | Declined payment |
+
+Use any future expiry date and any 3-digit CVC.
+
+---
+
+## Database Setup
+
+**Tables:** `profiles`, `listings`, `transactions`, `reviews`, `messages`, `regions`
+
+To set up a fresh Supabase project:
+
+1. Create a new project at [supabase.com](https://supabase.com)
+2. In **Database → Extensions**, enable `vector` (pgvector)
+3. In the SQL editor, run `supabase/schema.sql`
+4. Then run `supabase/migrations/001_phase2_columns.sql`
+5. For local dev, run `supabase/seed.sql` to load test data
+6. Copy your project URL and keys into `.env`
+7. In **Authentication → URL Configuration**, add `http://localhost:5173/auth/callback` to Redirect URLs
+
+RLS is enabled on every table from day one. The service role key (used only in the webhook handler) bypasses RLS — keep it server-side only.
 
 ---
 
@@ -142,75 +254,9 @@ All user-facing strings go through [paraglide-js](https://inlang.com/m/gerre34r/
 <h1>{m.page_home_title()}</h1>
 ```
 
-The generated `src/lib/paraglide/` directory is gitignored — it's compiled automatically by the Vite plugin when you run `npm run dev` or `npm run build`.
+The generated `src/lib/paraglide/` directory is gitignored — compiled automatically by the Vite plugin.
 
 **Language routing:** English is unprefixed (`/browse`). Spanish uses the `/es/` prefix (`/es/browse`). The language toggle in the Nav switches between them.
-
----
-
-## Stripe Setup
-
-Cruz Trade uses [Stripe Connect](https://stripe.com/connect) for marketplace payments. You need a Stripe account with Connect enabled.
-
-**1. Get your API keys**
-
-In the Stripe dashboard go to **Developers → API keys** and copy your publishable and secret keys into `.env`.
-
-**2. Start the local webhook listener**
-
-Stripe needs to notify your app when payments complete. In a **separate terminal tab** (keep it running alongside `npm run dev`):
-
-```bash
-# Install Stripe CLI (first time only)
-brew install stripe/stripe-cli/stripe
-
-# Log in (first time only — opens browser to authorize)
-stripe login
-
-# Forward webhook events to your local dev server
-stripe listen --forward-to localhost:5173/api/stripe/webhook
-```
-
-The command will print a signing secret:
-```
-> Ready! Your webhook signing secret is whsec_abc123...
-```
-
-Copy that value into `.env`:
-```env
-STRIPE_WEBHOOK_SECRET=whsec_abc123...
-```
-
-Then restart `npm run dev` to pick up the new secret.
-
-> **Note:** The `whsec_` key from `stripe listen` expires after 90 days. Re-run `stripe login` when it does. For production, create a permanent webhook endpoint in the Stripe dashboard pointing to `https://yourdomain.com/api/stripe/webhook` and use that `whsec_` key instead.
-
-**3. Provider Stripe Connect onboarding**
-
-Providers connect their Stripe account to receive payouts by visiting their profile page and clicking **Connect Stripe**. This starts a Stripe Express onboarding flow. In test mode, use Stripe's test data to complete it.
-
-**Test card numbers (test mode only):**
-
-| Card | Use |
-|---|---|
-| `4242 4242 4242 4242` | Successful payment |
-| `4000 0000 0000 9995` | Declined payment |
-
-Use any future expiry date and any 3-digit CVC.
-
----
-
-## Database Setup
-
-The full schema is documented in [`CLAUDE.md`](./CLAUDE.md). To set up a fresh Supabase project:
-
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Enable the `pgvector` extension (Database → Extensions)
-3. Run the SQL from the schema section of `CLAUDE.md` in the SQL editor
-4. Enable Row Level Security on every table
-5. Copy your project URL and keys into `.env`
-
-**Tables:** `profiles`, `listings`, `transactions`, `reviews`, `messages`, `regions`
 
 ---
 
@@ -236,22 +282,27 @@ Design tokens live in `tailwind.config.js`. Use Tailwind classes exclusively —
 
 ---
 
-## MVP Scope
+## Going to Production
 
-**Building now (Phase 1):**
-- Auth (sign up, log in, onboarding)
-- Browse listings with category + neighborhood filter
-- Post a listing (service or tool rental)
-- Listing detail + booking flow
-- Stripe Connect payments + deposit holds for tool rentals
-- In-app messaging (Supabase Realtime)
-- Reviews after completed transactions
-- Provider profile page
-- EN + ES language toggle
+Checklist before flipping live:
 
-**Phase 2 (not yet):**
-- AI semantic matching (pgvector column is already on `listings`, feature ships later)
-- Mobile app / PWA
-- Pro Profile / SEO mini-website
-- Verification / ID check
-- Digest email notifications
+- [ ] Run `supabase/schema.sql` + `supabase/migrations/001_phase2_columns.sql` on the production Supabase project
+- [ ] Add your production domain to Supabase **Authentication → URL Configuration** redirect URLs
+- [ ] Switch Stripe keys from `sk_test_` / `pk_test_` to `sk_live_` / `pk_live_`
+- [ ] Create a permanent webhook endpoint in Stripe dashboard → **Developers → Webhooks → Add destination**, pointing to `https://yourdomain.com/api/stripe/webhook`, listening for `checkout.session.completed`, `checkout.session.expired`, `payment_intent.payment_failed`
+- [ ] Update `STRIPE_WEBHOOK_SECRET` in production env to the new `whsec_` from the permanent endpoint
+- [ ] Complete Stripe account verification (**Verify your business** in Stripe dashboard) before going live
+- [ ] Seed at least 20 real listings before public launch
+
+---
+
+## Phase 2 Roadmap
+
+- AI semantic matching via pgvector (column already on `listings` table)
+- "Need a Hand" demand-side posts
+- Weekly neighborhood digest email (Resend)
+- Recurring bookings
+- Tool condition photo documentation
+- Pro Profile mini-website (~$12/mo subscription)
+- Verified identity / background checks
+- Native iOS app
