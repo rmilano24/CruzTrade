@@ -30,6 +30,7 @@ const providers = [
     profile: {
       username: 'mariag',
       full_name: 'Maria Gonzalez',
+      avatar_url: 'https://randomuser.me/api/portraits/women/44.jpg',
       bio: 'Gardener, house cleaner, and translator based in Watsonville. Bilingual English/Spanish. Happy to trade skills!',
       neighborhood: 'Watsonville',
       language_preference: 'es',
@@ -41,6 +42,7 @@ const providers = [
     profile: {
       username: 'jaket',
       full_name: 'Jake Torres',
+      avatar_url: 'https://randomuser.me/api/portraits/men/32.jpg',
       bio: 'Westside local. I help neighbors move stuff, fix guitars, and rent out tools I\'ve collected over the years.',
       neighborhood: 'Westside',
       language_preference: 'en',
@@ -52,6 +54,7 @@ const providers = [
     profile: {
       username: 'sofiar',
       full_name: 'Sofia Reyes',
+      avatar_url: 'https://randomuser.me/api/portraits/women/68.jpg',
       bio: 'Designer and web person downtown. I help small businesses get online and look good doing it.',
       neighborhood: 'Downtown',
       language_preference: 'en',
@@ -63,6 +66,7 @@ const providers = [
     profile: {
       username: 'carlosm',
       full_name: 'Carlos Mendoza',
+      avatar_url: 'https://randomuser.me/api/portraits/men/75.jpg',
       bio: 'Live Oak neighbor. Yard work, landscaping, hauling. I also rent out my lawn mower and drill.',
       neighborhood: 'Live Oak',
       language_preference: 'es',
@@ -74,6 +78,7 @@ const providers = [
     profile: {
       username: 'danak',
       full_name: 'Dana Kim',
+      avatar_url: 'https://randomuser.me/api/portraits/women/17.jpg',
       bio: 'Certified yoga instructor and massage therapist in Aptos. Also teach watercolor classes and rent out my sewing machine.',
       neighborhood: 'Aptos',
       language_preference: 'en',
@@ -85,6 +90,7 @@ const providers = [
     profile: {
       username: 'tonyb',
       full_name: 'Tony Bruno',
+      avatar_url: 'https://randomuser.me/api/portraits/men/51.jpg',
       bio: 'Soquel contractor. Fencing, carpentry, furniture assembly. I own a lot of tools I\'m happy to rent out.',
       neighborhood: 'Soquel',
       language_preference: 'en',
@@ -96,6 +102,7 @@ const providers = [
     profile: {
       username: 'priyas',
       full_name: 'Priya Sharma',
+      avatar_url: 'https://randomuser.me/api/portraits/women/22.jpg',
       bio: 'Tech support and holistic wellness. I fix laptops, set up home networks, and offer reiki. Eastside Santa Cruz.',
       neighborhood: 'Eastside',
       language_preference: 'en',

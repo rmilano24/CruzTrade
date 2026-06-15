@@ -348,6 +348,8 @@ Safe to re-run — existing users are skipped, profiles are upserted.
 
 **Password:** `CruzTrade-seed-2026!`
 
+Avatars use stable portrait URLs from [randomuser.me](https://randomuser.me) — no API key required, suitable for dev/seed data only.
+
 ---
 
 ## i18n (Bilingual EN/ES)
