@@ -143,6 +143,6 @@ export const actions: Actions = {
 
 		if (updateErr) return fail(500, { error: updateErr.message });
 
-		return { completed: true };
+		redirect(303, `/reviews/${transaction_id}`);
 	}
 };
