@@ -174,7 +174,8 @@
 		<!-- Sidebar -->
 		<aside class="lg:w-72 shrink-0 flex flex-col gap-4">
 
-			<!-- CTA Card -->
+			<!-- CTA Card — hidden for the listing owner -->
+			{#if !isOwner}
 			<div class="bg-bg-card border border-border rounded-lg p-5 shadow-card">
 				<div class="text-xl font-bold text-text-primary mb-4">
 					{formatPrice(listing.price, listing.price_unit)}
@@ -206,6 +207,7 @@
 					</a>
 				{/if}
 			</div>
+			{/if}
 
 			<!-- Owner controls -->
 			{#if isOwner}
