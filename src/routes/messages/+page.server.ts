@@ -1,5 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { stripe } from '$lib/server/stripe';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const { user } = await locals.safeGetSession();
@@ -128,7 +129,7 @@ export const actions: Actions = {
 		// Only the buyer can mark complete, and only if status is 'confirmed'
 		const { data: tx } = await locals.supabase
 			.from('transactions')
-			.select('id, status, buyer_id')
+			.select('id, status, buyer_id, stripe_payment_intent_id, deposit_amount, deposit_status')
 			.eq('id', transaction_id)
 			.single();
 
@@ -136,9 +137,24 @@ export const actions: Actions = {
 		if (tx.buyer_id !== user.id) return fail(403, { error: 'Only the buyer can mark a job complete' });
 		if (tx.status !== 'confirmed') return fail(400, { error: 'This booking cannot be marked complete' });
 
+		// Release tool rental deposit back to buyer via Stripe refund
+		let deposit_status = tx.deposit_status;
+		if (tx.deposit_status === 'held' && tx.deposit_amount > 0 && tx.stripe_payment_intent_id) {
+			try {
+				await stripe.refunds.create({
+					payment_intent: tx.stripe_payment_intent_id,
+					amount: tx.deposit_amount
+				});
+				deposit_status = 'released';
+			} catch (err: any) {
+				console.error('Deposit refund failed:', err.message);
+				// Don't block job completion if refund fails — handle manually
+			}
+		}
+
 		const { error: updateErr } = await locals.supabase
 			.from('transactions')
-			.update({ status: 'completed' })
+			.update({ status: 'completed', deposit_status })
 			.eq('id', transaction_id);
 
 		if (updateErr) return fail(500, { error: updateErr.message });
