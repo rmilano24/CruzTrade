@@ -45,9 +45,44 @@ export const actions: Actions = {
 
 		if (existing) return fail(400, { error: 'That username is already taken' });
 
+		// Handle optional avatar upload
+		const avatarFile = form.get('avatar') as File | null;
+		let avatar_url: string | undefined = undefined;
+
+		if (avatarFile && avatarFile.size > 0) {
+			if (avatarFile.size > 5 * 1024 * 1024) {
+				return fail(400, { error: 'Avatar must be under 5 MB' });
+			}
+			const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+			if (!allowed.includes(avatarFile.type)) {
+				return fail(400, { error: 'Avatar must be a JPEG, PNG, or WebP image' });
+			}
+			const ext = avatarFile.name.split('.').pop() ?? 'jpg';
+			const path = `${user.id}.${ext}`;
+			const buffer = await avatarFile.arrayBuffer();
+
+			const { error: uploadError } = await locals.supabase.storage
+				.from('avatars')
+				.upload(path, buffer, { contentType: avatarFile.type, upsert: true });
+
+			if (uploadError) return fail(500, { error: `Avatar upload failed: ${uploadError.message}` });
+
+			const { data: { publicUrl } } = locals.supabase.storage
+				.from('avatars')
+				.getPublicUrl(path);
+
+			avatar_url = publicUrl;
+		}
+
+		const updates: Record<string, unknown> = {
+			full_name, username, bio, neighborhood, language_preference,
+			updated_at: new Date().toISOString()
+		};
+		if (avatar_url) updates.avatar_url = avatar_url;
+
 		const { error: updateErr } = await locals.supabase
 			.from('profiles')
-			.update({ full_name, username, bio, neighborhood, language_preference, updated_at: new Date().toISOString() })
+			.update(updates)
 			.eq('id', user.id);
 
 		if (updateErr) return fail(500, { error: updateErr.message });

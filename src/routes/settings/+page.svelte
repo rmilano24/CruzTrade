@@ -9,6 +9,12 @@
 	$: ({ profile } = data);
 
 	let saving = false;
+	let avatarPreview: string | null = null;
+
+	function onAvatarChange(e: Event) {
+		const file = (e.target as HTMLInputElement).files?.[0];
+		if (file) avatarPreview = URL.createObjectURL(file);
+	}
 </script>
 
 <svelte:head>
@@ -39,6 +45,7 @@
 
 	<form
 		method="POST"
+		enctype="multipart/form-data"
 		use:enhance={() => {
 			saving = true;
 			return async ({ update }) => {
@@ -48,6 +55,35 @@
 		}}
 		class="flex flex-col gap-5"
 	>
+		<!-- Avatar -->
+		<div class="flex flex-col gap-1.5">
+			<label class="text-sm font-medium text-text-primary">Profile Photo</label>
+			<div class="flex items-center gap-4">
+				{#if avatarPreview || profile.avatar_url}
+					<img
+						src={avatarPreview ?? profile.avatar_url}
+						alt="Profile"
+						class="w-16 h-16 rounded-full object-cover border border-border shrink-0"
+					/>
+				{:else}
+					<div class="w-16 h-16 rounded-full bg-bg-secondary border border-border flex items-center justify-center text-xl font-semibold text-text-muted shrink-0">
+						{(profile.full_name ?? profile.username ?? '?')[0].toUpperCase()}
+					</div>
+				{/if}
+				<label class="cursor-pointer border border-border rounded-md px-4 py-2 text-sm font-medium text-text-primary hover:bg-bg-secondary transition-colors">
+					Change photo
+					<input
+						type="file"
+						name="avatar"
+						accept="image/jpeg,image/png,image/webp"
+						class="sr-only"
+						on:change={onAvatarChange}
+					/>
+				</label>
+			</div>
+			<p class="text-xs text-text-muted">JPEG, PNG, or WebP · max 5 MB</p>
+		</div>
+
 		<!-- Full name -->
 		<div class="flex flex-col gap-1.5">
 			<label for="full_name" class="text-sm font-medium text-text-primary">
