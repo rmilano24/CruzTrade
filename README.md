@@ -22,7 +22,7 @@ A hyperlocal skill trade and tool rental marketplace for Santa Cruz County, CA. 
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22+ (required — `@supabase/realtime-js` throws on Node < 22 without a WebSocket polyfill)
 - npm 9+
 - A [Supabase](https://supabase.com) project
 - A [Stripe](https://stripe.com) account with Connect enabled
@@ -65,8 +65,8 @@ In the Supabase SQL editor, run these two files in order:
 1. `supabase/schema.sql` — creates all tables, enables pgvector, sets up RLS
 2. `supabase/migrations/001_phase2_columns.sql` — adds Phase 2 columns
 
-To load test listings (required for local dev):
-3. `supabase/seed.sql` — creates seed user `seed@cruztrade.test` / `SeedPass123!` with 5 sample listings
+To load seed data (recommended for local dev):
+3. Run the seed script (see **Seed Data** section below)
 
 **4. Configure Supabase auth redirect**
 
@@ -115,14 +115,22 @@ Open [http://localhost:5173](http://localhost:5173).
 | `/` | Landing page — hero, how it works, featured listings |
 | `/browse` | Browse listings — filter by category, type, neighborhood |
 | `/listings/[id]` | Listing detail — description, provider, Hire/Trade/Message CTAs |
+| `/listings/[id]/edit` | Edit listing — owner-only, pre-filled form |
 | `/listings/[id]/book` | Booking form — pay or trade, date, job description |
 | `/listings/[id]/book/confirmation` | Booking confirmation — receipt, escrow notice |
 | `/post` | Post a listing — service or tool rental form |
 | `/profile/[username]` | Provider profile — listings, reviews, Stripe connect |
 | `/messages` | Messaging — thread list + conversation view |
+| `/reviews/[transaction_id]` | Leave a review — buyer only, after job complete |
+| `/settings` | Account settings — profile info, avatar upload |
 | `/auth/signup` | Sign up |
 | `/auth/login` | Log in |
 | `/auth/onboarding` | 3-step onboarding — profile, neighborhood, first listing |
+| `/about` | About Cruz Trade |
+| `/contact` | Contact page |
+| `/changelog` | Release history and roadmap |
+| `/terms` | Terms of Service |
+| `/privacy` | Privacy Policy |
 
 All routes available in English and Spanish (`/es/` prefix for Spanish).
 
@@ -228,7 +236,7 @@ To set up a fresh Supabase project:
 2. In **Database → Extensions**, enable `vector` (pgvector)
 3. In the SQL editor, run `supabase/schema.sql`
 4. Then run `supabase/migrations/001_phase2_columns.sql`
-5. For local dev, run `supabase/seed.sql` to load test data
+5. For local dev, run the seed script (see **Seed Data** section below)
 6. Copy your project URL and keys into `.env`
 7. In **Authentication → URL Configuration**, add `http://localhost:5173/auth/callback` to Redirect URLs
 
@@ -280,17 +288,65 @@ http://localhost:5173/auth/callback
 
 ## Supabase Storage Setup
 
-Listing images are stored in Supabase Storage under a public bucket called `listing-images`.
+Two storage buckets are required.
 
-**Create the bucket (one-time):**
+**`listing-images` bucket (listing photos):**
 
 1. Go to Supabase → **Storage → New bucket**
-2. Name: `listing-images`
-3. Toggle **Public bucket** on (images are publicly readable by URL)
-4. Leave file size limit blank (5 MB limit is enforced server-side in `src/routes/post/+page.server.ts`)
-5. Save
+2. Name: `listing-images`, toggle **Public bucket** on
+3. Save — no extra RLS policies needed (uploads go through server action with service role key)
 
-No additional RLS policies are needed — the bucket is public for reads, and uploads go through the authenticated server action which uses the service role key.
+**`avatars` bucket (profile photos):**
+
+1. Go to Supabase → **Storage → New bucket**
+2. Name: `avatars`, toggle **Public bucket** on, save
+3. In **Storage → Policies**, add these three RLS policies on `storage.objects`:
+
+```sql
+-- Allow authenticated users to upload their own avatar
+CREATE POLICY "Users can upload own avatar"
+ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (bucket_id = 'avatars' AND name LIKE (auth.uid()::text || '.%'));
+
+-- Allow authenticated users to replace their own avatar
+CREATE POLICY "Users can update own avatar"
+ON storage.objects FOR UPDATE TO authenticated
+USING (bucket_id = 'avatars' AND name LIKE (auth.uid()::text || '.%'));
+
+-- Allow anyone to view avatars
+CREATE POLICY "Public can view avatars"
+ON storage.objects FOR SELECT TO public
+USING (bucket_id = 'avatars');
+```
+
+The 5 MB size limit and file type validation are enforced server-side in `src/routes/settings/+page.server.ts`.
+
+---
+
+## Seed Data
+
+`scripts/seed.mjs` creates 7 provider accounts and 26 listings covering all categories and neighborhoods. Run it after setting up the database:
+
+```bash
+node --env-file=.env scripts/seed.mjs --dry-run   # preview only
+node --env-file=.env scripts/seed.mjs              # insert for real
+```
+
+Safe to re-run — existing users are skipped, profiles are upserted.
+
+**Seed provider accounts** (all use the same password):
+
+| Name | Email | Neighborhood | Offers |
+|---|---|---|---|
+| Maria Gonzalez | maria.g.seed@cruztrade.com | Watsonville | Garden, cleaning, translation |
+| Jake Torres | jake.t.seed@cruztrade.com | Westside | Moving/hauling, guitar lessons, ladder + tent rental |
+| Sofia Reyes | sofia.r.seed@cruztrade.com | Downtown | Web design, social media, cargo e-bike rental |
+| Carlos Mendoza | carlos.m.seed@cruztrade.com | Live Oak | Yard work, pruning, mower + drill rental |
+| Dana Kim | dana.k.seed@cruztrade.com | Aptos | Yoga, massage, painting classes, sewing machine rental |
+| Tony Bruno | tony.b.seed@cruztrade.com | Soquel | Fencing, furniture assembly, pressure washer + tile saw rental |
+| Priya Sharma | priya.s.seed@cruztrade.com | Eastside | Laptop repair, WiFi setup, Reiki |
+
+**Password:** `CruzTrade-seed-2026!`
 
 ---
 
@@ -348,6 +404,7 @@ Checklist before flipping live:
 - [ ] Run `supabase/schema.sql` + `supabase/migrations/001_phase2_columns.sql` on the production Supabase project
 - [ ] Add your production domain to Supabase **Authentication → URL Configuration** redirect URLs (e.g. `https://yourdomain.com/auth/callback`)
 - [ ] Create `listing-images` storage bucket (public) in the production Supabase project
+- [ ] Create `avatars` storage bucket (public) with the three RLS policies from the **Supabase Storage Setup** section
 
 **Google OAuth**
 - [ ] Add production redirect URI to Google Cloud OAuth credentials: `https://yourdomain.com/auth/callback` (alongside the Supabase one)
@@ -360,7 +417,7 @@ Checklist before flipping live:
 - [ ] Complete Stripe account verification (**Verify your business** in Stripe dashboard) before going live
 
 **Launch**
-- [ ] Seed at least 20 real listings before public marketing
+- [ ] Run `node --env-file=.env scripts/seed.mjs` to seed 7 providers + 26 listings before public marketing
 
 ---
 
