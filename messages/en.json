@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"nav_browse": "Browse",
 	"nav_post": "Post a Service",
 	"nav_messages": "Messages",
@@ -10,44 +9,31 @@
 	"nav_my_profile": "My Profile",
 	"nav_settings": "Settings",
 	"nav_logout": "Log Out",
-
 	"page_home_title": "Cruz Trade",
 	"page_home_tagline": "Your neighborhood marketplace",
-
 	"page_browse_title": "Browse Listings",
 	"page_browse_tagline": "Find services and tools near you",
-
 	"page_listing_title": "Listing Detail",
 	"page_listing_tagline": "Loading listing…",
-
 	"page_book_title": "Book / Hire",
 	"page_book_tagline": "Complete your booking",
-
 	"page_book_confirm_title": "Booking Confirmed",
 	"page_book_confirm_tagline": "Your booking has been confirmed",
-
 	"page_post_title": "Post a Service",
 	"page_post_tagline": "Share your skills or rent your tools",
-
 	"page_profile_title": "Provider Profile",
 	"page_profile_tagline": "Loading profile…",
-
 	"page_messages_title": "Messages",
 	"page_messages_tagline": "Your conversations",
-
 	"page_signup_title": "Create Account",
 	"page_signup_tagline": "Join Cruz Trade",
-
 	"page_login_title": "Log In",
 	"page_login_tagline": "Welcome back",
-
 	"page_onboarding_title": "Welcome to Cruz Trade",
 	"page_onboarding_tagline": "Let's get you set up",
-
 	"auth_email": "Email address",
 	"auth_password": "Password",
 	"auth_password_hint": "At least 8 characters",
-
 	"auth_signup_heading": "Create your account",
 	"auth_signup_subheading": "Join your neighborhood marketplace",
 	"auth_signup_submit": "Create Account",
@@ -55,14 +41,12 @@
 	"auth_signup_login_link": "Log in",
 	"auth_signup_success_heading": "Check your email",
 	"auth_signup_success_body": "We sent a confirmation link to {email}. Click it to activate your account.",
-
 	"auth_login_heading": "Welcome back",
 	"auth_login_subheading": "Log in to Cruz Trade",
 	"auth_login_submit": "Log In",
 	"auth_login_no_account": "Don't have an account?",
 	"auth_login_signup_link": "Sign up",
 	"auth_login_forgot": "Forgot password?",
-
 	"auth_onboarding_step_of": "Step {current} of {total}",
 	"auth_onboarding_step1_heading": "Tell us about yourself",
 	"auth_onboarding_step1_subheading": "This is what neighbors will see on your profile.",
@@ -82,7 +66,6 @@
 	"auth_onboarding_skip": "Skip for now",
 	"auth_onboarding_post_first": "Post Your First Listing",
 	"auth_onboarding_browse_first": "Browse Listings",
-
 	"browse_count": "{count} listings",
 	"browse_count_filtered": "{count} of {total} listings",
 	"browse_filter_all_types": "All",
@@ -96,7 +79,6 @@
 	"browse_no_listings": "No listings found",
 	"browse_no_listings_hint": "Try adjusting your filters or check back soon.",
 	"browse_accepts_trade": "Accepts Trade",
-
 	"review_heading": "Leave a review",
 	"review_subheading": "How did it go with {name}?",
 	"review_rating_label": "Rating",
@@ -111,7 +93,6 @@
 	"review_stars_3": "Good",
 	"review_stars_4": "Great",
 	"review_stars_5": "Excellent",
-
 	"home_hero_headline": "Your neighborhood marketplace",
 	"home_hero_subheadline": "Hire neighbors for services, rent tools, or trade skills — all within Santa Cruz County.",
 	"home_hero_cta_browse": "Browse listings",
@@ -138,7 +119,6 @@
 	"home_cta_body": "Join your neighbors on Cruz Trade — it takes two minutes.",
 	"home_cta_signup": "Create free account",
 	"home_cta_browse": "Browse first",
-
 	"profile_member_since": "Member since {year}",
 	"profile_verified": "Verified member",
 	"profile_neighborhood": "Neighborhood",
@@ -149,7 +129,6 @@
 	"profile_avg_rating": "{rating} avg",
 	"profile_contact": "Contact {name}",
 	"profile_view_listing": "View listing",
-
 	"messages_heading": "Messages",
 	"messages_no_threads": "No conversations yet",
 	"messages_no_threads_hint": "When you book a service or a provider responds, your conversations will appear here.",
@@ -162,7 +141,6 @@
 	"messages_re": "Re:",
 	"messages_today": "Today",
 	"messages_yesterday": "Yesterday",
-
 	"book_heading": "Book / Hire",
 	"book_heading_rental": "Rent This Tool",
 	"book_heading_trade": "Propose a Trade",
@@ -195,7 +173,6 @@
 	"book_submit": "Confirm Booking",
 	"book_submit_trade": "Send Trade Proposal",
 	"book_submitting": "Processing…",
-
 	"confirm_heading": "You're booked!",
 	"confirm_heading_trade": "Trade proposal sent!",
 	"confirm_subheading": "Your booking with {name} is confirmed.",
@@ -209,7 +186,6 @@
 	"confirm_next_message": "Message {name}",
 	"confirm_next_browse": "Browse more listings",
 	"confirm_next_view": "View booking",
-
 	"post_heading": "Post a Listing",
 	"post_subheading": "Share your skills or rent your tools to neighbors in Santa Cruz County.",
 	"post_type_label": "What are you offering?",
@@ -242,7 +218,6 @@
 	"post_image_change": "Click to change photo",
 	"post_submit": "Post Listing",
 	"post_success_notice": "Your listing is live!",
-
 	"listing_hire": "Hire",
 	"listing_book": "Book This",
 	"listing_propose_trade": "Propose a Trade",
@@ -261,13 +236,22 @@
 	"listing_tool_rental": "Tool Rental",
 	"listing_deposit_notice": "A deposit is held via Stripe and returned after the tool is returned in good condition.",
 	"listing_sign_in_to_book": "Sign in to book",
-
 	"settings_heading": "Account Settings",
 	"settings_subheading": "Update your profile information",
 	"settings_save": "Save changes",
 	"settings_saved": "Changes saved!",
 	"settings_view_profile": "View my profile →",
-
 	"error_required": "This field is required",
-	"error_generic": "Something went wrong. Please try again."
+	"error_generic": "Something went wrong. Please try again.",
+	"footer_tagline": "Your neighborhood marketplace for Santa Cruz County.",
+	"footer_explore": "Explore",
+	"footer_account": "Account",
+	"footer_company": "Company",
+	"footer_how_it_works": "How It Works",
+	"footer_about": "About",
+	"footer_contact": "Contact",
+	"footer_changelog": "Changelog",
+	"footer_terms": "Terms of Service",
+	"footer_privacy": "Privacy Policy",
+	"footer_copyright": "© {year} Cruz Trade. All rights reserved."
 }

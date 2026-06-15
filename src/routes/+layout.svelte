@@ -6,6 +6,7 @@
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	import { i18n } from '$lib/i18n';
 	import Nav from '$lib/components/ui/Nav.svelte';
+	import Footer from '$lib/components/ui/Footer.svelte';
 	import { notifications } from '$lib/stores/notifications';
 	import '../app.css';
 
@@ -73,8 +74,13 @@
 </script>
 
 <ParaglideJS {i18n}>
-	<Nav />
-	<main class="min-h-screen bg-bg">
-		<slot />
-	</main>
+	<div class="flex flex-col min-h-screen">
+		<Nav />
+		<main class="flex-1 bg-bg">
+			<slot />
+		</main>
+		{#if !$page.url.pathname.startsWith('/messages')}
+			<Footer />
+		{/if}
+	</div>
 </ParaglideJS>

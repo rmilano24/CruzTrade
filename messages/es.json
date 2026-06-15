@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"nav_browse": "Explorar",
 	"nav_post": "Publicar Servicio",
 	"nav_messages": "Mensajes",
@@ -10,44 +9,31 @@
 	"nav_my_profile": "Mi Perfil",
 	"nav_settings": "Configuración",
 	"nav_logout": "Cerrar Sesión",
-
 	"page_home_title": "Cruz Trade",
 	"page_home_tagline": "Tu mercado del vecindario",
-
 	"page_browse_title": "Ver Anuncios",
 	"page_browse_tagline": "Encuentra servicios y herramientas cerca de ti",
-
 	"page_listing_title": "Detalle del Anuncio",
 	"page_listing_tagline": "Cargando anuncio…",
-
 	"page_book_title": "Contratar",
 	"page_book_tagline": "Completa tu reserva",
-
 	"page_book_confirm_title": "Reserva Confirmada",
 	"page_book_confirm_tagline": "Tu reserva ha sido confirmada",
-
 	"page_post_title": "Publicar un Servicio",
 	"page_post_tagline": "Comparte tus habilidades o renta tus herramientas",
-
 	"page_profile_title": "Perfil del Proveedor",
 	"page_profile_tagline": "Cargando perfil…",
-
 	"page_messages_title": "Mensajes",
 	"page_messages_tagline": "Tus conversaciones",
-
 	"page_signup_title": "Crear Cuenta",
 	"page_signup_tagline": "Únete a Cruz Trade",
-
 	"page_login_title": "Iniciar Sesión",
 	"page_login_tagline": "Bienvenido de vuelta",
-
 	"page_onboarding_title": "Bienvenido a Cruz Trade",
 	"page_onboarding_tagline": "Vamos a configurar tu cuenta",
-
 	"auth_email": "Correo electrónico",
 	"auth_password": "Contraseña",
 	"auth_password_hint": "Al menos 8 caracteres",
-
 	"auth_signup_heading": "Crea tu cuenta",
 	"auth_signup_subheading": "Únete a tu mercado del vecindario",
 	"auth_signup_submit": "Crear Cuenta",
@@ -55,14 +41,12 @@
 	"auth_signup_login_link": "Inicia sesión",
 	"auth_signup_success_heading": "Revisa tu correo",
 	"auth_signup_success_body": "Enviamos un enlace de confirmación a {email}. Haz clic para activar tu cuenta.",
-
 	"auth_login_heading": "Bienvenido de vuelta",
 	"auth_login_subheading": "Inicia sesión en Cruz Trade",
 	"auth_login_submit": "Iniciar Sesión",
 	"auth_login_no_account": "¿No tienes una cuenta?",
 	"auth_login_signup_link": "Regístrate",
 	"auth_login_forgot": "¿Olvidaste tu contraseña?",
-
 	"auth_onboarding_step_of": "Paso {current} de {total}",
 	"auth_onboarding_step1_heading": "Cuéntanos sobre ti",
 	"auth_onboarding_step1_subheading": "Esto es lo que verán tus vecinos en tu perfil.",
@@ -82,7 +66,6 @@
 	"auth_onboarding_skip": "Omitir por ahora",
 	"auth_onboarding_post_first": "Publica tu Primer Anuncio",
 	"auth_onboarding_browse_first": "Ver Anuncios",
-
 	"browse_count": "{count} anuncios",
 	"browse_count_filtered": "{count} de {total} anuncios",
 	"browse_filter_all_types": "Todos",
@@ -96,7 +79,6 @@
 	"browse_no_listings": "No se encontraron anuncios",
 	"browse_no_listings_hint": "Intenta ajustar tus filtros o vuelve pronto.",
 	"browse_accepts_trade": "Acepta Intercambio",
-
 	"review_heading": "Dejar una reseña",
 	"review_subheading": "¿Cómo te fue con {name}?",
 	"review_rating_label": "Calificación",
@@ -111,7 +93,6 @@
 	"review_stars_3": "Bueno",
 	"review_stars_4": "Muy bueno",
 	"review_stars_5": "Excelente",
-
 	"home_hero_headline": "Tu mercado del vecindario",
 	"home_hero_subheadline": "Contrata vecinos para servicios, renta herramientas o intercambia habilidades — todo dentro del Condado de Santa Cruz.",
 	"home_hero_cta_browse": "Ver anuncios",
@@ -138,7 +119,6 @@
 	"home_cta_body": "Únete a tus vecinos en Cruz Trade — toma dos minutos.",
 	"home_cta_signup": "Crear cuenta gratis",
 	"home_cta_browse": "Explorar primero",
-
 	"profile_member_since": "Miembro desde {year}",
 	"profile_verified": "Miembro verificado",
 	"profile_neighborhood": "Vecindario",
@@ -149,7 +129,6 @@
 	"profile_avg_rating": "{rating} promedio",
 	"profile_contact": "Contactar a {name}",
 	"profile_view_listing": "Ver anuncio",
-
 	"messages_heading": "Mensajes",
 	"messages_no_threads": "Aún no hay conversaciones",
 	"messages_no_threads_hint": "Cuando reserves un servicio o un proveedor responda, tus conversaciones aparecerán aquí.",
@@ -162,7 +141,6 @@
 	"messages_re": "Re:",
 	"messages_today": "Hoy",
 	"messages_yesterday": "Ayer",
-
 	"book_heading": "Contratar / Reservar",
 	"book_heading_rental": "Rentar Esta Herramienta",
 	"book_heading_trade": "Proponer un Intercambio",
@@ -195,7 +173,6 @@
 	"book_submit": "Confirmar Reserva",
 	"book_submit_trade": "Enviar Propuesta de Intercambio",
 	"book_submitting": "Procesando…",
-
 	"confirm_heading": "¡Tu reserva está confirmada!",
 	"confirm_heading_trade": "¡Propuesta de intercambio enviada!",
 	"confirm_subheading": "Tu reserva con {name} está confirmada.",
@@ -209,7 +186,6 @@
 	"confirm_next_message": "Mensaje a {name}",
 	"confirm_next_browse": "Explorar más anuncios",
 	"confirm_next_view": "Ver reserva",
-
 	"post_heading": "Publicar un Anuncio",
 	"post_subheading": "Comparte tus habilidades o renta tus herramientas a vecinos en el Condado de Santa Cruz.",
 	"post_type_label": "¿Qué estás ofreciendo?",
@@ -242,7 +218,6 @@
 	"post_image_change": "Haz clic para cambiar la foto",
 	"post_submit": "Publicar Anuncio",
 	"post_success_notice": "¡Tu anuncio está en línea!",
-
 	"listing_hire": "Contratar",
 	"listing_book": "Reservar",
 	"listing_propose_trade": "Proponer Intercambio",
@@ -261,13 +236,22 @@
 	"listing_tool_rental": "Renta de herramienta",
 	"listing_deposit_notice": "Se retiene un depósito vía Stripe y se devuelve cuando la herramienta es regresada en buen estado.",
 	"listing_sign_in_to_book": "Inicia sesión para reservar",
-
 	"settings_heading": "Configuración de cuenta",
 	"settings_subheading": "Actualiza la información de tu perfil",
 	"settings_save": "Guardar cambios",
 	"settings_saved": "¡Cambios guardados!",
 	"settings_view_profile": "Ver mi perfil →",
-
 	"error_required": "Este campo es obligatorio",
-	"error_generic": "Algo salió mal. Por favor intenta de nuevo."
+	"error_generic": "Algo salió mal. Por favor intenta de nuevo.",
+	"footer_tagline": "Tu mercado vecinal en el Condado de Santa Cruz.",
+	"footer_explore": "Explorar",
+	"footer_account": "Cuenta",
+	"footer_company": "Empresa",
+	"footer_how_it_works": "Cómo funciona",
+	"footer_about": "Acerca de",
+	"footer_contact": "Contacto",
+	"footer_changelog": "Novedades",
+	"footer_terms": "Términos de servicio",
+	"footer_privacy": "Política de privacidad",
+	"footer_copyright": "© {year} Cruz Trade. Todos los derechos reservados."
 }
