@@ -17,6 +17,7 @@
 	let confirmDelete = false;
 	$: lang = languageTag() as 'en' | 'es';
 	$: justPosted = $page.url.searchParams.get('posted') === '1';
+	$: justEdited = $page.url.searchParams.get('edited') === '1';
 	$: provider = listing.profiles;
 	$: memberYear = provider?.created_at ? new Date(provider.created_at).getFullYear() : null;
 	$: avgRating = reviews.length
@@ -36,13 +37,13 @@
 
 <div class="max-w-content mx-auto px-6 py-8">
 
-	<!-- Success banner after posting -->
-	{#if justPosted}
+	<!-- Success banners -->
+	{#if justPosted || justEdited}
 		<div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
 			<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
 			</svg>
-			{m.post_success_notice()}
+			{justEdited ? 'Listing updated.' : m.post_success_notice()}
 		</div>
 	{/if}
 
@@ -210,6 +211,11 @@
 			{#if isOwner}
 				<div class="bg-bg-card border border-border rounded-lg p-4 shadow-card">
 					<p class="text-xs font-semibold text-text-primary mb-3">Manage listing</p>
+					<a
+						href="/listings/{listing.id}/edit"
+						class="block w-full text-center border border-border text-text-primary font-semibold text-sm px-4 py-2 rounded-md hover:bg-bg-secondary transition-colors mb-2">
+						Edit listing
+					</a>
 					{#if !confirmDelete}
 						<button
 							on:click={() => confirmDelete = true}
