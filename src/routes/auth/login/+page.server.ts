@@ -19,10 +19,16 @@ export const actions: Actions = {
 			return fail(400, { error: 'Email and password are required', email });
 		}
 
-		const { error } = await locals.supabase.auth.signInWithPassword({ email, password });
+		let signInError;
+		try {
+			const { error } = await locals.supabase.auth.signInWithPassword({ email, password });
+			signInError = error;
+		} catch (e: any) {
+			return fail(500, { error: `Auth error: ${e?.message ?? 'Unknown error'}`, email });
+		}
 
-		if (error) {
-			return fail(400, { error: error.message, email });
+		if (signInError) {
+			return fail(400, { error: signInError.message, email });
 		}
 
 		redirect(303, '/');
