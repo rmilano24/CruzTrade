@@ -77,6 +77,7 @@
 
 				<form
 					method="POST"
+					action="?/signup"
 					use:enhance={() => {
 						loading = true;
 						return async ({ update }) => {

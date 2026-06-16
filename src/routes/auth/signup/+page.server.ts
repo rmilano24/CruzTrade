@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, locals, url }) => {
+	signup: async ({ request, locals, url }) => {
 		if (!locals.supabase) return fail(500, { error: 'Service unavailable' });
 
 		const form = await request.formData();

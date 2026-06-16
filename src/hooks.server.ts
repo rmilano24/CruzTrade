@@ -3,6 +3,11 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/publi
 import { sequence } from '@sveltejs/kit/hooks';
 import { i18n } from '$lib/i18n';
 import type { Handle } from '@sveltejs/kit';
+import { WebSocket as WS } from 'ws';
+
+if (typeof globalThis.WebSocket === 'undefined') {
+	(globalThis as unknown as Record<string, unknown>).WebSocket = WS;
+}
 
 const supabase: Handle = async ({ event, resolve }) => {
 	// Skip Supabase init until env vars are configured
