@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 					.eq('id', user.id)
 					.single();
 
-				if (!profile?.username) {
+				if (!profile?.username && next !== '/auth/reset-password') {
 					redirect(303, '/auth/onboarding');
 				}
 			}
