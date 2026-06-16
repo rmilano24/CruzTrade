@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { afterUpdate, onMount, onDestroy } from 'svelte';
 	import { createClient } from '@supabase/supabase-js';
@@ -18,10 +19,11 @@
 		activeMessages: any[];
 		activeTransaction: any | null;
 		userId: string;
+		newConversation: { recipient: any; listing: any; threadId: string } | null;
 	};
 
 	$: reviewed = $page.url.searchParams.get('reviewed') === '1';
-	$: ({ threads, activeThreadId, activeMessages, activeTransaction, userId } = data);
+	$: ({ threads, activeThreadId, activeMessages, activeTransaction, userId, newConversation } = data);
 
 	// The other party in the active thread
 	$: activeThread = threads.find((t) => t.thread_id === activeThreadId);
@@ -179,6 +181,21 @@
 			if (bodyInput.trim()) form.requestSubmit();
 		}
 	}
+
+	function handleNewConversationSend(threadId: string) {
+		return () => {
+			sending = true;
+			bodyInput = '';
+			return async ({ result, update }: any) => {
+				sending = false;
+				if (result.type === 'success') {
+					await goto(`/messages?thread=${threadId}`);
+				} else {
+					await update({ reset: false });
+				}
+			};
+		};
+	}
 </script>
 
 <svelte:head>
@@ -197,7 +214,7 @@
 		</div>
 	{/if}
 
-	{#if threads.length === 0}
+	{#if threads.length === 0 && !newConversation}
 		<!-- Empty state -->
 		<div class="text-center py-20">
 			<div class="w-14 h-14 rounded-full bg-bg-card border border-border flex items-center justify-center mx-auto mb-4">
@@ -219,6 +236,9 @@
 
 			<!-- Thread list -->
 			<div class="w-72 shrink-0 border-r border-border flex flex-col bg-bg overflow-y-auto">
+				{#if threads.length === 0}
+					<p class="text-xs text-text-muted text-center px-4 py-6">No conversations yet</p>
+				{/if}
 				{#each threads as thread (thread.thread_id)}
 					{@const other = thread.sender_id === userId ? thread.recipient : thread.sender}
 					{@const isActive = thread.thread_id === activeThreadId}
@@ -266,7 +286,70 @@
 			<!-- Conversation pane -->
 			<div class="flex-1 flex flex-col min-w-0 bg-bg">
 
-				{#if !activeThreadId || !activeThread}
+				{#if newConversation && !activeThread}
+					<!-- New conversation compose pane -->
+					<div class="px-5 py-3.5 border-b border-border flex items-center gap-3 shrink-0">
+						{#if newConversation.recipient.avatar_url}
+							<img src={newConversation.recipient.avatar_url} alt="" class="w-8 h-8 rounded-full object-cover" />
+						{:else}
+							<div class="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-sm font-semibold text-text-muted">
+								{(newConversation.recipient.full_name ?? newConversation.recipient.username ?? 'U')[0].toUpperCase()}
+							</div>
+						{/if}
+						<div>
+							<p class="text-sm font-semibold text-text-primary">
+								{newConversation.recipient.full_name ?? newConversation.recipient.username}
+							</p>
+							{#if newConversation.listing}
+								<p class="text-xs text-text-muted">Re: {newConversation.listing.title}</p>
+							{/if}
+						</div>
+						{#if newConversation.recipient.username}
+							<a href="/profile/{newConversation.recipient.username}"
+								class="ml-auto text-xs text-text-muted hover:text-primary transition-colors shrink-0">
+								View profile →
+							</a>
+						{/if}
+					</div>
+					<div class="flex-1 flex items-center justify-center">
+						<p class="text-sm text-text-muted">Send a message to start the conversation</p>
+					</div>
+					<div class="px-5 py-4 border-t border-border shrink-0">
+						<form
+							method="POST"
+							action="?/send"
+							use:enhance={handleNewConversationSend(newConversation.threadId)}
+							class="flex items-end gap-3"
+						>
+							<input type="hidden" name="thread_id" value={newConversation.threadId} />
+							<input type="hidden" name="recipient_id" value={newConversation.recipient.id} />
+							{#if newConversation.listing?.id}
+								<input type="hidden" name="listing_id" value={newConversation.listing.id} />
+							{/if}
+							<textarea
+								name="body"
+								rows="1"
+								placeholder={m.messages_type_placeholder()}
+								bind:value={bodyInput}
+								on:keydown={handleKeydown}
+								class="flex-1 bg-bg-secondary border border-border rounded-2xl px-4 py-2.5 text-sm text-text-primary focus:border-primary focus:outline-none transition-colors resize-none leading-relaxed"
+								style="max-height: 120px"
+							></textarea>
+							<button
+								type="submit"
+								disabled={sending || !bodyInput.trim()}
+								class="shrink-0 bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-primary-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+								aria-label={m.messages_send()}
+							>
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+								</svg>
+							</button>
+						</form>
+					</div>
+
+				{:else if !activeThreadId || !activeThread}
 					<div class="flex-1 flex items-center justify-center">
 						<p class="text-sm text-text-muted">{m.messages_no_thread_selected()}</p>
 					</div>

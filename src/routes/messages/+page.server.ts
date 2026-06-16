@@ -29,6 +29,39 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		return true;
 	});
 
+	// If ?to= is set, check for an existing thread with that person or set up a new one
+	const toUserId = url.searchParams.get('to');
+	const inboundListingId = url.searchParams.get('listing');
+	let newConversation: { recipient: any; listing: any; threadId: string } | null = null;
+
+	if (toUserId) {
+		const existingThread = dedupedThreads.find(
+			(t) => t.sender_id === toUserId || t.recipient_id === toUserId
+		);
+		if (existingThread) {
+			redirect(303, `/messages?thread=${existingThread.thread_id}`);
+		}
+
+		const [{ data: recipient }, listingResult] = await Promise.all([
+			locals.supabase
+				.from('profiles')
+				.select('id, username, full_name, avatar_url')
+				.eq('id', toUserId)
+				.single(),
+			inboundListingId
+				? locals.supabase.from('listings').select('id, title').eq('id', inboundListingId).single()
+				: Promise.resolve({ data: null, error: null })
+		]);
+
+		if (recipient) {
+			newConversation = {
+				recipient,
+				listing: listingResult.data,
+				threadId: crypto.randomUUID()
+			};
+		}
+	}
+
 	// Load active thread messages + transaction if a thread_id is in the URL
 	const activeThreadId = url.searchParams.get('thread') || null;
 	let activeMessages: any[] = [];
@@ -83,7 +116,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		activeThreadId,
 		activeMessages,
 		activeTransaction,
-		userId: user.id
+		userId: user.id,
+		newConversation
 	};
 };
 

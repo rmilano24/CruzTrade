@@ -100,7 +100,7 @@
 
 				<!-- CTA -->
 				{#if !isOwnProfile}
-					<a href="/messages?listing={listings[0]?.id ?? ''}"
+					<a href="/messages?to={profile.id}{listings[0]?.id ? `&listing=${listings[0].id}` : ''}"
 						class="w-full text-center bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors mt-1">
 						{m.profile_contact({ name: profile.full_name ?? profile.username })}
 					</a>
