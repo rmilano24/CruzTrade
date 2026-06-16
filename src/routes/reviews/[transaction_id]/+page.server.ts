@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	const { data: tx } = await locals.supabase
 		.from('transactions')
 		.select(
-			`id, status, type, amount, price_unit, listing_id,
+			`id, status, type, amount, listing_id,
 			 profiles!seller_id(id, username, full_name, avatar_url)`
 		)
 		.eq('id', params.transaction_id)

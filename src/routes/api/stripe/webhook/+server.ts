@@ -67,18 +67,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 	} catch (e: any) {
 		console.error('[webhook] unhandled error:', e);
-		return new Response(JSON.stringify({
-			error: e?.message ?? 'Unknown error',
-			stack: e?.stack?.split('\n').slice(0, 3).join(' | '),
-			env: {
-				has_service_key: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-				service_key_len: process.env.SUPABASE_SERVICE_ROLE_KEY?.length ?? 0,
-				has_webhook_secret: !!process.env.STRIPE_WEBHOOK_SECRET,
-				has_stripe_key: !!process.env.STRIPE_SECRET_KEY,
-				node_version: process.version,
-				supabase_keys_present: Object.keys(process.env).filter(k => k.includes('SUPABASE')),
-			}
-		}), {
+		return new Response(JSON.stringify({ error: e?.message ?? 'Unknown error' }), {
 			status: 500,
 			headers: { 'content-type': 'application/json' }
 		});
