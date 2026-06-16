@@ -2,7 +2,6 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { stripe } from '$lib/server/stripe';
 import { createSupabaseAdminClient } from '$lib/server/db';
-import { env } from '$env/dynamic/private';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.text();
@@ -12,7 +11,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	let event;
 	try {
-		event = stripe.webhooks.constructEvent(body, sig, env.STRIPE_WEBHOOK_SECRET);
+		event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
 	} catch (err: any) {
 		error(400, `Webhook signature verification failed: ${err.message}`);
 	}
