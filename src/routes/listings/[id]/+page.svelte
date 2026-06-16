@@ -192,7 +192,7 @@
 							{m.listing_propose_trade()}
 						</a>
 					{/if}
-					<a href="/messages?listing={listing.id}"
+					<a href="/messages?to={listing.profiles?.id}&listing={listing.id}"
 						class="block w-full text-center border border-border text-text-primary font-semibold px-5 py-2.5 rounded-md hover:bg-bg-secondary transition-colors text-sm">
 						{m.listing_message()}
 					</a>

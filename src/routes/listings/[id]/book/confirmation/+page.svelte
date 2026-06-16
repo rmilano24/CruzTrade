@@ -120,7 +120,7 @@
 
 	<!-- Next steps -->
 	<div class="flex flex-col sm:flex-row gap-3">
-		<a href="/messages?listing={listing?.id}"
+		<a href="/messages?thread={tx.id}"
 			class="flex-1 text-center bg-primary text-white font-semibold px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors text-sm">
 			{m.confirm_next_message({ name: providerName })}
 		</a>
