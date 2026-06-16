@@ -182,9 +182,11 @@ export const actions: Actions = {
 		if (!['pending', 'confirmed'].includes(tx.status)) return fail(400, { error: 'This booking cannot be cancelled' });
 
 		// Full refund if payment was already captured
+		let refunded = false;
 		if (tx.status === 'confirmed' && tx.stripe_payment_intent_id) {
 			try {
 				await stripe.refunds.create({ payment_intent: tx.stripe_payment_intent_id });
+				refunded = true;
 			} catch (err: any) {
 				console.error('Refund failed:', err.message);
 				return fail(500, { error: 'Refund failed — please contact support' });
@@ -198,6 +200,6 @@ export const actions: Actions = {
 
 		if (updateErr) return fail(500, { error: updateErr.message });
 
-		return { cancelled: true };
+		return { cancelled: true, refunded };
 	}
 };

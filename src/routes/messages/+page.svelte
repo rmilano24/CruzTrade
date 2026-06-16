@@ -134,7 +134,15 @@
 	let completing = false;
 	let cancelling = false;
 	let confirmingCancel = false;
+	let toastMessage = '';
+	let toastTimer: ReturnType<typeof setTimeout>;
 	let bodyInput = '';
+
+	function showToast(msg: string) {
+		toastMessage = msg;
+		clearTimeout(toastTimer);
+		toastTimer = setTimeout(() => toastMessage = '', 6000);
+	}
 	let messagesEl: HTMLElement;
 
 	// Auto-scroll to bottom when messages load or new message arrives
@@ -338,9 +346,12 @@
 											<span class="text-xs text-text-muted">Cancel this booking?</span>
 											<form method="POST" action="?/cancel" use:enhance={() => {
 												cancelling = true;
-												return async ({ update }) => {
+												return async ({ result, update }) => {
 													cancelling = false;
 													confirmingCancel = false;
+													if (result.type === 'success' && (result.data as any)?.refunded) {
+														showToast('Booking cancelled. Stripe will automatically refund your payment within 5–10 business days.');
+													}
 													await update();
 												};
 											}}>
@@ -452,3 +463,20 @@
 		</div>
 	{/if}
 </div>
+
+{#if toastMessage}
+	<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-sm w-full px-4">
+		<div class="bg-text-primary text-white text-sm rounded-lg px-4 py-3 shadow-lg flex items-start gap-3">
+			<svg class="w-4 h-4 shrink-0 mt-0.5 text-success" fill="currentColor" viewBox="0 0 20 20">
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+			</svg>
+			<span class="flex-1">{toastMessage}</span>
+			<button type="button" on:click={() => toastMessage = ''}
+				class="shrink-0 text-white/60 hover:text-white transition-colors ml-1">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</div>
+	</div>
+{/if}
