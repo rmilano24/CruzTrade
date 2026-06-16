@@ -10,10 +10,19 @@
 
 	let saving = false;
 	let avatarPreview: string | null = null;
+	let avatarError = '';
 
 	function onAvatarChange(e: Event) {
-		const file = (e.target as HTMLInputElement).files?.[0];
-		if (file) avatarPreview = URL.createObjectURL(file);
+		const input = e.target as HTMLInputElement;
+		const file = input.files?.[0];
+		avatarError = '';
+		if (!file) return;
+		if (file.size > 5 * 1024 * 1024) {
+			avatarError = 'Image must be under 5 MB. Please choose a smaller file.';
+			input.value = '';
+			return;
+		}
+		avatarPreview = URL.createObjectURL(file);
 	}
 </script>
 
@@ -81,7 +90,11 @@
 					/>
 				</label>
 			</div>
-			<p class="text-xs text-text-muted">JPEG, PNG, or WebP · max 5 MB</p>
+			{#if avatarError}
+				<p class="text-xs text-error">{avatarError}</p>
+			{:else}
+				<p class="text-xs text-text-muted">JPEG, PNG, or WebP · max 5 MB</p>
+			{/if}
 		</div>
 
 		<!-- Full name -->

@@ -71,7 +71,7 @@ export const actions: Actions = {
 				.from('avatars')
 				.getPublicUrl(path);
 
-			avatar_url = publicUrl;
+			avatar_url = `${publicUrl}?t=${Date.now()}`;
 		}
 
 		const updates: Record<string, unknown> = {
