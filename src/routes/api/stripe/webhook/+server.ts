@@ -75,7 +75,8 @@ export const POST: RequestHandler = async ({ request }) => {
 				service_key_len: process.env.SUPABASE_SERVICE_ROLE_KEY?.length ?? 0,
 				has_webhook_secret: !!process.env.STRIPE_WEBHOOK_SECRET,
 				has_stripe_key: !!process.env.STRIPE_SECRET_KEY,
-				node_version: process.version
+				node_version: process.version,
+				supabase_keys_present: Object.keys(process.env).filter(k => k.includes('SUPABASE')),
 			}
 		}), {
 			status: 500,
