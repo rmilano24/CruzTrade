@@ -106,6 +106,14 @@
 					</a>
 				{/if}
 
+				<!-- Edit profile (own profile only) -->
+				{#if isOwnProfile}
+					<a href="/settings"
+						class="w-full text-center border border-border text-text-primary font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-bg-secondary transition-colors mt-1">
+						Edit profile
+					</a>
+				{/if}
+
 				<!-- Stripe Connect panel (own profile only) -->
 				{#if isOwnProfile}
 					<div class="w-full border-t border-border pt-4 mt-1 flex flex-col gap-2">

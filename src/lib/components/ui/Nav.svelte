@@ -185,13 +185,22 @@
 								>
 									View all messages →
 								</a>
-								<a
-									href="/profile/{profile?.username}"
-									on:click={closeDropdown}
-									class="block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors border-t border-border"
-								>
-									My profile · Settings
-								</a>
+								<div class="border-t border-border flex">
+									<a
+										href="/profile/{profile?.username}"
+										on:click={closeDropdown}
+										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors"
+									>
+										My profile
+									</a>
+									<a
+										href="/settings"
+										on:click={closeDropdown}
+										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors border-l border-border"
+									>
+										Edit profile
+									</a>
+								</div>
 							</div>
 						</div>
 					{/if}
