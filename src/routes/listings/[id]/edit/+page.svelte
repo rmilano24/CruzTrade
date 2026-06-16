@@ -33,18 +33,35 @@
 	// Show existing image by default; replaced by new file preview
 	let imagePreview: string | null = listing.image_url ?? null;
 	let hasNewImage = false;
+	let imageRemoved = false;
+	let imageError = '';
 
 	function handleToggle(e: Event) {
 		showTrade = (e.currentTarget as HTMLInputElement).checked;
 	}
 
 	function handleImageChange(e: Event) {
-		const file = (e.currentTarget as HTMLInputElement).files?.[0];
+		const input = e.currentTarget as HTMLInputElement;
+		const file = input.files?.[0];
+		imageError = '';
 		if (!file) return;
+		if (file.size > 5 * 1024 * 1024) {
+			imageError = 'Image must be under 5 MB. Please choose a smaller file.';
+			input.value = '';
+			return;
+		}
+		imageRemoved = false;
 		hasNewImage = true;
 		const reader = new FileReader();
 		reader.onload = (ev) => { imagePreview = ev.target?.result as string; };
 		reader.readAsDataURL(file);
+	}
+
+	function removeImage() {
+		imagePreview = null;
+		hasNewImage = false;
+		imageRemoved = true;
+		imageError = '';
 	}
 </script>
 
@@ -264,6 +281,9 @@
 		<!-- Photo -->
 		<div class="flex flex-col gap-1.5">
 			<label class="text-sm font-medium text-text-primary">{m.post_image_label()}</label>
+			{#if imageRemoved}
+				<input type="hidden" name="remove_image" value="true" />
+			{/if}
 			<label class="flex flex-col items-center justify-center gap-2 bg-bg-secondary border-2 border-dashed border-border rounded-lg p-6 cursor-pointer hover:border-primary transition-colors text-center">
 				<input type="file" name="image" accept="image/jpeg,image/png,image/webp"
 					class="sr-only" on:change={handleImageChange} />
@@ -281,6 +301,15 @@
 					<span class="text-xs text-text-muted">{m.post_image_hint()}</span>
 				{/if}
 			</label>
+			{#if imagePreview}
+				<button type="button" on:click={removeImage}
+					class="text-xs text-red-500 hover:text-red-700 transition-colors self-start">
+					Remove photo
+				</button>
+			{/if}
+			{#if imageError}
+				<p class="text-xs text-red-600">{imageError}</p>
+			{/if}
 		</div>
 
 		<!-- Submit -->

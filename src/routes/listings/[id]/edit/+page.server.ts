@@ -69,11 +69,12 @@ export const actions: Actions = {
 
 		const priceCents = Math.round(priceNum * 100);
 
-		// Handle optional image upload — keep existing if no new file
+		// Handle optional image upload — keep existing if no new file, or null it out on remove
+		const removeImage = form.get('remove_image') === 'true';
 		const imageFile = form.get('image') as File | null;
-		let image_url: string | null = existing.image_url ?? null;
+		let image_url: string | null = removeImage ? null : (existing.image_url ?? null);
 
-		if (imageFile && imageFile.size > 0) {
+		if (!removeImage && imageFile && imageFile.size > 0) {
 			if (imageFile.size > 5 * 1024 * 1024) {
 				return fail(400, { error: 'Image must be under 5 MB', values: { type, title, description, category, price: priceRaw, price_unit, neighborhood, language, accepts_trade, trade_description } });
 			}
