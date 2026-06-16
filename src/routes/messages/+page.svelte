@@ -349,7 +349,7 @@
 												return async ({ result, update }) => {
 													cancelling = false;
 													confirmingCancel = false;
-													if (result.type === 'success' && (result.data as any)?.refunded) {
+													if (result.type === 'success' && result.data?.refunded) {
 														showToast('Booking cancelled. Stripe will automatically refund your payment within 5–10 business days.');
 													}
 													await update();
