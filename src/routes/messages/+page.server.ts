@@ -160,5 +160,44 @@ export const actions: Actions = {
 		if (updateErr) return fail(500, { error: updateErr.message });
 
 		redirect(303, `/reviews/${transaction_id}`);
+	},
+
+	cancel: async ({ request, locals }) => {
+		const { user } = await locals.safeGetSession();
+		if (!user || !locals.supabase) return fail(401, { error: 'Not authenticated' });
+
+		const form = await request.formData();
+		const transaction_id = form.get('transaction_id') as string;
+
+		if (!transaction_id) return fail(400, { error: 'Missing transaction ID' });
+
+		const { data: tx } = await locals.supabase
+			.from('transactions')
+			.select('id, status, buyer_id, seller_id, stripe_payment_intent_id')
+			.eq('id', transaction_id)
+			.single();
+
+		if (!tx) return fail(404, { error: 'Transaction not found' });
+		if (tx.buyer_id !== user.id && tx.seller_id !== user.id) return fail(403, { error: 'Not authorized' });
+		if (!['pending', 'confirmed'].includes(tx.status)) return fail(400, { error: 'This booking cannot be cancelled' });
+
+		// Full refund if payment was already captured
+		if (tx.status === 'confirmed' && tx.stripe_payment_intent_id) {
+			try {
+				await stripe.refunds.create({ payment_intent: tx.stripe_payment_intent_id });
+			} catch (err: any) {
+				console.error('Refund failed:', err.message);
+				return fail(500, { error: 'Refund failed — please contact support' });
+			}
+		}
+
+		const { error: updateErr } = await locals.supabase
+			.from('transactions')
+			.update({ status: 'cancelled' })
+			.eq('id', transaction_id);
+
+		if (updateErr) return fail(500, { error: updateErr.message });
+
+		return { cancelled: true };
 	}
 };

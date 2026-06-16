@@ -127,10 +127,13 @@
 	$: if (supabaseBrowser && activeThreadId && activeThreadId !== subscribedThreadId) {
 		subscribeToThread(activeThreadId);
 	}
+	$: if (activeThreadId) confirmingCancel = false;
 	// ─────────────────────────────────────────────────────────────────────────
 
 	let sending = false;
 	let completing = false;
+	let cancelling = false;
+	let confirmingCancel = false;
 	let bodyInput = '';
 	let messagesEl: HTMLElement;
 
@@ -303,26 +306,63 @@
 								<span class="font-semibold {txStatusColor}">{txStatusLabel}</span>
 							</div>
 
-							{#if tx.status === 'confirmed' && isBuyer}
-								<form method="POST" action="?/complete" use:enhance={() => {
-									completing = true;
-									return async ({ update }) => {
-										completing = false;
-										await update();
-									};
-								}}>
-									<input type="hidden" name="transaction_id" value={tx.id} />
-									<button
-										type="submit"
-										disabled={completing}
-										class="bg-success text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
-										{completing ? 'Saving…' : '✓ Mark job complete'}
-									</button>
-								</form>
-							{/if}
+							<div class="flex items-center gap-2 flex-wrap">
+								{#if tx.status === 'confirmed' && isBuyer}
+									<form method="POST" action="?/complete" use:enhance={() => {
+										completing = true;
+										return async ({ update }) => {
+											completing = false;
+											await update();
+										};
+									}}>
+										<input type="hidden" name="transaction_id" value={tx.id} />
+										<button
+											type="submit"
+											disabled={completing}
+											class="bg-success text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
+											{completing ? 'Saving…' : '✓ Mark job complete'}
+										</button>
+									</form>
+								{/if}
 
-							{#if tx.status === 'completed'}
-								<div class="flex items-center gap-3">
+								{#if tx.status === 'pending' || tx.status === 'confirmed'}
+									{#if !confirmingCancel}
+										<button
+											type="button"
+											on:click={() => confirmingCancel = true}
+											class="text-xs text-error font-medium hover:underline whitespace-nowrap">
+											{tx.status === 'confirmed' ? 'Cancel & refund' : 'Cancel booking'}
+										</button>
+									{:else}
+										<div class="flex items-center gap-2">
+											<span class="text-xs text-text-muted">Cancel this booking?</span>
+											<form method="POST" action="?/cancel" use:enhance={() => {
+												cancelling = true;
+												return async ({ update }) => {
+													cancelling = false;
+													confirmingCancel = false;
+													await update();
+												};
+											}}>
+												<input type="hidden" name="transaction_id" value={tx.id} />
+												<button
+													type="submit"
+													disabled={cancelling}
+													class="text-xs bg-error text-white font-semibold px-3 py-1.5 rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
+													{cancelling ? '…' : 'Yes, cancel'}
+												</button>
+											</form>
+											<button
+												type="button"
+												on:click={() => confirmingCancel = false}
+												class="text-xs text-text-muted hover:text-text-primary transition-colors">
+												Never mind
+											</button>
+										</div>
+									{/if}
+								{/if}
+
+								{#if tx.status === 'completed'}
 									<span class="text-xs text-success font-semibold flex items-center gap-1">
 										<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
 											<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -335,8 +375,12 @@
 											{m.review_leave()}
 										</a>
 									{/if}
-								</div>
-							{/if}
+								{/if}
+
+								{#if tx.status === 'cancelled'}
+									<span class="text-xs text-error font-semibold">Booking cancelled</span>
+								{/if}
+							</div>
 						</div>
 					{/if}
 
