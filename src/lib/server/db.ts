@@ -1,7 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { WebSocket as WS } from 'ws';
 import type { Cookies } from '@sveltejs/kit';
+
+if (typeof globalThis.WebSocket === 'undefined') {
+	(globalThis as unknown as Record<string, unknown>).WebSocket = WS;
+}
 
 export function createSupabaseServerClient(cookies: Cookies) {
 	return createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
