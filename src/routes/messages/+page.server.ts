@@ -1,4 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
+import { randomUUID } from 'node:crypto';
 import type { Actions, PageServerLoad } from './$types';
 import { stripe } from '$lib/server/stripe';
 
@@ -57,7 +58,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			newConversation = {
 				recipient,
 				listing: listingResult.data,
-				threadId: crypto.randomUUID()
+				threadId: randomUUID()
 			};
 		}
 	}
