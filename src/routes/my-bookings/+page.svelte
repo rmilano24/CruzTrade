@@ -4,8 +4,11 @@
 	export let data: { transactions: any[]; userId: string };
 	$: ({ transactions, userId } = data);
 
+	const tabs = ['upcoming', 'completed', 'cancelled'] as const;
+	type Tab = (typeof tabs)[number];
+
 	let role: 'buyer' | 'seller' = 'buyer';
-	let tab: 'upcoming' | 'completed' | 'cancelled' = 'upcoming';
+	let tab: Tab = 'upcoming';
 
 	$: roleFiltered = transactions.filter((tx) =>
 		role === 'buyer' ? tx.buyer_id === userId : tx.seller_id === userId
@@ -18,7 +21,7 @@
 		return false;
 	});
 
-	function tabCount(t: 'upcoming' | 'completed' | 'cancelled') {
+	function tabCount(t: Tab) {
 		return roleFiltered.filter((tx) => {
 			if (t === 'upcoming') return tx.status === 'pending' || tx.status === 'confirmed';
 			if (t === 'completed') return tx.status === 'completed';
@@ -82,7 +85,7 @@
 
 	<!-- Tabs -->
 	<div class="flex gap-1 mb-6">
-		{#each (['upcoming', 'completed', 'cancelled'] as const) as t}
+		{#each tabs as t}
 			{@const count = tabCount(t)}
 			<button
 				on:click={() => tab = t}
