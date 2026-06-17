@@ -119,7 +119,6 @@
 								</span>
 							{/if}
 						</div>
-						<span class="hidden sm:block">{displayName}</span>
 					</button>
 
 					<!-- Dropdown -->
@@ -127,6 +126,9 @@
 						<div class="absolute right-0 top-full mt-2 w-80 bg-bg border border-border rounded-lg shadow-modal z-20 overflow-hidden">
 
 							<!-- Header -->
+							<div class="px-4 py-3 border-b border-border">
+								<p class="text-xs text-text-muted">Signed in as <span class="font-semibold text-text-primary">{displayName}</span></p>
+							</div>
 							<div class="px-4 py-3 border-b border-border flex items-center justify-between">
 								<h3 class="text-sm font-semibold text-text-primary">Notifications</h3>
 								{#if count > 0}
