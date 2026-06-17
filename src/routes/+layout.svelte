@@ -76,7 +76,7 @@
 <ParaglideJS {i18n}>
 	<div class="flex flex-col min-h-screen">
 		<Nav />
-		<main class="flex-1 bg-bg">
+		<main class="bg-bg">
 			<slot />
 		</main>
 		{#if !$page.url.pathname.startsWith('/messages')}
