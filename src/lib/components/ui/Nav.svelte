@@ -70,13 +70,9 @@
 						<div class="fixed inset-0 z-10" on:click={closeDropdown} role="none"></div>
 					{/if}
 
-					<!-- Avatar button -->
-					<button
-						type="button"
-						on:click={toggleDropdown}
-						class="relative flex items-center"
-					>
-						<div class="relative shrink-0">
+					<!-- Avatar → dashboard + chevron → dropdown -->
+					<div class="flex items-center gap-1">
+						<a href="/dashboard" class="relative shrink-0">
 							{#if profile?.avatar_url}
 								<img src={profile.avatar_url} alt={displayName} class="w-8 h-8 rounded-full object-cover" />
 							{:else}
@@ -89,8 +85,13 @@
 									{unread > 9 ? '9+' : unread}
 								</span>
 							{/if}
-						</div>
-					</button>
+						</a>
+						<button type="button" on:click={toggleDropdown} class="text-text-muted hover:text-text-primary transition-colors p-0.5">
+							<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+							</svg>
+						</button>
+					</div>
 
 					<!-- Dropdown -->
 					{#if dropdownOpen}
