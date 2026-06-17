@@ -7,11 +7,22 @@
 
 	export let data: {
 		listing: any;
+		images: { id: string; url: string; is_featured: boolean }[];
 		reviews: any[];
 		otherListings: any[];
 	};
 
-	$: ({ listing, reviews, otherListings } = data);
+	$: ({ listing, images: dbImages, reviews, otherListings } = data);
+	type GalleryImage = { id: string; url: string; is_featured: boolean };
+	// Fall back to listing.image_url for seeded/legacy listings with no listing_images rows
+	$: allImages = (dbImages.length > 0
+		? dbImages
+		: listing.image_url
+			? [{ id: 'legacy', url: listing.image_url as string, is_featured: true }]
+			: []
+	) as GalleryImage[];
+	let activeImageIdx = 0;
+	$: if (activeImageIdx >= allImages.length) activeImageIdx = 0;
 	$: user = $page.data.user;
 	$: isOwner = user?.id === listing.profiles?.id;
 	let confirmDelete = false;
@@ -57,11 +68,26 @@
 		<!-- Main content -->
 		<div class="flex-1 min-w-0">
 
-			<!-- Hero image -->
-			{#if listing.image_url}
-				<div class="w-full h-64 rounded-lg overflow-hidden bg-bg-secondary mb-6">
-					<img src={listing.image_url} alt={listing.title}
-						class="w-full h-full object-cover" />
+			<!-- Photo gallery -->
+			{#if allImages.length > 0}
+				<div class="mb-6">
+					<div class="w-full h-64 rounded-lg overflow-hidden bg-bg-secondary">
+						<img src={allImages[activeImageIdx].url} alt={listing.title}
+							class="w-full h-full object-cover" />
+					</div>
+					{#if allImages.length > 1}
+						<div class="flex gap-2 mt-2 overflow-x-auto pb-1">
+							{#each allImages as img, i}
+								<button
+									type="button"
+									on:click={() => activeImageIdx = i}
+									class="shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition-colors
+										{i === activeImageIdx ? 'border-primary' : 'border-transparent hover:border-border'}">
+									<img src={img.url} alt="" class="w-full h-full object-cover" />
+								</button>
+							{/each}
+						</div>
+					{/if}
 				</div>
 			{/if}
 
@@ -181,7 +207,7 @@
 					{formatPrice(listing.price, listing.price_unit)}
 				</div>
 
-				{#if data.user}
+				{#if user}
 					<a href="/listings/{listing.id}/book"
 						class="block w-full text-center bg-primary text-white font-semibold px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors mb-3">
 						{listing.type === 'tool_rental' ? m.listing_book() : m.listing_hire()}

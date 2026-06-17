@@ -17,18 +17,33 @@
 	const categories = Object.entries(CATEGORY_LABELS);
 
 	let submitting = false;
-	let imagePreview: string | null = null;
+	type PickedImage = { file: File; preview: string };
+	let pickedImages: PickedImage[] = [];
+	let featuredIndex = 0;
+	let imageError = '';
 
 	function handleToggle(e: Event) {
 		showTrade = (e.currentTarget as HTMLInputElement).checked;
 	}
 
-	function handleImageChange(e: Event) {
-		const file = (e.currentTarget as HTMLInputElement).files?.[0];
-		if (!file) { imagePreview = null; return; }
-		const reader = new FileReader();
-		reader.onload = (ev) => { imagePreview = ev.target?.result as string; };
-		reader.readAsDataURL(file);
+	function handleImagePick(e: Event) {
+		const input = e.currentTarget as HTMLInputElement;
+		const files = Array.from(input.files ?? []);
+		imageError = '';
+		for (const file of files) {
+			if (file.size > 5 * 1024 * 1024) { imageError = 'Each image must be under 5 MB'; continue; }
+			const reader = new FileReader();
+			reader.onload = (ev) => {
+				pickedImages = [...pickedImages, { file, preview: ev.target?.result as string }];
+			};
+			reader.readAsDataURL(file);
+		}
+		input.value = '';
+	}
+
+	function removeImage(i: number) {
+		pickedImages = pickedImages.filter((_, idx) => idx !== i);
+		if (featuredIndex >= pickedImages.length) featuredIndex = Math.max(0, pickedImages.length - 1);
 	}
 </script>
 
@@ -52,8 +67,10 @@
 	<form
 		method="POST"
 		enctype="multipart/form-data"
-		use:enhance={() => {
+		use:enhance={({ formData }) => {
 			submitting = true;
+			pickedImages.forEach(({ file }) => formData.append('images', file));
+			formData.set('featured_index', featuredIndex.toString());
 			return async ({ update }) => {
 				submitting = false;
 				await update();
@@ -94,66 +111,44 @@
 		<div class="flex flex-col gap-1.5">
 			<label for="title" class="text-sm font-medium text-text-primary">{m.post_title_label()}</label>
 			<input
-				id="title"
-				name="title"
-				type="text"
-				maxlength="120"
-				placeholder={m.post_title_placeholder()}
-				value={v.title ?? ''}
+				id="title" name="title" type="text" maxlength="120"
+				placeholder={m.post_title_placeholder()} value={v.title ?? ''}
 				class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 					{errors.title ? 'border-red-400' : 'border-border'}"
 			/>
-			{#if errors.title}
-				<p class="text-xs text-red-600">{errors.title}</p>
-			{/if}
+			{#if errors.title}<p class="text-xs text-red-600">{errors.title}</p>{/if}
 		</div>
 
 		<!-- Description -->
 		<div class="flex flex-col gap-1.5">
 			<label for="description" class="text-sm font-medium text-text-primary">{m.post_description_label()}</label>
 			<textarea
-				id="description"
-				name="description"
-				rows="5"
+				id="description" name="description" rows="5"
 				placeholder={m.post_description_placeholder()}
 				class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors resize-y
 					{errors.description ? 'border-red-400' : 'border-border'}"
 			>{v.description ?? ''}</textarea>
-			{#if errors.description}
-				<p class="text-xs text-red-600">{errors.description}</p>
-			{/if}
+			{#if errors.description}<p class="text-xs text-red-600">{errors.description}</p>{/if}
 		</div>
 
-		<!-- Category + Language in a row -->
+		<!-- Category + Language -->
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-			<!-- Category -->
 			<div class="flex flex-col gap-1.5">
 				<label for="category" class="text-sm font-medium text-text-primary">{m.post_category_label()}</label>
-				<select
-					id="category"
-					name="category"
+				<select id="category" name="category"
 					class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
-						{errors.category ? 'border-red-400' : 'border-border'}"
-				>
+						{errors.category ? 'border-red-400' : 'border-border'}">
 					<option value="" disabled selected={!v.category}>{m.post_category_placeholder()}</option>
 					{#each categories as [key, labels]}
 						<option value={key} selected={v.category === key}>{labels.en}</option>
 					{/each}
 				</select>
-				{#if errors.category}
-					<p class="text-xs text-red-600">{errors.category}</p>
-				{/if}
+				{#if errors.category}<p class="text-xs text-red-600">{errors.category}</p>{/if}
 			</div>
-
-			<!-- Language -->
 			<div class="flex flex-col gap-1.5">
 				<label for="language" class="text-sm font-medium text-text-primary">{m.post_language_label()}</label>
-				<select
-					id="language"
-					name="language"
-					class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-				>
+				<select id="language" name="language"
+					class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
 					<option value="en" selected={!v.language || v.language === 'en'}>{m.post_language_en()}</option>
 					<option value="es" selected={v.language === 'es'}>{m.post_language_es()}</option>
 					<option value="both" selected={v.language === 'both'}>{m.post_language_both()}</option>
@@ -161,39 +156,23 @@
 			</div>
 		</div>
 
-		<!-- Price + unit in a row -->
+		<!-- Price + unit -->
 		<div class="grid grid-cols-2 gap-4">
-
-			<!-- Price -->
 			<div class="flex flex-col gap-1.5">
 				<label for="price" class="text-sm font-medium text-text-primary">{m.post_price_label()}</label>
 				<div class="relative">
 					<span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-sm">$</span>
-					<input
-						id="price"
-						name="price"
-						type="number"
-						min="0"
-						step="0.01"
-						placeholder={m.post_price_placeholder()}
-						value={v.price ?? ''}
+					<input id="price" name="price" type="number" min="0" step="0.01"
+						placeholder={m.post_price_placeholder()} value={v.price ?? ''}
 						class="w-full bg-bg-secondary border rounded-md pl-7 pr-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
-							{errors.price ? 'border-red-400' : 'border-border'}"
-					/>
+							{errors.price ? 'border-red-400' : 'border-border'}" />
 				</div>
-				{#if errors.price}
-					<p class="text-xs text-red-600">{errors.price}</p>
-				{/if}
+				{#if errors.price}<p class="text-xs text-red-600">{errors.price}</p>{/if}
 			</div>
-
-			<!-- Price unit -->
 			<div class="flex flex-col gap-1.5">
 				<label for="price_unit" class="text-sm font-medium text-text-primary">{m.post_price_unit_label()}</label>
-				<select
-					id="price_unit"
-					name="price_unit"
-					class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-				>
+				<select id="price_unit" name="price_unit"
+					class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
 					<option value="flat" selected={!v.price_unit || v.price_unit === 'flat'}>{m.post_price_unit_flat()}</option>
 					<option value="per_hour" selected={v.price_unit === 'per_hour'}>{m.post_price_unit_hour()}</option>
 					<option value="per_day" selected={v.price_unit === 'per_day'}>{m.post_price_unit_day()}</option>
@@ -204,11 +183,8 @@
 		<!-- Neighborhood -->
 		<div class="flex flex-col gap-1.5">
 			<label for="neighborhood" class="text-sm font-medium text-text-primary">{m.post_neighborhood_label()}</label>
-			<select
-				id="neighborhood"
-				name="neighborhood"
-				class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-			>
+			<select id="neighborhood" name="neighborhood"
+				class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
 				<option value="">{m.post_neighborhood_placeholder()}</option>
 				{#each data.neighborhoods as hood}
 					<option value={hood} selected={v.neighborhood === hood}>{hood}</option>
@@ -219,60 +195,85 @@
 		<!-- Trade toggle -->
 		<div class="flex flex-col gap-3">
 			<label class="flex items-center gap-3 cursor-pointer">
-				<input
-					type="checkbox"
-					name="accepts_trade"
-					checked={showTrade}
-					on:change={handleToggle}
-					class="w-4 h-4 accent-primary"
-				/>
+				<input type="checkbox" name="accepts_trade" checked={showTrade} on:change={handleToggle}
+					class="w-4 h-4 accent-primary" />
 				<span class="text-sm text-text-primary">{m.post_trade_toggle()}</span>
 			</label>
-
 			{#if showTrade}
 				<div class="flex flex-col gap-1.5 ml-7">
 					<label for="trade_description" class="text-sm font-medium text-text-primary">
 						{m.post_trade_description_label()}
 					</label>
-					<input
-						id="trade_description"
-						name="trade_description"
-						type="text"
-						placeholder={m.post_trade_description_placeholder()}
-						value={v.trade_description ?? ''}
-						class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-					/>
+					<input id="trade_description" name="trade_description" type="text"
+						placeholder={m.post_trade_description_placeholder()} value={v.trade_description ?? ''}
+						class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors" />
 				</div>
 			{/if}
 		</div>
 
-		<!-- Photo -->
-		<div class="flex flex-col gap-1.5">
-			<label class="text-sm font-medium text-text-primary">{m.post_image_label()}</label>
-			<label class="flex flex-col items-center justify-center gap-2 bg-bg-secondary border-2 border-dashed border-border rounded-lg p-6 cursor-pointer hover:border-primary transition-colors text-center">
-				<input type="file" name="image" accept="image/jpeg,image/png,image/webp"
-					class="sr-only" on:change={handleImageChange} />
-				{#if imagePreview}
-					<img src={imagePreview} alt="Preview" class="w-full max-h-48 object-cover rounded-md" />
-					<span class="text-xs text-text-muted">{m.post_image_change()}</span>
-				{:else}
+		<!-- Photos -->
+		<div class="flex flex-col gap-2">
+			<label class="text-sm font-medium text-text-primary">Photos (optional)</label>
+
+			{#if pickedImages.length > 0}
+				<div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+					{#each pickedImages as img, i}
+						<div class="relative group rounded-md overflow-hidden bg-bg-secondary border border-border">
+							<img src={img.preview} alt="" class="w-full h-24 object-cover" />
+
+							<!-- Featured star -->
+							<button type="button" on:click={() => featuredIndex = i}
+								title={i === featuredIndex ? 'Featured photo' : 'Set as featured'}
+								class="absolute top-1 left-1 w-6 h-6 rounded flex items-center justify-center text-sm leading-none transition-colors
+									{i === featuredIndex ? 'bg-primary text-white' : 'bg-black/50 text-white hover:bg-primary'}">
+								★
+							</button>
+
+							<!-- Remove -->
+							<button type="button" on:click={() => removeImage(i)}
+								class="absolute top-1 right-1 w-6 h-6 bg-black/50 text-white rounded flex items-center justify-center text-xs leading-none opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500">
+								✕
+							</button>
+
+							{#if i === featuredIndex}
+								<div class="absolute bottom-0 left-0 right-0 bg-primary/90 text-white text-[10px] font-semibold text-center py-0.5">
+									Featured
+								</div>
+							{/if}
+						</div>
+					{/each}
+
+					<!-- Add more -->
+					<label class="flex flex-col items-center justify-center h-24 border-2 border-dashed border-border rounded-md cursor-pointer hover:border-primary transition-colors text-text-muted gap-1">
+						<input type="file" accept="image/jpeg,image/png,image/webp" multiple on:change={handleImagePick} class="sr-only" />
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+						</svg>
+						<span class="text-xs">Add photo</span>
+					</label>
+				</div>
+				<p class="text-xs text-text-muted">★ sets the featured photo shown on listing cards</p>
+			{:else}
+				<label class="flex flex-col items-center justify-center gap-2 bg-bg-secondary border-2 border-dashed border-border rounded-lg p-6 cursor-pointer hover:border-primary transition-colors text-center">
+					<input type="file" accept="image/jpeg,image/png,image/webp" multiple on:change={handleImagePick} class="sr-only" />
 					<svg class="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
 							d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
 					</svg>
-					<span class="text-sm text-text-muted">{m.post_image_prompt()}</span>
-					<span class="text-xs text-text-muted">{m.post_image_hint()}</span>
-				{/if}
-			</label>
+					<span class="text-sm text-text-muted">Click to add photos</span>
+					<span class="text-xs text-text-muted">JPG, PNG or WebP · Max 5 MB each · Multiple allowed</span>
+				</label>
+			{/if}
+
+			{#if imageError}
+				<p class="text-xs text-red-600">{imageError}</p>
+			{/if}
 		</div>
 
 		<!-- Submit -->
 		<div class="pt-2">
-			<button
-				type="submit"
-				disabled={submitting}
-				class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-base"
-			>
+			<button type="submit" disabled={submitting}
+				class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-base">
 				{submitting ? '…' : m.post_submit()}
 			</button>
 		</div>

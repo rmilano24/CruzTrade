@@ -18,6 +18,13 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	if (err || !listing) error(404, 'Listing not found');
 
+	const { data: images } = await locals.supabase
+		.from('listing_images')
+		.select('id, url, is_featured, sort_order')
+		.eq('listing_id', params.id)
+		.order('is_featured', { ascending: false })
+		.order('sort_order', { ascending: true });
+
 	const { data: reviews } = await locals.supabase
 		.from('reviews')
 		.select('id, rating, body, created_at, profiles!reviewer_id(full_name, avatar_url)')
@@ -35,6 +42,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	return {
 		listing,
+		images: images ?? [],
 		reviews: reviews ?? [],
 		otherListings: otherListings ?? []
 	};
