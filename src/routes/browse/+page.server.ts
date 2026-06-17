@@ -8,6 +8,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const type = url.searchParams.get('type') || null;
 	const category = url.searchParams.get('category') || null;
 	const neighborhood = url.searchParams.get('neighborhood') || null;
+	const q = url.searchParams.get('q')?.trim() || null;
 
 	let query = locals.supabase
 		.from('listings')
@@ -23,13 +24,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	if (type) query = query.eq('type', type);
 	if (category) query = query.eq('category', category);
 	if (neighborhood) query = query.eq('neighborhood', neighborhood);
+	if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
 
 	const { data: listings, error: err } = await query;
 	if (err) error(500, err.message);
 
 	return {
 		listings: listings ?? [],
-		filters: { type, category, neighborhood },
+		filters: { type, category, neighborhood, q },
 		neighborhoods: SANTA_CRUZ_NEIGHBORHOODS
 	};
 };

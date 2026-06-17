@@ -6,12 +6,13 @@
 
 	export let data: {
 		listings: any[];
-		filters: { type: string | null; category: string | null; neighborhood: string | null };
+		filters: { type: string | null; category: string | null; neighborhood: string | null; q: string | null };
 		neighborhoods: readonly string[];
 	};
 
 	$: ({ listings, filters, neighborhoods } = data);
-	$: hasFilters = !!(filters.type || filters.category || filters.neighborhood);
+	$: hasFilters = !!(filters.type || filters.category || filters.neighborhood || filters.q);
+	let searchInput = filters.q ?? '';
 
 	function filterUrl(key: string, value: string | null): string {
 		const p = new URLSearchParams($page.url.searchParams);
@@ -35,9 +36,29 @@
 
 <div class="max-w-content mx-auto px-6 py-8">
 
+	<!-- Search bar -->
+	<form action="/browse" method="GET" class="mb-6">
+		{#if filters.type}<input type="hidden" name="type" value={filters.type} />{/if}
+		{#if filters.category}<input type="hidden" name="category" value={filters.category} />{/if}
+		{#if filters.neighborhood}<input type="hidden" name="neighborhood" value={filters.neighborhood} />{/if}
+		<div class="flex items-center bg-bg border border-border rounded-xl shadow-card overflow-hidden focus-within:border-primary transition-colors">
+			<input type="text" name="q" bind:value={searchInput}
+				placeholder="Search listings… e.g. plumber, ladder, piano lessons"
+				class="flex-1 px-5 py-3.5 text-sm text-text-primary bg-transparent placeholder:text-text-muted focus:outline-none" />
+			<button type="submit"
+				class="bg-primary text-white font-semibold text-sm px-5 py-3.5 hover:bg-primary-hover transition-colors shrink-0 m-1 rounded-lg">
+				Search
+			</button>
+		</div>
+	</form>
+
 	<!-- Header -->
-	<div class="flex items-baseline justify-between mb-6 gap-4">
-		<h1 class="text-xl font-bold text-text-primary">{m.page_browse_title()}</h1>
+	<div class="flex items-baseline justify-between mb-4 gap-4">
+		<div>
+			<h1 class="text-xl font-bold text-text-primary">
+				{#if filters.q}Results for "{filters.q}"{:else}{m.page_browse_title()}{/if}
+			</h1>
+		</div>
 		<span class="text-sm text-text-muted shrink-0">
 			{m.browse_count({ count: listings.length })}
 		</span>

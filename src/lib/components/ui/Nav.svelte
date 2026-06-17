@@ -38,12 +38,17 @@
 
 		<!-- Nav links -->
 		<nav class="hidden md:flex items-center gap-6">
-			<a
-				href="/browse"
-				class="text-sm text-text-muted hover:text-text-primary transition-colors"
-				class:text-text-primary={$page.url.pathname.startsWith('/browse')}
-			>
+			<a href="/browse"
+				class="text-sm transition-colors {$page.url.pathname.startsWith('/browse') ? 'text-text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}">
 				{m.nav_browse()}
+			</a>
+			<a href="/post"
+				class="text-sm transition-colors {$page.url.pathname === '/post' ? 'text-text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}">
+				Post a Service
+			</a>
+			<a href="/#how-it-works"
+				class="text-sm text-text-muted hover:text-text-primary transition-colors">
+				How it works
 			</a>
 		</nav>
 
@@ -195,17 +200,13 @@
 
 			{:else}
 				<!-- Logged-out state -->
-				<a
-					href="/post"
-					class="hidden sm:block bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors"
-				>
-					{m.nav_post()}
+				<a href="/auth/login"
+					class="text-sm font-semibold text-text-primary hover:text-primary transition-colors">
+					Log in
 				</a>
-				<a
-					href="/auth/login"
-					class="border border-border text-text-primary font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-bg-secondary transition-colors"
-				>
-					{m.nav_login()}
+				<a href="/auth/signup"
+					class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors">
+					Join for free
 				</a>
 			{/if}
 		</div>
