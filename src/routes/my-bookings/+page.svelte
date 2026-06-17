@@ -165,7 +165,7 @@
 							class="bg-primary text-white font-semibold text-xs px-4 py-2 rounded-md hover:bg-primary-hover transition-colors text-center whitespace-nowrap">
 							Message
 						</a>
-						<a href="/messages?thread={tx.id}"
+						<a href="/listings/{listing?.id}"
 							class="border border-border text-text-primary font-semibold text-xs px-4 py-2 rounded-md hover:bg-bg-secondary transition-colors text-center whitespace-nowrap">
 							View details
 						</a>
