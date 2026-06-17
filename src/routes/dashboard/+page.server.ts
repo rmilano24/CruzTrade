@@ -2,10 +2,11 @@ import { redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!locals.user) redirect(302, '/auth/login');
+	const { user } = await locals.safeGetSession();
+	if (!user) redirect(302, '/auth/login');
 	if (!locals.supabase) error(503, 'Database unavailable');
 
-	const userId = locals.user.id;
+	const userId = user.id;
 
 	const { data: profile } = await locals.supabase
 		.from('profiles')
