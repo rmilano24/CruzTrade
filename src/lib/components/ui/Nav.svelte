@@ -96,8 +96,8 @@
 					{#if dropdownOpen}
 						<div class="absolute right-0 top-full mt-2 w-72 bg-bg border border-border rounded-xl shadow-modal z-20 overflow-hidden">
 
-							<!-- User header -->
-							<div class="px-4 py-4 flex items-center gap-3">
+							<!-- User header → dashboard -->
+							<a href="/dashboard" on:click={closeDropdown} class="px-4 py-4 flex items-center gap-3 hover:bg-bg-card transition-colors">
 								{#if profile?.avatar_url}
 									<img src={profile.avatar_url} alt={displayName} class="w-11 h-11 rounded-full object-cover shrink-0" />
 								{:else}
@@ -111,7 +111,7 @@
 										<p class="text-xs text-text-muted truncate">{username}</p>
 									{/if}
 								</div>
-							</div>
+							</a>
 
 							<div class="border-t border-border"></div>
 
