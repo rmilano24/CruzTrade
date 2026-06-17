@@ -31,7 +31,7 @@
 
 	let submitting = false;
 	// Show existing image by default; replaced by new file preview
-	let imagePreview: string | null = listing.image_url ?? null;
+	let imagePreview: string | null = data.listing?.image_url ?? null;
 	let hasNewImage = false;
 	let imageRemoved = false;
 	let imageError = '';
