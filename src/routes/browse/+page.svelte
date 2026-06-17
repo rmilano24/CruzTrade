@@ -12,7 +12,7 @@
 
 	$: ({ listings, filters, neighborhoods } = data);
 	$: hasFilters = !!(filters.type || filters.category || filters.neighborhood || filters.q);
-	let searchInput = filters.q ?? '';
+	let searchInput = data.filters?.q ?? '';
 
 	function filterUrl(key: string, value: string | null): string {
 		const p = new URLSearchParams($page.url.searchParams);
