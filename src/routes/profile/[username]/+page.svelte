@@ -5,13 +5,13 @@
 	import * as m from '$lib/paraglide/messages';
 
 	export let data: {
-		profile: any;
+		viewedProfile: any;
 		listings: any[];
 		reviews: any[];
 		avgRating: number | null;
 	};
 
-	$: ({ profile, listings, reviews, avgRating } = data);
+	$: ({ viewedProfile: profile, listings, reviews, avgRating } = data);
 	$: lang = languageTag() as 'en' | 'es';
 	$: isOwnProfile = $page.data.user?.id === profile.id;
 	$: stripeStatus = $page.url.searchParams.get('stripe');
