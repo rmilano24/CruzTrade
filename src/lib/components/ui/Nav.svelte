@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
-	import { availableLanguageTags, languageTag } from '$lib/paraglide/runtime';
-	import { i18n } from '$lib/i18n';
 	import * as m from '$lib/paraglide/messages';
 	import { notifications } from '$lib/stores/notifications';
 
@@ -51,20 +49,7 @@
 
 		<!-- Right actions -->
 		<div class="flex items-center gap-3">
-			<!-- Language toggle -->
-			{#each availableLanguageTags as lang}
-				{#if lang !== languageTag()}
-					<a
-						href={i18n.route($page.url.pathname)}
-						hreflang={lang}
-						class="text-xs text-text-muted hover:text-text-primary transition-colors"
-					>
-						{m.nav_language_toggle()}
-					</a>
-				{/if}
-			{/each}
-
-			{#if user}
+{#if user}
 				<!-- Post CTA -->
 				<a
 					href="/post"

@@ -1,5 +1,8 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages';
+	import { availableLanguageTags, languageTag } from '$lib/paraglide/runtime';
+	import { i18n } from '$lib/i18n';
+	import { page } from '$app/stores';
 </script>
 
 <footer class="bg-bg border-t border-border mt-auto">
@@ -48,8 +51,23 @@
 
 		</div>
 
-		<div class="border-t border-border mt-10 pt-6">
+		<div class="border-t border-border mt-10 pt-6 flex items-center justify-between gap-4 flex-wrap">
 			<p class="text-xs text-text-muted">{m.footer_copyright({ year: new Date().getFullYear().toString() })}</p>
+			<!-- Language toggle -->
+			<div class="flex items-center gap-2">
+				{#each availableLanguageTags as lang}
+					<a
+						href={i18n.route($page.url.pathname)}
+						hreflang={lang}
+						class="text-xs px-2.5 py-1 rounded-full border transition-colors
+							{lang === languageTag()
+								? 'border-border text-text-primary font-semibold bg-bg-secondary'
+								: 'border-transparent text-text-muted hover:text-text-primary'}"
+					>
+						{lang === 'en' ? 'English' : 'Español'}
+					</a>
+				{/each}
+			</div>
 		</div>
 	</div>
 </footer>
