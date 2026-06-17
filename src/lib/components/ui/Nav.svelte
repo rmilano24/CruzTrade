@@ -8,15 +8,16 @@
 
 	$: user = $page.data.user;
 	$: profile = $page.data.profile;
-	$: displayName = profile?.username ?? profile?.full_name ?? 'Account';
-	$: initials = (profile?.full_name ?? displayName)
+	$: displayName = profile?.full_name ?? profile?.username ?? 'Account';
+	$: username = profile?.username ?? '';
+	$: initials = displayName
 		.split(' ')
 		.slice(0, 2)
 		.map((w: string) => w[0])
 		.join('')
 		.toUpperCase();
 
-	$: count = $notifications.length;
+	$: unread = $notifications.length;
 
 	let dropdownOpen = false;
 
@@ -26,17 +27,6 @@
 
 	function closeDropdown() {
 		dropdownOpen = false;
-	}
-
-	function formatTime(iso: string): string {
-		const d = new Date(iso);
-		const now = new Date();
-		const diffMins = Math.floor((now.getTime() - d.getTime()) / 60000);
-		if (diffMins < 1) return 'just now';
-		if (diffMins < 60) return `${diffMins}m`;
-		const diffHours = Math.floor(diffMins / 60);
-		if (diffHours < 24) return `${diffHours}h`;
-		return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 	}
 </script>
 
@@ -57,15 +47,6 @@
 			>
 				{m.nav_browse()}
 			</a>
-			{#if user}
-				<a
-					href="/messages"
-					class="text-sm text-text-muted hover:text-text-primary transition-colors"
-					class:text-text-primary={$page.url.pathname.startsWith('/messages')}
-				>
-					{m.nav_messages()}
-				</a>
-			{/if}
 		</nav>
 
 		<!-- Right actions -->
@@ -92,7 +73,7 @@
 					{m.nav_post()}
 				</a>
 
-				<!-- Avatar + notification dropdown -->
+				<!-- Avatar + dropdown -->
 				<div class="relative">
 					<!-- Click-outside backdrop -->
 					{#if dropdownOpen}
@@ -103,7 +84,7 @@
 					<button
 						type="button"
 						on:click={toggleDropdown}
-						class="relative flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors"
+						class="relative flex items-center"
 					>
 						<div class="relative shrink-0">
 							{#if profile?.avatar_url}
@@ -113,9 +94,9 @@
 									{initials}
 								</div>
 							{/if}
-							{#if count > 0}
+							{#if unread > 0}
 								<span class="absolute -top-1 -right-1 min-w-[16px] h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none pointer-events-none">
-									{count > 9 ? '9+' : count}
+									{unread > 9 ? '9+' : unread}
 								</span>
 							{/if}
 						</div>
@@ -123,114 +104,106 @@
 
 					<!-- Dropdown -->
 					{#if dropdownOpen}
-						<div class="absolute right-0 top-full mt-2 w-80 bg-bg border border-border rounded-lg shadow-modal z-20 overflow-hidden">
+						<div class="absolute right-0 top-full mt-2 w-72 bg-bg border border-border rounded-xl shadow-modal z-20 overflow-hidden">
 
-							<!-- Header -->
-							<div class="px-4 py-3 border-b border-border">
-								<p class="text-xs text-text-muted">Signed in as <span class="font-semibold text-text-primary">{displayName}</span></p>
-							</div>
-							<div class="px-4 py-3 border-b border-border flex items-center justify-between">
-								<h3 class="text-sm font-semibold text-text-primary">Notifications</h3>
-								{#if count > 0}
-									<span class="text-xs text-text-muted">{count} unread</span>
+							<!-- User header -->
+							<div class="px-4 py-4 flex items-center gap-3">
+								{#if profile?.avatar_url}
+									<img src={profile.avatar_url} alt={displayName} class="w-11 h-11 rounded-full object-cover shrink-0" />
+								{:else}
+									<div class="w-11 h-11 rounded-full bg-bg-secondary flex items-center justify-center text-sm font-semibold text-text-muted shrink-0">
+										{initials}
+									</div>
 								{/if}
+								<div class="min-w-0">
+									<p class="text-sm font-bold text-text-primary truncate">{displayName}</p>
+									{#if username}
+										<p class="text-xs text-text-muted truncate">{username}</p>
+									{/if}
+								</div>
 							</div>
 
-							<!-- Notification list -->
-							{#if $notifications.length === 0}
-								<div class="px-4 py-8 text-center text-sm text-text-muted">
-									No new notifications
-								</div>
-							{:else}
-								{#each $notifications as notif (notif.id)}
-									{@const senderName = notif.sender?.full_name ?? notif.sender?.username ?? 'Someone'}
-									{@const senderInitials = senderName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()}
-									<a
-										href="/messages?thread={notif.thread_id}"
-										on:click={closeDropdown}
-										class="flex items-start gap-3 px-4 py-3 hover:bg-bg-card transition-colors border-b border-border last:border-b-0"
-									>
-										<!-- Sender avatar -->
-										{#if notif.sender?.avatar_url}
-											<img src={notif.sender.avatar_url} alt={senderName}
-												class="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
-										{:else}
-											<div class="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-xs font-semibold text-text-muted shrink-0 mt-0.5">
-												{senderInitials}
-											</div>
-										{/if}
+							<div class="border-t border-border"></div>
 
-										<!-- Content -->
-										<div class="flex-1 min-w-0">
-											<div class="flex items-baseline justify-between gap-2 mb-0.5">
-												<p class="text-xs font-semibold text-text-primary truncate">{senderName}</p>
-												<span class="text-xs text-text-muted shrink-0">{formatTime(notif.created_at)}</span>
-											</div>
-											{#if notif.listing}
-												<p class="text-xs text-text-muted truncate">Re: {notif.listing.title}</p>
-											{/if}
-											<p class="text-xs text-text-primary truncate mt-0.5">{notif.body}</p>
-										</div>
-
-										<!-- Unread dot -->
-										<span class="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5"></span>
-									</a>
-								{/each}
-							{/if}
-
-							<!-- Footer -->
-							<div class="border-t border-border">
+							<!-- Nav links -->
+							<nav class="py-1">
+								<a
+									href="/my-listings"
+									on:click={closeDropdown}
+									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
+								>
+									<!-- Grid icon -->
+									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+										<rect x="3" y="3" width="7" height="7" rx="1"/>
+										<rect x="14" y="3" width="7" height="7" rx="1"/>
+										<rect x="3" y="14" width="7" height="7" rx="1"/>
+										<rect x="14" y="14" width="7" height="7" rx="1"/>
+									</svg>
+									My listings
+								</a>
+								<a
+									href="/my-bookings"
+									on:click={closeDropdown}
+									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
+								>
+									<!-- Calendar icon -->
+									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+										<rect x="3" y="4" width="18" height="18" rx="2"/>
+										<line x1="16" y1="2" x2="16" y2="6"/>
+										<line x1="8" y1="2" x2="8" y2="6"/>
+										<line x1="3" y1="10" x2="21" y2="10"/>
+									</svg>
+									My bookings
+								</a>
+								<a
+									href="/settings"
+									on:click={closeDropdown}
+									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
+								>
+									<!-- Person icon -->
+									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+										<circle cx="12" cy="8" r="4"/>
+										<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+									</svg>
+									Edit profile
+								</a>
 								<a
 									href="/messages"
 									on:click={closeDropdown}
-									class="block px-4 py-3 text-xs text-center text-primary hover:bg-bg-card transition-colors font-medium"
+									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
 								>
-									View all messages →
+									<!-- Chat icon -->
+									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+										<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+									</svg>
+									Messages
+									{#if unread > 0}
+										<span class="ml-auto min-w-[20px] h-5 bg-primary text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1.5 leading-none">
+											{unread > 99 ? '99+' : unread}
+										</span>
+									{/if}
 								</a>
-								<div class="border-t border-border flex">
-									<a
-										href="/my-listings"
-										on:click={closeDropdown}
-										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors"
-									>
-										My listings
-									</a>
-									<a
-										href="/my-bookings"
-										on:click={closeDropdown}
-										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors border-l border-border"
-									>
-										My bookings
-									</a>
-								</div>
-								<div class="border-t border-border flex">
-									<a
-										href="/profile/{profile?.username}"
-										on:click={closeDropdown}
-										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors"
-									>
-										My profile
-									</a>
-									<a
-										href="/settings"
-										on:click={closeDropdown}
-										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors border-l border-border"
-									>
-										Edit profile
-									</a>
-								</div>
-								<div class="border-t border-border">
-									<form method="POST" action="/auth/logout" use:enhance>
-										<button
-											type="submit"
-											on:click={closeDropdown}
-											class="w-full px-4 py-2.5 text-xs text-center text-error hover:bg-bg-card transition-colors font-medium"
-										>
-											{m.nav_logout()}
-										</button>
-									</form>
-								</div>
-							</div>
+							</nav>
+
+							<div class="border-t border-border"></div>
+
+							<!-- Log out -->
+							<form method="POST" action="/auth/logout" use:enhance>
+								<button
+									type="submit"
+									on:click={closeDropdown}
+									class="w-full flex items-center gap-3 px-4 py-3 text-sm text-text-muted hover:bg-bg-card transition-colors"
+								>
+									<!-- Exit icon -->
+									<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+										<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+										<polyline points="16 17 21 12 16 7"/>
+										<line x1="21" y1="12" x2="9" y2="12"/>
+									</svg>
+									{m.nav_logout()}
+								</button>
+							</form>
+
 						</div>
 					{/if}
 				</div>
