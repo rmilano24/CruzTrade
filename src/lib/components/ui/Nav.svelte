@@ -194,18 +194,25 @@
 										My listings
 									</a>
 									<a
-										href="/profile/{profile?.username}"
+										href="/my-bookings"
 										on:click={closeDropdown}
 										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors border-l border-border"
 									>
-										My profile
+										My bookings
 									</a>
 								</div>
 								<div class="border-t border-border flex">
 									<a
-										href="/settings"
+										href="/profile/{profile?.username}"
 										on:click={closeDropdown}
 										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors"
+									>
+										My profile
+									</a>
+									<a
+										href="/settings"
+										on:click={closeDropdown}
+										class="flex-1 block px-4 py-2.5 text-xs text-center text-text-muted hover:bg-bg-card transition-colors border-l border-border"
 									>
 										Edit profile
 									</a>
