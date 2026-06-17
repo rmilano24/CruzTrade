@@ -46,8 +46,8 @@
 				class="text-sm transition-colors {$page.url.pathname === '/post' ? 'text-text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}">
 				Post a Service
 			</a>
-			<a href="/#how-it-works"
-				class="text-sm text-text-muted hover:text-text-primary transition-colors">
+			<a href="/how-it-works"
+				class="text-sm transition-colors {$page.url.pathname === '/how-it-works' ? 'text-text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}">
 				How it works
 			</a>
 		</nav>

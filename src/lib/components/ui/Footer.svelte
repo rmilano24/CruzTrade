@@ -23,7 +23,7 @@
 				<nav class="flex flex-col gap-2">
 					<a href="/browse" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_browse()}</a>
 					<a href="/post" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_post()}</a>
-					<a href="/#how-it-works" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.footer_how_it_works()}</a>
+					<a href="/how-it-works" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.footer_how_it_works()}</a>
 				</nav>
 			</div>
 
