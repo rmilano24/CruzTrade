@@ -217,20 +217,21 @@
 										Edit profile
 									</a>
 								</div>
+								<div class="border-t border-border">
+									<form method="POST" action="/auth/logout" use:enhance>
+										<button
+											type="submit"
+											on:click={closeDropdown}
+											class="w-full px-4 py-2.5 text-xs text-center text-error hover:bg-bg-card transition-colors font-medium"
+										>
+											{m.nav_logout()}
+										</button>
+									</form>
+								</div>
 							</div>
 						</div>
 					{/if}
 				</div>
-
-				<!-- Log out -->
-				<form method="POST" action="/auth/logout" use:enhance>
-					<button
-						type="submit"
-						class="text-xs text-text-muted hover:text-text-primary transition-colors"
-					>
-						{m.nav_logout()}
-					</button>
-				</form>
 
 			{:else}
 				<!-- Logged-out state -->
