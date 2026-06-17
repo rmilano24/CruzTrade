@@ -8,11 +8,8 @@
 
 			<!-- Brand -->
 			<div class="flex flex-col gap-3">
-				<a href="/" class="flex items-center gap-2">
-					<div class="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-						<span class="text-white font-bold text-xs">CT</span>
-					</div>
-					<span class="font-bold text-text-primary text-base">Cruz Trade</span>
+				<a href="/" class="font-exile text-[24px] text-primary hover:opacity-80 transition-opacity leading-none">
+					Cruz Trade
 				</a>
 				<p class="text-sm text-text-muted leading-relaxed">{m.footer_tagline()}</p>
 			</div>

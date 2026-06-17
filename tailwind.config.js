@@ -35,6 +35,7 @@ export default {
       // ─── Typography ───────────────────────────────────────────────────────
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
+        exile: ['Exile', 'serif'],
       },
 
       fontSize: {

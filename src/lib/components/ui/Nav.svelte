@@ -44,7 +44,7 @@
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
 
 		<!-- Logo -->
-		<a href="/" class="text-md font-bold text-text-primary hover:text-primary transition-colors">
+		<a href="/" class="font-exile text-[24px] text-primary hover:opacity-80 transition-opacity leading-none">
 			Cruz Trade
 		</a>
 
