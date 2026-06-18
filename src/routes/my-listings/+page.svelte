@@ -18,6 +18,7 @@
 	<title>My Listings · Cruz Trade</title>
 </svelte:head>
 
+<div class="min-h-screen bg-bg-card">
 <div class="max-w-content mx-auto px-6 py-8">
 
 	<div class="flex items-center justify-between mb-6">
@@ -154,4 +155,5 @@
 		<span class="text-xs text-text-muted">Share a skill, service, or tool with your neighbors</span>
 	</a>
 
+</div>
 </div>

@@ -61,6 +61,7 @@
 	<title>My Bookings · Cruz Trade</title>
 </svelte:head>
 
+<div class="min-h-screen bg-bg-card">
 <div class="max-w-content mx-auto px-6 py-8">
 
 	<div class="flex items-center justify-between mb-6">
@@ -175,4 +176,5 @@
 		</div>
 	{/if}
 
+</div>
 </div>
