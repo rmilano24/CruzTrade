@@ -9,12 +9,11 @@
 	};
 
 	$: user = $page.data.user;
-	$: { listings, filters } = data;
 
 	// Split into the three homepage sections
-	$: hireListings  = listings.filter(l => l.type === 'service'     && !l.accepts_trade);
-	$: tradeListings = listings.filter(l => l.accepts_trade === true);
-	$: rentListings  = listings.filter(l => l.type === 'tool_rental');
+	$: hireListings  = data.listings.filter(l => l.type === 'service' && !l.accepts_trade);
+	$: tradeListings = data.listings.filter(l => l.accepts_trade === true);
+	$: rentListings  = data.listings.filter(l => l.type === 'tool_rental');
 </script>
 
 <svelte:head>
@@ -22,7 +21,7 @@
 </svelte:head>
 
 <!-- Hero (hidden during search) -->
-{#if !filters.q}
+{#if !data.filters.q}
 <section class="bg-bg py-14 px-6">
 	<div class="max-w-2xl mx-auto flex flex-col items-center text-center gap-4">
 		<div class="inline-flex items-center gap-2 border border-orange-200 bg-orange-50 text-orange-700 text-sm font-medium px-4 py-1.5 rounded-full">
@@ -43,10 +42,10 @@
 <div class="bg-bg border-t border-border px-6">
 	<div class="max-w-content mx-auto divide-y divide-border">
 
-		{#if filters.q}
+		{#if data.filters.q}
 			<div class="py-5">
 				<p class="text-base font-semibold text-text-primary">
-					{listings.length} result{listings.length !== 1 ? 's' : ''} for "<span class="text-primary">{filters.q}</span>"
+					{data.listings.length} result{data.listings.length !== 1 ? 's' : ''} for "<span class="text-primary">{data.filters.q}</span>"
 				</p>
 			</div>
 		{/if}
