@@ -1,31 +1,28 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import * as m from '$lib/paraglide/messages';
-	import ListingCard from '$lib/components/listings/ListingCard.svelte';
+	import CarouselSection from '$lib/components/listings/CarouselSection.svelte';
 
 	export let data: {
 		listings: any[];
-		filters: { type: string | null; acceptsTrade: boolean | null; q: string | null; category: string | null; neighborhood: string | null };
+		filters: { q: string | null; [key: string]: any };
 	};
 
 	$: user = $page.data.user;
-	$: ({ listings, filters } = data);
+	$: { listings, filters } = data;
 
-	$: activeLabel = filters.type === 'service'
-		? 'Hire'
-		: filters.type === 'tool_rental'
-			? 'Rent'
-			: filters.acceptsTrade
-				? 'Trade'
-				: null;
+	// Split into the three homepage sections
+	$: hireListings  = listings.filter(l => l.type === 'service'     && !l.accepts_trade);
+	$: tradeListings = listings.filter(l => l.accepts_trade === true);
+	$: rentListings  = listings.filter(l => l.type === 'tool_rental');
 </script>
 
 <svelte:head>
 	<title>Cruz Trade — Trade skills, rent tools, build community in Santa Cruz</title>
 </svelte:head>
 
-<!-- ─── Hero ─────────────────────────────────────────────────────────────── -->
-{#if !activeLabel && !filters.q}
+<!-- Hero (hidden during search) -->
+{#if !filters.q}
 <section class="bg-bg py-14 px-6">
 	<div class="max-w-2xl mx-auto flex flex-col items-center text-center gap-4">
 		<div class="inline-flex items-center gap-2 border border-orange-200 bg-orange-50 text-orange-700 text-sm font-medium px-4 py-1.5 rounded-full">
@@ -42,44 +39,46 @@
 </section>
 {/if}
 
-<!-- ─── Listings ──────────────────────────────────────────────────────────── -->
-<section class="bg-bg-card border-t border-border px-6 py-8 min-h-screen">
-	<div class="max-w-content mx-auto">
+<!-- Sections -->
+<div class="bg-bg border-t border-border px-6">
+	<div class="max-w-content mx-auto divide-y divide-border">
 
-		<!-- Header row -->
-		<div class="flex items-baseline justify-between mb-6">
-			<h2 class="text-lg font-bold text-text-primary">
-				{#if filters.q}
-					Results for "{filters.q}"
-				{:else if activeLabel}
-					{activeLabel}
-				{:else}
-					All listings
-				{/if}
-			</h2>
-			<span class="text-sm text-text-muted">{listings.length} listing{listings.length !== 1 ? 's' : ''}</span>
-		</div>
-
-		{#if listings.length > 0}
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-				{#each listings as listing (listing.id)}
-					<ListingCard {listing} />
-				{/each}
-			</div>
-		{:else}
-			<div class="text-center py-20">
-				<p class="text-lg font-semibold text-text-primary mb-2">No listings found</p>
-				<p class="text-sm text-text-muted mb-6">Try a different search or category.</p>
-				<a href="/" class="inline-block border border-border text-text-primary font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-bg transition-colors">
-					Clear filters
-				</a>
+		{#if filters.q}
+			<div class="py-5">
+				<p class="text-base font-semibold text-text-primary">
+					{listings.length} result{listings.length !== 1 ? 's' : ''} for "<span class="text-primary">{filters.q}</span>"
+				</p>
 			</div>
 		{/if}
 
-	</div>
-</section>
+		<CarouselSection
+			slug="hire"
+			title="Hire a Neighbor"
+			icon="🤝"
+			listings={hireListings}
+			href="/hire"
+		/>
 
-<!-- ─── Bottom CTA ────────────────────────────────────────────────────────── -->
+		<CarouselSection
+			slug="trade"
+			title="Trade Skills"
+			icon="🔄"
+			listings={tradeListings}
+			href="/trade"
+		/>
+
+		<CarouselSection
+			slug="rent"
+			title="Rent Tools & Gear"
+			icon="🛠️"
+			listings={rentListings}
+			href="/rent"
+		/>
+
+	</div>
+</div>
+
+<!-- Bottom CTA (logged-out only) -->
 {#if !user}
 	<section class="bg-primary px-6 py-16">
 		<div class="max-w-content mx-auto text-center flex flex-col items-center gap-4">

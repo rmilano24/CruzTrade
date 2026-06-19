@@ -668,6 +668,22 @@ const listings = [
 async function run() {
   console.log(`\nCruz Trade seed script ${DRY_RUN ? '(DRY RUN — no writes)' : ''}\n`);
 
+  // Step 0: wipe dependent data then listings so re-seeds don't duplicate
+  if (!DRY_RUN) {
+    const ALL = '.neq';
+    const wipe = async (table) => {
+      process.stdout.write(`  Clearing ${table} … `);
+      const { error } = await supabase.from(table).delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      if (error) throw error;
+      console.log('done');
+    };
+    await wipe('reviews');
+    await wipe('messages');
+    await wipe('transactions');
+    await wipe('listings');
+  }
+  console.log();
+
   // Step 1: create auth users + profiles
   const userIdByEmail = {};
 
