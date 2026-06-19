@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
+	import { onDestroy } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
 	import { notifications } from '$lib/stores/notifications';
 
@@ -18,14 +19,37 @@
 	$: unread = $notifications.length;
 
 	let dropdownOpen = false;
+	function toggleDropdown() { dropdownOpen = !dropdownOpen; }
+	function closeDropdown() { dropdownOpen = false; }
 
-	function toggleDropdown() {
-		dropdownOpen = !dropdownOpen;
+	// Rotating placeholder
+	const placeholders: Record<string, string[]> = {
+		'/':      ['Search for skills, tools, or services…'],
+		'/hire':  ['Hire a handyman…', 'Find a guitar teacher…', 'Book an electrician…', 'Find a dog walker…', 'Hire a photographer…'],
+		'/trade': ['Trade a guitar lesson for web design…', 'Swap painting for plumbing…', 'Trade skills with a neighbor…', 'Offer what you know, get what you need…'],
+		'/rent':  ['Rent a pressure washer…', 'Borrow a bounce house…', 'Find a trailer for the weekend…', 'Rent a ladder…', 'Borrow a standing desk…'],
+	};
+
+	let placeholderIdx = 0;
+	let interval: ReturnType<typeof setInterval> | null = null;
+
+	$: currentPlaceholders = placeholders[$page.url.pathname] ?? placeholders['/'];
+
+	$: {
+		// Reset and restart cycle whenever the route changes
+		$page.url.pathname;
+		placeholderIdx = 0;
+		if (interval) clearInterval(interval);
+		if (currentPlaceholders.length > 1) {
+			interval = setInterval(() => {
+				placeholderIdx = (placeholderIdx + 1) % currentPlaceholders.length;
+			}, 3500);
+		}
 	}
 
-	function closeDropdown() {
-		dropdownOpen = false;
-	}
+	onDestroy(() => { if (interval) clearInterval(interval); });
+
+	$: placeholder = currentPlaceholders[placeholderIdx];
 </script>
 
 <header class="bg-bg border-b border-border">
@@ -244,8 +268,8 @@
 						type="text"
 						name="q"
 						value={$page.url.searchParams.get('q') ?? ''}
-						placeholder="Search for skills, tools, or services…"
-						class="flex-1 px-4 py-2.5 text-sm bg-transparent text-text-primary placeholder:text-text-muted focus:outline-none"
+						placeholder={placeholder}
+						class="flex-1 px-4 py-2.5 text-sm bg-transparent text-text-primary placeholder:text-text-muted placeholder:transition-opacity focus:outline-none"
 					/>
 					<button type="submit"
 						class="bg-primary text-white font-semibold text-sm px-5 py-2 rounded-full m-1 hover:bg-primary-hover transition-colors shrink-0">
