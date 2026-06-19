@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import ListingCard from './ListingCard.svelte';
 
+	export let slug: string;
 	export let title: string;
 	export let icon: string;
 	export let listings: any[];
@@ -23,7 +24,7 @@
 	function next() { scrollEl?.scrollBy({ left:  672, behavior: 'smooth' }); }
 </script>
 
-<section class="py-8 first:pt-6">
+<section id={slug} class="py-8 first:pt-6 scroll-mt-6">
 	<!-- Header -->
 	<div class="flex items-center justify-between mb-5">
 		<a {href} class="flex items-center gap-2.5 group">

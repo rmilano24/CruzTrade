@@ -481,6 +481,184 @@ const listings = [
     accepts_trade: true,
     trade_description: 'Trade for tech help, cooking, or garden work',
   },
+
+  // --- More care_errands services ---
+  {
+    provider: 'maria.g.seed@cruztrade.com',
+    type: 'service',
+    title: 'Childcare & babysitting — South County',
+    image_url: IMG('1512621776951-a57141f2eefd'), // kids playing
+    description: 'Experienced mother of three offering flexible childcare in Watsonville and surrounding areas. After-school pickup, homework help, meals, and engaging activities. Bilingual English/Spanish home environment. References available. Daily, weekly, or drop-in rates.',
+    category: 'care_errands',
+    price: 2000,
+    price_unit: 'per_hour',
+    neighborhood: 'Watsonville',
+    language: 'both',
+    accepts_trade: true,
+    trade_description: 'Trade for garden help, cooking lessons, or tech support',
+  },
+  {
+    provider: 'jake.t.seed@cruztrade.com',
+    type: 'service',
+    title: 'Dog walking & pet sitting — Westside',
+    image_url: IMG('1587300003688-93a500fdf813'), // dog on leash
+    description: 'Reliable dog walker and pet sitter on the Westside. Daily walks, drop-in visits, or overnight stays at your place. I have two dogs of my own and genuinely love animals. Great with high-energy breeds. Available most mornings and afternoons. Message me to set up a meet-and-greet.',
+    category: 'care_errands',
+    price: 2500,
+    price_unit: 'per_hour',
+    neighborhood: 'Westside',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+  {
+    provider: 'priya.s.seed@cruztrade.com',
+    type: 'service',
+    title: 'Errand running & grocery shopping',
+    image_url: IMG('1579113800080-6969a704e5c2'), // grocery bags
+    description: 'Need groceries, pharmacy pickup, post office runs, or other errands done? I cover all of Santa Cruz city and nearby neighborhoods. I use a reliable car and can handle multiple stops in one trip. Great for busy professionals, seniors, or anyone who just needs a hand. Flat rate per trip.',
+    category: 'care_errands',
+    price: 3500,
+    price_unit: 'flat',
+    neighborhood: 'Eastside',
+    language: 'en',
+    accepts_trade: true,
+    trade_description: 'Trade for tech help, yoga, or garden work',
+  },
+
+  // --- More outdoor_adventure rentals ---
+  {
+    provider: 'dana.k.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: 'Two kayaks + paddles — day or weekend rental',
+    image_url: IMG('1526491109672-74740652b963'), // kayak on water
+    description: 'Two sit-on-top kayaks perfect for Monterey Bay, the lagoon at Seacliff, or Capitola. Includes paddles and basic safety gear. Great for two people exploring the coast. Roof rack straps available if needed. Pick up in Aptos. Check availability before booking — popular on weekends.',
+    category: 'outdoor_adventure',
+    price: 5500,
+    price_unit: 'per_day',
+    neighborhood: 'Aptos',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+  {
+    provider: 'jake.t.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: 'Two mountain bikes — trail-ready, Westside pickup',
+    image_url: IMG('1558981403-65a9b6b1b5b8'), // mountain bikes
+    description: 'Two 29er hardtail mountain bikes, medium and large frames. Dialed in and ready for Wilder Ranch, Demo Forest, or UCSC trails. Helmets included. Pick up on the Westside. Deposit required via Stripe — returned when bikes come back clean and undamaged.',
+    category: 'outdoor_adventure',
+    price: 4000,
+    price_unit: 'per_day',
+    neighborhood: 'Westside',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+
+  // --- party_events rentals ---
+  {
+    provider: 'tony.b.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: '10x20 canopy tent + 8 folding tables & 40 chairs',
+    image_url: IMG('1530103862676-de8c9debad1d'), // event tent setup
+    description: 'Commercial-grade 10x20 pop-up canopy, 8 six-foot folding tables, and 40 folding chairs. Everything you need for a backyard party, graduation, quinceañera, or community event. Delivery and setup available within Soquel/Capitola/Aptos for extra fee. Pick up or we bring it to you.',
+    category: 'party_events',
+    price: 15000,
+    price_unit: 'per_day',
+    neighborhood: 'Soquel',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+  {
+    provider: 'sofia.r.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: 'Bluetooth PA system + wireless mic rental',
+    image_url: IMG('1558403194-611308249627'), // speaker / PA system
+    description: 'QSC K12 powered speaker (1000W) with a Bluetooth input and wireless handheld mic. Loud enough for 150 people outdoors. Great for outdoor parties, graduation speeches, band practice, or small events. Includes all cables and a mic stand. Pick up downtown SC.',
+    category: 'party_events',
+    price: 8000,
+    price_unit: 'per_day',
+    neighborhood: 'Downtown',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+  {
+    provider: 'jake.t.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: 'Portable projector + 100" screen — movie nights & events',
+    image_url: IMG('1489599849927-2ee91cede3ba'), // outdoor movie
+    description: 'Epson full HD projector (3500 lumens) with a 100-inch freestanding screen and a Bluetooth speaker. Perfect for backyard movie nights, presentations, or party entertainment. Works in partial daylight. Includes HDMI, extension cords, and setup instructions. Westside pickup.',
+    category: 'party_events',
+    price: 6500,
+    price_unit: 'per_day',
+    neighborhood: 'Westside',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+
+  // --- garden_yard rentals ---
+  {
+    provider: 'carlos.m.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: 'Electric hedge trimmer & leaf blower combo',
+    image_url: IMG('1416879595882-3373a0480b5b'), // hedge trimming
+    description: 'Ryobi 40V cordless hedge trimmer (24 in blade) and matching leaf blower, both with charged batteries. Perfect for a weekend yard cleanup — trim the hedges and blow the clippings in one trip. Pick up in Live Oak. Return clean with batteries recharged.',
+    category: 'garden_yard',
+    price: 2000,
+    price_unit: 'per_day',
+    neighborhood: 'Live Oak',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+  {
+    provider: 'tony.b.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: 'Gas rototiller — veggie beds & new lawn prep',
+    image_url: IMG('1416879595882-3373a0480b5b'), // garden tilling
+    description: 'Troy-Bilt 21-inch rear-tine rototiller. Great for breaking new ground for a veggie garden, aerating established beds, or prepping a lawn. Self-propelled, easy to use. Pick up in Soquel. You provide the gas. Recommend booking 2 days to get the job done right.',
+    category: 'garden_yard',
+    price: 7500,
+    price_unit: 'per_day',
+    neighborhood: 'Soquel',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+
+  // --- vehicles rentals ---
+  {
+    provider: 'jake.t.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: '5x8 enclosed cargo trailer rental',
+    image_url: IMG('1567808485489-a7c0de6bd625'), // cargo trailer
+    description: 'U-Haul-style 5x8 enclosed cargo trailer — fits a full apartment\'s worth of furniture. Tow hitch required (2-inch ball, available to borrow). Perfect for moving furniture, hauling gear, or a Costco run. I\'ll show you how to hitch it safely. Pick up on the Westside.',
+    category: 'vehicles',
+    price: 5000,
+    price_unit: 'per_day',
+    neighborhood: 'Westside',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
+  {
+    provider: 'carlos.m.seed@cruztrade.com',
+    type: 'tool_rental',
+    title: 'Pickup truck rental — haul it yourself',
+    image_url: IMG('1568605114967-8130f3a36994'), // pickup truck
+    description: 'Full-size pickup truck (Ford F-150, 6.5 ft bed) available for self-drive hauling. Great for furniture, lumber, mulch, appliances, or a dump run. Insurance on you — must have valid license and be 25+. Gas returned full. Pick up in Live Oak. Half-day rate available.',
+    category: 'vehicles',
+    price: 7500,
+    price_unit: 'per_day',
+    neighborhood: 'Live Oak',
+    language: 'en',
+    accepts_trade: false,
+    trade_description: null,
+  },
 ];
 
 // ---------------------------------------------------------------------------
