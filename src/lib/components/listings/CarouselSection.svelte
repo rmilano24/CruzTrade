@@ -7,6 +7,12 @@
 	export let icon: string;
 	export let listings: any[];
 	export let href: string;
+	export let categories: { slug: string; label: string }[] = [];
+
+	let activeCategory: string | null = null;
+	$: displayed = activeCategory
+		? listings.filter(l => l.category === activeCategory)
+		: listings;
 
 	let scrollEl: HTMLElement;
 	let atStart = true;
@@ -18,15 +24,25 @@
 		atEnd = scrollEl.scrollLeft + scrollEl.clientWidth >= scrollEl.scrollWidth - 4;
 	}
 
+	// Reset scroll and arrow state whenever displayed listings change
+	$: if (scrollEl && displayed) {
+		scrollEl.scrollLeft = 0;
+		setTimeout(updateState, 50);
+	}
+
 	onMount(updateState);
 
 	function prev() { scrollEl?.scrollBy({ left: -672, behavior: 'smooth' }); }
 	function next() { scrollEl?.scrollBy({ left:  672, behavior: 'smooth' }); }
+
+	function selectCategory(s: string | null) {
+		activeCategory = activeCategory === s ? null : s;
+	}
 </script>
 
 <section id={slug} class="py-8 first:pt-6 scroll-mt-6">
 	<!-- Header -->
-	<div class="flex items-center justify-between mb-5">
+	<div class="flex items-center justify-between mb-4">
 		<a {href} class="flex items-center gap-2.5 group">
 			<span class="text-2xl leading-none">{icon}</span>
 			<h2 class="text-xl font-bold text-text-primary group-hover:text-primary transition-colors">
@@ -39,7 +55,7 @@
 		</a>
 
 		<!-- Prev / Next (desktop) -->
-		{#if listings.length > 3}
+		{#if displayed.length > 3}
 			<div class="hidden md:flex items-center gap-2">
 				<button
 					on:click={prev}
@@ -69,19 +85,41 @@
 		{/if}
 	</div>
 
+	<!-- Category pills -->
+	{#if categories.length > 0}
+		<div class="flex gap-2 flex-wrap mb-5">
+			<button
+				on:click={() => activeCategory = null}
+				class="text-sm px-3.5 py-1.5 rounded-full border transition-all
+					{!activeCategory
+						? 'bg-text-primary text-white border-text-primary'
+						: 'bg-bg border-border text-text-muted hover:border-text-muted hover:text-text-primary'}"
+			>All</button>
+			{#each categories as cat}
+				<button
+					on:click={() => selectCategory(cat.slug)}
+					class="text-sm px-3.5 py-1.5 rounded-full border transition-all
+						{activeCategory === cat.slug
+							? 'bg-text-primary text-white border-text-primary'
+							: 'bg-bg border-border text-text-muted hover:border-text-muted hover:text-text-primary'}"
+				>{cat.label}</button>
+			{/each}
+		</div>
+	{/if}
+
 	<!-- Carousel track -->
 	<div
 		bind:this={scrollEl}
 		on:scroll={updateState}
 		class="flex gap-4 overflow-x-auto no-scrollbar pb-1"
 	>
-		{#each listings as listing (listing.id)}
+		{#each displayed as listing (listing.id)}
 			<div class="w-72 shrink-0">
 				<ListingCard {listing} />
 			</div>
 		{/each}
 
-		{#if listings.length === 0}
+		{#if displayed.length === 0}
 			<p class="text-sm text-text-muted py-8">
 				No listings yet in this category — be the first to post!
 			</p>
