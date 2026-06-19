@@ -40,9 +40,9 @@
 		<!-- Category nav -->
 		<nav class="hidden md:flex items-center gap-1">
 			{#each [
-				{ label: 'Hire',  icon: '🤝', href: '/browse?type=service',         active: $page.url.pathname === '/browse' && $page.url.searchParams.get('type') === 'service' },
-				{ label: 'Trade', icon: '🔄', href: '/browse?accepts_trade=true',    active: $page.url.pathname === '/browse' && $page.url.searchParams.get('accepts_trade') === 'true' },
-				{ label: 'Rent',  icon: '🔧', href: '/browse?type=tool_rental',      active: $page.url.pathname === '/browse' && $page.url.searchParams.get('type') === 'tool_rental' },
+				{ label: 'Hire',  icon: '🤝', href: '/?type=service',         active: $page.url.pathname === '/' && $page.url.searchParams.get('type') === 'service' },
+				{ label: 'Trade', icon: '🔄', href: '/?accepts_trade=true',    active: $page.url.pathname === '/' && $page.url.searchParams.get('accepts_trade') === 'true' },
+				{ label: 'Rent',  icon: '🔧', href: '/?type=tool_rental',      active: $page.url.pathname === '/' && $page.url.searchParams.get('type') === 'tool_rental' },
 			] as cat}
 				<a href={cat.href}
 					class="relative flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors
@@ -223,7 +223,7 @@
 	{#if $page.url.pathname === '/' || $page.url.pathname.startsWith('/browse')}
 		<div class="border-t border-border px-6 py-3">
 			<div class="max-w-content mx-auto">
-				<form action="/browse" method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
+				<form action="/" method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
 					{#if $page.url.searchParams.get('type')}
 						<input type="hidden" name="type" value={$page.url.searchParams.get('type')} />
 					{/if}
