@@ -36,20 +36,23 @@
 			Cruz Trade
 		</a>
 
-		<!-- Nav links -->
-		<nav class="hidden md:flex items-center gap-6">
-			<a href="/browse"
-				class="text-sm transition-colors {$page.url.pathname.startsWith('/browse') ? 'text-text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}">
-				{m.nav_browse()}
-			</a>
-			<a href="/post"
-				class="text-sm transition-colors {$page.url.pathname === '/post' ? 'text-text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}">
-				Post a Service
-			</a>
-			<a href="/how-it-works"
-				class="text-sm transition-colors {$page.url.pathname === '/how-it-works' ? 'text-text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}">
-				How it works
-			</a>
+		<!-- Category nav -->
+		<nav class="hidden md:flex items-center gap-1">
+			{#each [
+				{ label: 'Hire',  icon: '🤝', href: '/browse?type=service',         active: $page.url.pathname === '/browse' && $page.url.searchParams.get('type') === 'service' },
+				{ label: 'Trade', icon: '🔄', href: '/browse?accepts_trade=true',    active: $page.url.pathname === '/browse' && $page.url.searchParams.get('accepts_trade') === 'true' },
+				{ label: 'Rent',  icon: '🔧', href: '/browse?type=tool_rental',      active: $page.url.pathname === '/browse' && $page.url.searchParams.get('type') === 'tool_rental' },
+			] as cat}
+				<a href={cat.href}
+					class="relative flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors
+						{cat.active ? 'text-text-primary' : 'text-text-muted hover:text-text-primary hover:bg-bg-secondary'}">
+					<span>{cat.icon}</span>
+					<span>{cat.label}</span>
+					{#if cat.active}
+						<span class="absolute bottom-0 left-3 right-3 h-0.5 bg-text-primary rounded-full"></span>
+					{/if}
+				</a>
+			{/each}
 		</nav>
 
 		<!-- Right actions -->

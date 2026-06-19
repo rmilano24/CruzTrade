@@ -6,12 +6,12 @@
 
 	export let data: {
 		listings: any[];
-		filters: { type: string | null; category: string | null; neighborhood: string | null; q: string | null };
+		filters: { type: string | null; category: string | null; neighborhood: string | null; q: string | null; acceptsTrade: boolean | null };
 		neighborhoods: readonly string[];
 	};
 
 	$: ({ listings, filters, neighborhoods } = data);
-	$: hasFilters = !!(filters.type || filters.category || filters.neighborhood || filters.q);
+	$: hasFilters = !!(filters.type || filters.category || filters.neighborhood || filters.q || filters.acceptsTrade);
 	let searchInput = data.filters?.q ?? '';
 
 	function filterUrl(key: string, value: string | null): string {
@@ -41,6 +41,7 @@
 		{#if filters.type}<input type="hidden" name="type" value={filters.type} />{/if}
 		{#if filters.category}<input type="hidden" name="category" value={filters.category} />{/if}
 		{#if filters.neighborhood}<input type="hidden" name="neighborhood" value={filters.neighborhood} />{/if}
+		{#if filters.acceptsTrade}<input type="hidden" name="accepts_trade" value="true" />{/if}
 		<div class="flex items-center bg-bg border border-border rounded-xl shadow-card overflow-hidden focus-within:border-primary transition-colors">
 			<input type="text" name="q" bind:value={searchInput}
 				placeholder="Search listings… e.g. plumber, ladder, piano lessons"
