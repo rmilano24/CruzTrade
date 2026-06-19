@@ -28,7 +28,8 @@
 	}
 </script>
 
-<header class="h-16 bg-bg border-b border-border flex items-center px-6">
+<header class="bg-bg border-b border-border">
+	<div class="h-16 flex items-center px-6">
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
 
 		<!-- Logo -->
@@ -216,4 +217,42 @@
 		</div>
 
 	</div>
+	</div>
+
+	<!-- Search bar — homepage + browse pages -->
+	{#if $page.url.pathname === '/' || $page.url.pathname.startsWith('/browse')}
+		<div class="border-t border-border px-6 py-3">
+			<div class="max-w-content mx-auto">
+				<form action="/browse" method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
+					{#if $page.url.searchParams.get('type')}
+						<input type="hidden" name="type" value={$page.url.searchParams.get('type')} />
+					{/if}
+					{#if $page.url.searchParams.get('accepts_trade')}
+						<input type="hidden" name="accepts_trade" value="true" />
+					{/if}
+					{#if $page.url.searchParams.get('category')}
+						<input type="hidden" name="category" value={$page.url.searchParams.get('category')} />
+					{/if}
+					{#if $page.url.searchParams.get('neighborhood')}
+						<input type="hidden" name="neighborhood" value={$page.url.searchParams.get('neighborhood')} />
+					{/if}
+					<svg class="w-4 h-4 text-text-muted shrink-0 ml-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+					</svg>
+					<input
+						type="text"
+						name="q"
+						value={$page.url.searchParams.get('q') ?? ''}
+						placeholder="Search for skills, tools, or services…"
+						class="flex-1 px-4 py-2.5 text-sm bg-transparent text-text-primary placeholder:text-text-muted focus:outline-none"
+					/>
+					<button type="submit"
+						class="bg-primary text-white font-semibold text-sm px-5 py-2 rounded-full m-1 hover:bg-primary-hover transition-colors shrink-0">
+						Search
+					</button>
+				</form>
+			</div>
+		</div>
+	{/if}
+
 </header>

@@ -12,8 +12,6 @@
 
 	$: ({ listings, filters, neighborhoods } = data);
 	$: hasFilters = !!(filters.type || filters.category || filters.neighborhood || filters.q || filters.acceptsTrade);
-	let searchInput = data.filters?.q ?? '';
-
 	function filterUrl(key: string, value: string | null): string {
 		const p = new URLSearchParams($page.url.searchParams);
 		if (value) p.set(key, value);
@@ -35,23 +33,6 @@
 </svelte:head>
 
 <div class="max-w-content mx-auto px-6 py-8">
-
-	<!-- Search bar -->
-	<form action="/browse" method="GET" class="mb-6">
-		{#if filters.type}<input type="hidden" name="type" value={filters.type} />{/if}
-		{#if filters.category}<input type="hidden" name="category" value={filters.category} />{/if}
-		{#if filters.neighborhood}<input type="hidden" name="neighborhood" value={filters.neighborhood} />{/if}
-		{#if filters.acceptsTrade}<input type="hidden" name="accepts_trade" value="true" />{/if}
-		<div class="flex items-center bg-bg border border-border rounded-xl shadow-card overflow-hidden focus-within:border-primary transition-colors">
-			<input type="text" name="q" bind:value={searchInput}
-				placeholder="Search listings… e.g. plumber, ladder, piano lessons"
-				class="flex-1 px-5 py-3.5 text-sm text-text-primary bg-transparent placeholder:text-text-muted focus:outline-none" />
-			<button type="submit"
-				class="bg-primary text-white font-semibold text-sm px-5 py-3.5 hover:bg-primary-hover transition-colors shrink-0 m-1 rounded-lg">
-				Search
-			</button>
-		</div>
-	</form>
 
 	<!-- Header -->
 	<div class="flex items-baseline justify-between mb-4 gap-4">

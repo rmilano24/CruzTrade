@@ -14,7 +14,6 @@
 		{ key: 'transport',   emoji: '🚗', label: 'Transportation' },
 	];
 
-	let searchQuery = '';
 </script>
 
 <svelte:head>
@@ -43,24 +42,6 @@
 			Connect with skilled neighbors in Santa Cruz.<br />
 			Hire, trade, or rent — all in one place.
 		</p>
-
-		<!-- Search -->
-		<form action="/browse" method="GET" class="w-full max-w-xl mt-2">
-			<div class="flex items-center bg-bg border border-border rounded-xl shadow-card overflow-hidden focus-within:border-primary transition-colors">
-				<input
-					type="text"
-					name="q"
-					bind:value={searchQuery}
-					placeholder="What do you need? e.g. plumber, ladder, piano lessons"
-					class="flex-1 px-5 py-4 text-base text-text-primary bg-transparent placeholder:text-text-muted focus:outline-none"
-				/>
-				<button
-					type="submit"
-					class="bg-primary text-white font-semibold text-sm px-6 py-4 hover:bg-primary-hover transition-colors shrink-0 m-1.5 rounded-lg">
-					Search
-				</button>
-			</div>
-		</form>
 
 	</div>
 </section>
