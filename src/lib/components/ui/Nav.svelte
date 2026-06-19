@@ -40,6 +40,7 @@
 		<!-- Category nav -->
 		<nav class="hidden md:flex items-center gap-1">
 			{#each [
+				{ label: 'All',   icon: '✦',  href: '/',                       active: $page.url.pathname === '/' && !$page.url.searchParams.get('type') && !$page.url.searchParams.get('accepts_trade') },
 				{ label: 'Hire',  icon: '🤝', href: '/?type=service',         active: $page.url.pathname === '/' && $page.url.searchParams.get('type') === 'service' },
 				{ label: 'Trade', icon: '🔄', href: '/?accepts_trade=true',    active: $page.url.pathname === '/' && $page.url.searchParams.get('accepts_trade') === 'true' },
 				{ label: 'Rent',  icon: '🔧', href: '/?type=tool_rental',      active: $page.url.pathname === '/' && $page.url.searchParams.get('type') === 'tool_rental' },
