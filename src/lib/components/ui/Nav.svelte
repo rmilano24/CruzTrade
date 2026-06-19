@@ -40,10 +40,10 @@
 		<!-- Category nav -->
 		<nav class="hidden md:flex items-center gap-1">
 			{#each [
-				{ label: 'All',   icon: '✦',  href: '/',                       active: $page.url.pathname === '/' && !$page.url.searchParams.get('type') && !$page.url.searchParams.get('accepts_trade') },
-				{ label: 'Hire',  icon: '🤝', href: '/?type=service',         active: $page.url.pathname === '/' && $page.url.searchParams.get('type') === 'service' },
-				{ label: 'Trade', icon: '🔄', href: '/?accepts_trade=true',    active: $page.url.pathname === '/' && $page.url.searchParams.get('accepts_trade') === 'true' },
-				{ label: 'Rent',  icon: '🔧', href: '/?type=tool_rental',      active: $page.url.pathname === '/' && $page.url.searchParams.get('type') === 'tool_rental' },
+				{ label: 'All',   icon: '✦',  href: '/',       active: $page.url.pathname === '/' },
+				{ label: 'Hire',  icon: '🤝', href: '/hire',   active: $page.url.pathname === '/hire' },
+				{ label: 'Trade', icon: '🔄', href: '/trade',  active: $page.url.pathname === '/trade' },
+				{ label: 'Rent',  icon: '🔧', href: '/rent',   active: $page.url.pathname === '/rent' },
 			] as cat}
 				<a href={cat.href}
 					class="relative flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors
@@ -221,10 +221,10 @@
 	</div>
 
 	<!-- Search bar — homepage + browse pages -->
-	{#if $page.url.pathname === '/' || $page.url.pathname.startsWith('/browse')}
+	{#if ['/', '/hire', '/trade', '/rent'].includes($page.url.pathname) || $page.url.pathname.startsWith('/browse')}
 		<div class="border-t border-border px-6 py-3">
 			<div class="max-w-content mx-auto">
-				<form action="/" method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
+				<form action={$page.url.pathname} method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
 					{#if $page.url.searchParams.get('type')}
 						<input type="hidden" name="type" value={$page.url.searchParams.get('type')} />
 					{/if}
