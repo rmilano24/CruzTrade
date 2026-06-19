@@ -46,7 +46,7 @@ npm install
 cp .env.example .env
 ```
 
-Open `.env` and fill in your keys (see the Stripe Setup and Database Setup sections below for how to get each one):
+Open `.env` and fill in your keys:
 
 ```env
 PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -61,12 +61,10 @@ ANTHROPIC_API_KEY=           # optional — AI matching is Phase 2
 
 **3. Set up the database**
 
-In the Supabase SQL editor, run these two files in order:
+In the Supabase SQL editor, run these files in order:
 1. `supabase/schema.sql` — creates all tables, enables pgvector, sets up RLS
 2. `supabase/migrations/001_phase2_columns.sql` — adds Phase 2 columns
-
-To load seed data (recommended for local dev):
-3. Run the seed script (see **Seed Data** section below)
+3. `supabase/migrations/update_category_constraint.sql` — updates category values to the current taxonomy
 
 **4. Configure Supabase auth redirect**
 
@@ -74,7 +72,7 @@ In the Supabase dashboard go to **Authentication → URL Configuration** and add
 ```
 http://localhost:5173/auth/callback
 ```
-to the **Redirect URLs** list. Without this, email confirmation links will fail.
+to the **Redirect URLs** list.
 
 **5. Run the dev servers**
 
@@ -108,31 +106,97 @@ Open [http://localhost:5173](http://localhost:5173).
 
 ---
 
-## Screens
+## Routes
 
-| Route | Screen |
+| Route | Description |
 |---|---|
-| `/` | Landing page — hero, how it works, featured listings |
-| `/browse` | Browse listings — filter by category, type, neighborhood |
+| `/` | Homepage — hero + Hire / Trade / Rent carousel sections |
+| `/hire` | Hire a neighbor — service listings by category |
+| `/trade` | Trade skills — barter listings by category |
+| `/rent` | Rent tools & gear — rental listings by category |
+| `/browse` | Legacy browse — filter by type, category, neighborhood |
 | `/listings/[id]` | Listing detail — description, provider, Hire/Trade/Message CTAs |
-| `/listings/[id]/edit` | Edit listing — owner-only, pre-filled form |
-| `/listings/[id]/book` | Booking form — pay or trade, date, job description |
+| `/listings/[id]/edit` | Edit listing — owner only |
+| `/listings/[id]/book` | Booking form — payment or trade |
 | `/listings/[id]/book/confirmation` | Booking confirmation — receipt, escrow notice |
-| `/post` | Post a listing — service or tool rental form |
+| `/post` | Post a listing — service or tool rental |
 | `/profile/[username]` | Provider profile — listings, reviews, Stripe connect |
+| `/dashboard` | User dashboard — active bookings, messages, nearby listings |
+| `/my-listings` | Manage your listings |
+| `/my-bookings` | Your bookings as buyer |
 | `/messages` | Messaging — thread list + conversation view |
-| `/reviews/[transaction_id]` | Leave a review — buyer only, after job complete |
+| `/reviews/[transaction_id]` | Leave a review after completed job |
 | `/settings` | Account settings — profile info, avatar upload |
+| `/how-it-works` | How Cruz Trade works — Hire / Trade / Rent tabs |
 | `/auth/signup` | Sign up |
 | `/auth/login` | Log in |
 | `/auth/onboarding` | 3-step onboarding — profile, neighborhood, first listing |
-| `/about` | About Cruz Trade |
-| `/contact` | Contact page |
-| `/changelog` | Release history and roadmap |
-| `/terms` | Terms of Service |
-| `/privacy` | Privacy Policy |
 
-All routes available in English and Spanish (`/es/` prefix for Spanish).
+---
+
+## Category Taxonomy
+
+Each listing has a `category` field. Current values:
+
+**Service listings** (`type = 'service'`):
+
+| Slug | Label |
+|---|---|
+| `home_yard` | Home & Yard |
+| `tech_creative` | Tech & Creative |
+| `lessons` | Lessons & Tutoring |
+| `wellness` | Wellness & Beauty |
+| `care_errands` | Care & Errands |
+
+**Rental listings** (`type = 'tool_rental'`):
+
+| Slug | Label |
+|---|---|
+| `tools_equipment` | Tools & Equipment |
+| `outdoor_adventure` | Outdoor & Adventure |
+| `party_events` | Party & Events |
+| `garden_yard` | Garden & Yard |
+| `vehicles` | Vehicles & Trailers |
+
+Trade listings are service listings with `accepts_trade = true` — they share the service category slugs.
+
+---
+
+## Seed Data
+
+`scripts/seed.mjs` creates 7 provider accounts and 38 listings covering all categories and neighborhoods. The script wipes existing listings before inserting, so it's safe to re-run.
+
+**First-time setup:** run the category constraint migration before seeding:
+
+```sql
+-- Run in Supabase SQL editor
+ALTER TABLE listings DROP CONSTRAINT IF EXISTS listings_category_check;
+ALTER TABLE listings ADD CONSTRAINT listings_category_check CHECK (
+  category IN (
+    'home_yard', 'tech_creative', 'lessons', 'wellness', 'care_errands',
+    'tools_equipment', 'outdoor_adventure', 'party_events', 'garden_yard', 'vehicles'
+  )
+);
+```
+
+Then run the seed:
+
+```bash
+node --env-file=.env scripts/seed.mjs --dry-run   # preview only
+node --env-file=.env scripts/seed.mjs              # insert for real
+```
+
+**Seed providers** (all share the same password: `CruzTrade-seed-2026!`):
+
+| Name | Neighborhood | Offers |
+|---|---|---|
+| Maria Gonzalez | Watsonville | Garden, cleaning, childcare, Spanish tutoring |
+| Jake Torres | Westside | Moving/hauling, guitar lessons, dog walking, trailer + bike rental |
+| Sofia Reyes | Downtown | Web design, social media, PA system + e-bike rental |
+| Carlos Mendoza | Live Oak | Yard work, pruning, mower + drill + truck rental |
+| Dana Kim | Aptos | Yoga, massage, painting classes, kayak + sewing machine rental |
+| Tony Bruno | Soquel | Fencing, carpentry, event tent + pressure washer + tile saw rental |
+| Priya Sharma | Eastside | Laptop repair, WiFi setup, errand running, Reiki |
 
 ---
 
@@ -148,34 +212,50 @@ src/
     ├── utils/format.ts           # formatPrice, categoryLabel, typeLabel helpers
     ├── server/
     │   ├── db.ts                 # Supabase client factory (SSR-aware + admin)
-    │   └── stripe.ts             # Stripe client + platformFee/depositAmount helpers
+    │   ├── listings.ts           # Shared loadListings() helper
+    │   └── stripe.ts             # Stripe client + fee helpers
     └── components/
-        ├── ui/Nav.svelte         # Top navigation with auth state
-        └── listings/ListingCard.svelte
+        ├── ui/
+        │   ├── Nav.svelte        # Top nav — logo, All/Hire/Trade/Rent tabs, search bar
+        │   └── Footer.svelte
+        └── listings/
+            ├── ListingCard.svelte
+            ├── ListingsGrid.svelte
+            ├── CategoryBar.svelte      # Anchor-scroll category chips
+            ├── CategorySections.svelte # Grouped carousel view (hire/trade/rent pages)
+            └── CarouselSection.svelte  # Single category section with horizontal carousel
 
 src/routes/
-├── +page.svelte / +page.server.ts          # Landing
-├── browse/                                 # Browse listings
+├── +page.svelte / +page.server.ts          # Homepage
+├── hire/                                   # /hire — service listings
+├── trade/                                  # /trade — trade listings
+├── rent/                                   # /rent — rental listings
 ├── listings/[id]/                          # Listing detail
-├── listings/[id]/book/                     # Booking form
-├── listings/[id]/book/confirmation/        # Booking confirmation
+├── listings/[id]/book/                     # Booking flow
 ├── post/                                   # Post a listing
 ├── profile/[username]/                     # Provider profile
+├── dashboard/                              # User dashboard
+├── my-listings/                            # Manage listings
+├── my-bookings/                            # Booking history
 ├── messages/                              # Messaging
+├── settings/                              # Account settings
+├── how-it-works/                          # How it works page
 ├── auth/signup|login|onboarding|callback/ # Auth flow
 └── api/stripe/
-    ├── connect/    # Start Stripe Express onboarding (GET → redirect to Stripe)
-    ├── return/     # Stripe redirects here after provider onboarding
+    ├── connect/    # Start Stripe Express onboarding
+    ├── return/     # Stripe redirects here after onboarding
     └── webhook/    # Receives Stripe events, updates transaction status
 
 messages/
-├── en.json         # English strings (source language)
+├── en.json         # English strings
 └── es.json         # Spanish strings
 
 supabase/
-├── schema.sql                      # Full database schema
-├── migrations/001_phase2_columns.sql
-└── seed.sql                        # Test data (5 listings, 1 user)
+├── schema.sql
+├── migrations/
+│   ├── 001_phase2_columns.sql
+│   └── update_category_constraint.sql
+└── seed.sql
 ```
 
 ---
@@ -184,207 +264,91 @@ supabase/
 
 Cruz Trade uses [Stripe Connect](https://stripe.com/connect) for marketplace payments (7% platform fee, 20% deposit for tool rentals).
 
-**1. Enable Connect**
+**1. Enable Connect** — Stripe dashboard → More → Connect → Get started
 
-In the Stripe dashboard go to **More → Connect → Get started** and enable Connect for your account.
+**2. Get API keys** — Developers → API keys → copy into `.env`
 
-**2. Get your API keys**
-
-Go to **Developers → API keys** and copy your publishable and secret keys into `.env`.
-
-**3. Local webhook listener**
-
-Stripe needs to notify your app when payments complete. Keep this running alongside `npm run dev`:
+**3. Local webhook listener:**
 
 ```bash
-# Install Stripe CLI (first time only)
-brew install stripe/stripe-cli/stripe
-
-# Log in (first time only)
-stripe login
-
-# Forward webhook events to local dev server
+brew install stripe/stripe-cli/stripe   # first time only
+stripe login                            # first time only
 stripe listen --forward-to localhost:5173/api/stripe/webhook
 ```
 
-Copy the printed `whsec_...` value into `.env` as `STRIPE_WEBHOOK_SECRET`, then restart `npm run dev`.
+Copy the printed `whsec_...` into `.env` as `STRIPE_WEBHOOK_SECRET`, restart `npm run dev`.
 
-> **Note:** The `whsec_` key from `stripe listen` expires after 90 days — re-run `stripe login` when it does. For production, create a permanent webhook endpoint in the Stripe dashboard pointing to `https://yourdomain.com/api/stripe/webhook`.
-
-**4. Provider onboarding**
-
-Providers connect their Stripe account to receive payouts from their profile page (**Connect Stripe** button). This uses Stripe Express — in test mode, Stripe provides pre-filled test data to complete onboarding.
-
-**Test card numbers:**
+**Test cards:**
 
 | Card | Use |
 |---|---|
 | `4242 4242 4242 4242` | Successful payment |
-| `4000 0000 0000 9995` | Declined payment |
-
-Use any future expiry date and any 3-digit CVC.
+| `4000 0000 0000 9995` | Declined |
 
 ---
 
 ## Database Setup
 
-**Tables:** `profiles`, `listings`, `transactions`, `reviews`, `messages`, `regions`
-
-To set up a fresh Supabase project:
-
 1. Create a new project at [supabase.com](https://supabase.com)
 2. In **Database → Extensions**, enable `vector` (pgvector)
-3. In the SQL editor, run `supabase/schema.sql`
-4. Then run `supabase/migrations/001_phase2_columns.sql`
-5. For local dev, run the seed script (see **Seed Data** section below)
+3. Run `supabase/schema.sql` in the SQL editor
+4. Run `supabase/migrations/001_phase2_columns.sql`
+5. Run `supabase/migrations/update_category_constraint.sql`
 6. Copy your project URL and keys into `.env`
 7. In **Authentication → URL Configuration**, add `http://localhost:5173/auth/callback` to Redirect URLs
+8. Seed the database (see **Seed Data** section)
 
-RLS is enabled on every table from day one. The service role key (used only in the webhook handler) bypasses RLS — keep it server-side only.
+RLS is enabled on every table. The service role key bypasses RLS — keep it server-side only.
 
 ---
 
 ## Google OAuth Setup
 
-Cruz Trade supports "Continue with Google" on the sign-in and sign-up pages. Setup is a one-time process per environment.
+**1.** Go to [console.cloud.google.com](https://console.cloud.google.com) → create project `CruzTrade`
 
-**1. Create a Google Cloud project**
+**2.** APIs & Services → Credentials → OAuth client ID → Web application
+- Authorized redirect URIs: `https://[your-ref].supabase.co/auth/v1/callback` and `http://localhost:5173/auth/callback`
+- Download JSON, copy `client_id` and `client_secret`
 
-1. Go to [console.cloud.google.com](https://console.cloud.google.com) — use a personal Gmail account (Workspace accounts may lack org-level permissions)
-2. Create a new project named `CruzTrade`
+**3.** Supabase → Authentication → Providers → Google → toggle on, paste credentials
 
-**2. Create OAuth credentials**
+**4.** Add test users: Google Cloud → Google Auth Platform → Audience → Test users
 
-1. Go to **APIs & Services → Credentials → + Create Credentials → OAuth client ID**
-2. Application type: **Web application**, name it `Cruz Trade Web`
-3. Under **Authorized redirect URIs**, add:
-   - `https://[your-supabase-project-ref].supabase.co/auth/v1/callback`
-   - `http://localhost:5173/auth/callback` (local dev)
-4. Click **Create** — immediately **Download JSON** from the creation modal (the only time the secret is shown cleanly)
-5. From the JSON, copy `client_id` and `client_secret`
-
-**3. Enable Google in Supabase**
-
-1. Go to Supabase → **Authentication → Providers → Google**
-2. Toggle on, paste Client ID and Client Secret, save
-3. Copy the **Callback URL** shown — verify it matches what you added in step 2
-
-**4. Add test users (while app is in Testing mode)**
-
-1. Go to Google Cloud → **Google Auth Platform → Audience**
-2. Scroll to **Test users → + Add users**
-3. Add any Gmail addresses that need to sign in before the app is published
-
-**5. Add localhost to Supabase redirect allowlist**
-
-In Supabase → **Authentication → URL Configuration → Redirect URLs**, add:
-```
-http://localhost:5173/auth/callback
-```
-
-> **Production note:** When ready to go live, publish the OAuth app in Google Cloud (**Audience → Publish app**) so any Google account can sign in — not just test users. You'll need to complete Google's verification form if requesting sensitive scopes (we only use email + profile, so verification is not required).
+> For production, publish the OAuth app (Audience → Publish app). No Google verification required since we only use email + profile scopes.
 
 ---
 
 ## Supabase Storage Setup
 
-Two storage buckets are required.
+**`listing-images` bucket** — Public, no extra RLS policies needed.
 
-**`listing-images` bucket (listing photos):**
-
-1. Go to Supabase → **Storage → New bucket**
-2. Name: `listing-images`, toggle **Public bucket** on
-3. Save — no extra RLS policies needed (uploads go through server action with service role key)
-
-**`avatars` bucket (profile photos):**
-
-1. Go to Supabase → **Storage → New bucket**
-2. Name: `avatars`, toggle **Public bucket** on, save
-3. In **Storage → Policies**, add these three RLS policies on `storage.objects`:
+**`avatars` bucket** — Public, plus these three RLS policies:
 
 ```sql
--- Allow authenticated users to upload their own avatar
 CREATE POLICY "Users can upload own avatar"
 ON storage.objects FOR INSERT TO authenticated
 WITH CHECK (bucket_id = 'avatars' AND name LIKE (auth.uid()::text || '.%'));
 
--- Allow authenticated users to replace their own avatar
 CREATE POLICY "Users can update own avatar"
 ON storage.objects FOR UPDATE TO authenticated
 USING (bucket_id = 'avatars' AND name LIKE (auth.uid()::text || '.%'));
 
--- Allow anyone to view avatars
 CREATE POLICY "Public can view avatars"
 ON storage.objects FOR SELECT TO public
 USING (bucket_id = 'avatars');
 ```
 
-The 5 MB size limit and file type validation are enforced server-side in `src/routes/settings/+page.server.ts`.
-
----
-
-## Seed Data
-
-`scripts/seed.mjs` creates 7 provider accounts and 26 listings covering all categories and neighborhoods. Run it after setting up the database:
-
-```bash
-node --env-file=.env scripts/seed.mjs --dry-run   # preview only
-node --env-file=.env scripts/seed.mjs              # insert for real
-```
-
-Safe to re-run — existing users are skipped, profiles are upserted.
-
-**Seed provider accounts** (all use the same password):
-
-| Name | Email | Neighborhood | Offers |
-|---|---|---|---|
-| Maria Gonzalez | maria.g.seed@cruztrade.com | Watsonville | Garden, cleaning, translation |
-| Jake Torres | jake.t.seed@cruztrade.com | Westside | Moving/hauling, guitar lessons, ladder + tent rental |
-| Sofia Reyes | sofia.r.seed@cruztrade.com | Downtown | Web design, social media, cargo e-bike rental |
-| Carlos Mendoza | carlos.m.seed@cruztrade.com | Live Oak | Yard work, pruning, mower + drill rental |
-| Dana Kim | dana.k.seed@cruztrade.com | Aptos | Yoga, massage, painting classes, sewing machine rental |
-| Tony Bruno | tony.b.seed@cruztrade.com | Soquel | Fencing, furniture assembly, pressure washer + tile saw rental |
-| Priya Sharma | priya.s.seed@cruztrade.com | Eastside | Laptop repair, WiFi setup, Reiki |
-
-**Password:** `CruzTrade-seed-2026!`
-
-Avatars use stable portrait URLs from [randomuser.me](https://randomuser.me) — no API key required, suitable for dev/seed data only.
-
----
-
-## i18n (Bilingual EN/ES)
-
-All user-facing strings go through [paraglide-js](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) — never hardcode English text directly in components.
-
-**Adding or editing strings:**
-
-1. Add the key to both `messages/en.json` and `messages/es.json`
-2. Use underscores for key names: `nav_browse`, `page_home_title`
-3. Import and call in components:
-
-```svelte
-<script>
-  import * as m from '$lib/paraglide/messages'
-</script>
-
-<h1>{m.page_home_title()}</h1>
-```
-
-The generated `src/lib/paraglide/` directory is gitignored — compiled automatically by the Vite plugin.
-
-**Language routing:** English is unprefixed (`/browse`). Spanish uses the `/es/` prefix (`/es/browse`). The language toggle in the Nav switches between them.
-
 ---
 
 ## Design System
 
-Design tokens live in `tailwind.config.js`. Use Tailwind classes exclusively — no inline styles.
+Tokens live in `tailwind.config.js` — use Tailwind classes only, no inline styles.
 
 | Token | Value | Usage |
 |---|---|---|
 | `bg-primary` | `#f97316` | CTAs, active states |
-| `bg-bg` | `#ffffff` | Page background |
-| `bg-bg-card` | `#f5f5f5` | Cards, panels |
+| `bg-bg` | `#ffffff` | Page background / cards |
+| `bg-bg-card` | `#f5f5f5` | Page background on "app" pages |
 | `bg-bg-secondary` | `#f0f0f0` | Input backgrounds |
 | `border-border` | `#e0e0e0` | All borders |
 | `text-text-primary` | `#111111` | Body text |
@@ -393,43 +357,39 @@ Design tokens live in `tailwind.config.js`. Use Tailwind classes exclusively —
 **Component patterns:**
 - Primary button: `bg-primary text-white font-semibold px-5 py-2.5 rounded-md hover:bg-primary-hover`
 - Ghost button: `border border-border text-text-primary font-semibold px-5 py-2.5 rounded-md`
-- Card: `bg-bg-card border border-border rounded-lg p-4 shadow-card`
+- Card: `bg-bg border border-border rounded-xl p-4`
 - Input: `bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base focus:border-primary focus:outline-none`
+- Badge/pill: `bg-bg-secondary text-text-muted text-xs px-2.5 py-1 rounded-full`
+
+**Page background pattern** ("app" pages like dashboard, listings, bookings):
+- Outer wrapper: `min-h-screen bg-bg-card`
+- Content cards: `bg-bg border border-border rounded-xl`
 
 ---
 
 ## Going to Production
 
-Checklist before flipping live:
-
-**Supabase**
-- [ ] Run `supabase/schema.sql` + `supabase/migrations/001_phase2_columns.sql` on the production Supabase project
-- [ ] Add your production domain to Supabase **Authentication → URL Configuration** redirect URLs (e.g. `https://yourdomain.com/auth/callback`)
-- [ ] Create `listing-images` storage bucket (public) in the production Supabase project
-- [ ] Create `avatars` storage bucket (public) with the three RLS policies from the **Supabase Storage Setup** section
-
-**Google OAuth**
-- [ ] Add production redirect URI to Google Cloud OAuth credentials: `https://yourdomain.com/auth/callback` (alongside the Supabase one)
-- [ ] Publish the OAuth app in Google Cloud (**Audience → Publish app**) so all Google accounts can sign in
-
-**Stripe**
-- [ ] Switch Stripe keys from `sk_test_` / `pk_test_` to `sk_live_` / `pk_live_`
-- [ ] Create a permanent webhook endpoint in Stripe dashboard → **Developers → Webhooks → Add destination**, pointing to `https://yourdomain.com/api/stripe/webhook`, listening for `checkout.session.completed`, `checkout.session.expired`, `payment_intent.payment_failed`
-- [ ] Update `STRIPE_WEBHOOK_SECRET` in production env to the new `whsec_` from the permanent endpoint
-- [ ] Complete Stripe account verification (**Verify your business** in Stripe dashboard) before going live
-
-**Launch**
-- [ ] Run `node --env-file=.env scripts/seed.mjs` to seed 7 providers + 26 listings before public marketing
+- [ ] Run all three SQL files on the production Supabase project (schema + migrations)
+- [ ] Add production domain to Supabase redirect URLs
+- [ ] Create `listing-images` and `avatars` storage buckets with correct policies
+- [ ] Add production redirect URI to Google Cloud OAuth credentials
+- [ ] Publish Google OAuth app (Audience → Publish app)
+- [ ] Switch Stripe keys to live (`sk_live_` / `pk_live_`)
+- [ ] Create permanent Stripe webhook endpoint pointing to `https://yourdomain.com/api/stripe/webhook`
+- [ ] Update `STRIPE_WEBHOOK_SECRET` to the permanent endpoint's signing secret
+- [ ] Complete Stripe account verification before processing live payments
 
 ---
 
 ## Phase 2 Roadmap
 
-- AI semantic matching via pgvector (column already on `listings` table)
+- AI semantic matching via pgvector (`embedding` column already on `listings`)
 - "Need a Hand" demand-side posts
 - Weekly neighborhood digest email (Resend)
+- Auto-translation in messaging (Claude Haiku)
 - Recurring bookings
-- Tool condition photo documentation
-- Pro Profile mini-website (~$12/mo subscription)
+- Tool condition photo documentation at pickup/return
+- Community vouching
+- Pro Profile mini-website (~$12/mo)
 - Verified identity / background checks
 - Native iOS app
