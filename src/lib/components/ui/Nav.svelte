@@ -22,34 +22,70 @@
 	function toggleDropdown() { dropdownOpen = !dropdownOpen; }
 	function closeDropdown() { dropdownOpen = false; }
 
-	// Rotating placeholder
-	const placeholders: Record<string, string[]> = {
-		'/':      ['Search for skills, tools, or services…'],
-		'/hire':  ['Hire a handyman…', 'Find a guitar teacher…', 'Book an electrician…', 'Find a dog walker…', 'Hire a photographer…'],
-		'/trade': ['Trade a guitar lesson for web design…', 'Swap painting for plumbing…', 'Trade skills with a neighbor…', 'Offer what you know, get what you need…'],
-		'/rent':  ['Rent a pressure washer…', 'Borrow a bounce house…', 'Find a trailer for the weekend…', 'Rent a ladder…', 'Borrow a standing desk…'],
+	// Typewriter placeholder
+	const twPhrases: Record<string, string[]> = {
+		'/':      ['Find a handyman…', 'Book a music lesson…', 'Rent a pressure washer…', 'Trade skills with a neighbor…', 'Hire an electrician…', 'Find a dog walker…'],
+		'/hire':  ['Hire a plumber…', 'Find a music teacher…', 'Book an electrician…', 'Hire a dog walker…', 'Find a photographer…', 'Hire a handyman…', 'Book a yoga instructor…'],
+		'/trade': ['Trade a guitar lesson for web design…', 'Swap painting for plumbing…', 'Trade Spanish lessons for cooking…', 'Offer what you know, get what you need…', 'Trade photography for carpentry…'],
+		'/rent':  ['Rent a pressure washer…', 'Borrow a bounce house…', 'Find a trailer for the weekend…', 'Rent a ladder…', 'Borrow a standing desk…', 'Rent a tile saw…'],
 	};
 
-	let placeholderIdx = 0;
-	let interval: ReturnType<typeof setInterval> | null = null;
+	const TYPE_MS = 70;
+	const DELETE_MS = 35;
+	const PAUSE_FULL_MS = 2000;
+	const PAUSE_EMPTY_MS = 400;
 
-	$: currentPlaceholders = placeholders[$page.url.pathname] ?? placeholders['/'];
+	let twText = '';
+	let twPhrase = 0;
+	let twChar = 0;
+	let twDeleting = false;
+	let twTimeout: ReturnType<typeof setTimeout> | null = null;
+	let twCursor = true;
+	let twCursorInterval: ReturnType<typeof setInterval> | null = null;
 
-	$: {
-		// Reset and restart cycle whenever the route changes
-		$page.url.pathname;
-		placeholderIdx = 0;
-		if (interval) clearInterval(interval);
-		if (currentPlaceholders.length > 1) {
-			interval = setInterval(() => {
-				placeholderIdx = (placeholderIdx + 1) % currentPlaceholders.length;
-			}, 3500);
+	function twTick() {
+		const phrases = twPhrases[$page.url.pathname] ?? twPhrases['/'];
+		const word = phrases[twPhrase % phrases.length];
+		if (!twDeleting) {
+			twChar++;
+			twText = word.slice(0, twChar);
+			if (twChar === word.length) {
+				twDeleting = true;
+				twTimeout = setTimeout(twTick, PAUSE_FULL_MS);
+			} else {
+				twTimeout = setTimeout(twTick, TYPE_MS);
+			}
+		} else {
+			twChar--;
+			twText = word.slice(0, twChar);
+			if (twChar === 0) {
+				twDeleting = false;
+				twPhrase = (twPhrase + 1) % phrases.length;
+				twTimeout = setTimeout(twTick, PAUSE_EMPTY_MS);
+			} else {
+				twTimeout = setTimeout(twTick, DELETE_MS);
+			}
 		}
 	}
 
-	onDestroy(() => { if (interval) clearInterval(interval); });
+	function twReset() {
+		if (twTimeout) clearTimeout(twTimeout);
+		twText = '';
+		twPhrase = 0;
+		twChar = 0;
+		twDeleting = false;
+		twTimeout = setTimeout(twTick, PAUSE_EMPTY_MS);
+	}
 
-	$: placeholder = currentPlaceholders[placeholderIdx];
+	$: { $page.url.pathname; twReset(); }
+
+	twCursorInterval = setInterval(() => { twCursor = !twCursor; }, 530);
+	onDestroy(() => {
+		if (twTimeout) clearTimeout(twTimeout);
+		if (twCursorInterval) clearInterval(twCursorInterval);
+	});
+
+	$: placeholder = twText + (twCursor ? '|' : ' ');
 </script>
 
 <header class="bg-bg border-b border-border">
