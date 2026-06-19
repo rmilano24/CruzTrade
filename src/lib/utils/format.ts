@@ -6,12 +6,18 @@ export function formatPrice(cents: number, unit: 'flat' | 'per_hour' | 'per_day'
 }
 
 export const CATEGORY_LABELS: Record<string, { en: string; es: string }> = {
-	home_garden: { en: 'Home & Garden', es: 'Hogar y Jardín' },
-	tech:         { en: 'Tech',          es: 'Tecnología' },
-	tools:        { en: 'Tools',         es: 'Herramientas' },
-	wellness:     { en: 'Wellness',      es: 'Bienestar' },
-	creative:     { en: 'Creative',      es: 'Creativo' },
-	transport:    { en: 'Transport',     es: 'Transporte' }
+	// Service categories
+	home_yard:       { en: 'Home & Yard',          es: 'Hogar y Jardín' },
+	tech_creative:   { en: 'Tech & Creative',       es: 'Tecnología y Creatividad' },
+	lessons:         { en: 'Lessons & Tutoring',    es: 'Clases y Tutoría' },
+	wellness:        { en: 'Wellness & Beauty',     es: 'Bienestar y Belleza' },
+	care_errands:    { en: 'Care & Errands',        es: 'Cuidados y Mandados' },
+	// Rental categories
+	tools_equipment: { en: 'Tools & Equipment',     es: 'Herramientas y Equipos' },
+	outdoor_adventure: { en: 'Outdoor & Adventure', es: 'Aventura al Aire Libre' },
+	party_events:    { en: 'Party & Events',        es: 'Fiestas y Eventos' },
+	garden_yard:     { en: 'Garden & Yard',         es: 'Jardín y Patio' },
+	vehicles:        { en: 'Vehicles & Trailers',   es: 'Vehículos y Remolques' },
 };
 
 export const TYPE_LABELS: Record<string, { en: string; es: string }> = {

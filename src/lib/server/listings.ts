@@ -20,7 +20,7 @@ export async function loadListings(
 		)
 		.eq('is_active', true)
 		.order('created_at', { ascending: false })
-		.limit(60);
+		.limit(200);
 
 	if (type) query = query.eq('type', type);
 	if (category) query = query.eq('category', category);
