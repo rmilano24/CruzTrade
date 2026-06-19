@@ -16,19 +16,19 @@
 	$: rentListings  = data.listings.filter(l => l.type === 'tool_rental');
 
 	const serviceCategories = [
-		{ slug: 'home_yard',      label: 'Home & Yard' },
-		{ slug: 'tech_creative',  label: 'Tech & Creative' },
-		{ slug: 'lessons',        label: 'Lessons' },
-		{ slug: 'wellness',       label: 'Wellness' },
-		{ slug: 'care_errands',   label: 'Care & Errands' },
+		{ slug: 'home_yard',      label: '🏡 Home & Yard' },
+		{ slug: 'tech_creative',  label: '💻 Tech & Creative' },
+		{ slug: 'lessons',        label: '📚 Lessons' },
+		{ slug: 'wellness',       label: '🧘 Wellness' },
+		{ slug: 'care_errands',   label: '🐾 Care & Errands' },
 	];
 
 	const rentalCategories = [
-		{ slug: 'tools_equipment',   label: 'Tools' },
-		{ slug: 'outdoor_adventure', label: 'Outdoor' },
-		{ slug: 'party_events',      label: 'Party & Events' },
-		{ slug: 'garden_yard',       label: 'Garden & Yard' },
-		{ slug: 'vehicles',          label: 'Vehicles' },
+		{ slug: 'tools_equipment',   label: '🛠️ Tools' },
+		{ slug: 'outdoor_adventure', label: '🏄 Outdoor' },
+		{ slug: 'party_events',      label: '🎉 Party & Events' },
+		{ slug: 'garden_yard',       label: '🌿 Garden & Yard' },
+		{ slug: 'vehicles',          label: '🚛 Vehicles' },
 	];
 </script>
 
