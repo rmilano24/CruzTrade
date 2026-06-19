@@ -125,7 +125,7 @@ const listings = [
     title: 'Organic garden planting & seasonal maintenance',
     image_url: IMG('1523741543316-beb7fc7023d8'), // vegetable garden
     description: 'I\'ve been gardening in Santa Cruz County for 12 years and know what grows well here. I can help you plan, plant, and maintain a vegetable garden, flower beds, or native plant garden. I use only organic methods — no synthetic pesticides or fertilizers. Available for one-time plantings or ongoing monthly maintenance. Bilingual English/Spanish.',
-    category: 'home_garden',
+    category: 'home_yard',
     price: 6500,
     price_unit: 'per_hour',
     neighborhood: 'Watsonville',
@@ -139,7 +139,7 @@ const listings = [
     title: 'House & apartment deep cleaning',
     image_url: IMG('1585771724684-38269d6639fd'), // cleaning supplies
     description: 'Thorough, reliable house cleaning for homes and apartments in South County. I bring all my own supplies. Deep cleans, move-in/move-out cleans, and regular bi-weekly service available. I\'ve been doing this for 8 years and have great references. Spanish y inglés.',
-    category: 'home_garden',
+    category: 'home_yard',
     price: 12000,
     price_unit: 'flat',
     neighborhood: 'Watsonville',
@@ -153,7 +153,7 @@ const listings = [
     title: 'Spanish ↔ English translation & tutoring',
     image_url: IMG('1434030216411-0b793f4b4173'), // books / studying
     description: 'Native Spanish speaker with professional translation experience. I can translate documents, help with business communications, or teach conversational Spanish. I also teach English to Spanish speakers. All levels welcome. Flexible scheduling including evenings and weekends.',
-    category: 'creative',
+    category: 'lessons',
     price: 4000,
     price_unit: 'per_hour',
     neighborhood: 'Watsonville',
@@ -169,7 +169,7 @@ const listings = [
     title: 'Moving help & hauling — truck included',
     image_url: IMG('1568605114967-8130f3a36994'), // pickup truck
     description: 'I have a full-size pickup truck and can help you move furniture, haul junk to the dump, pick up Craigslist finds, or assist with small moves within Santa Cruz County. I\'m strong, reliable, and on time. Minimum 2-hour booking. Second helper available for an extra $20/hr.',
-    category: 'transport',
+    category: 'care_errands',
     price: 8000,
     price_unit: 'per_hour',
     neighborhood: 'Westside',
@@ -183,7 +183,7 @@ const listings = [
     title: 'Beginner & intermediate guitar lessons',
     image_url: IMG('1525201548942-d8732f6617a0'), // acoustic guitar
     description: 'I\'ve been playing guitar for 20 years and teaching for 8. I can teach acoustic or electric, any genre — folk, rock, blues, fingerpicking. I\'m patient and encouraging, great with kids and adults alike. Lessons at your place or mine on the Westside.',
-    category: 'creative',
+    category: 'lessons',
     price: 5500,
     price_unit: 'per_hour',
     neighborhood: 'Westside',
@@ -197,7 +197,7 @@ const listings = [
     title: '10 ft fiberglass ladder — daily or weekend rental',
     image_url: IMG('1572981779307-38b8cabb2407'), // ladder
     description: 'Werner fiberglass step ladder, 10 feet, 300 lb capacity. Great for cleaning gutters, painting, trimming trees. Well maintained and safe. Pick up on the Westside. Leave a small deposit via Stripe, returned when you bring it back in good shape.',
-    category: 'tools',
+    category: 'tools_equipment',
     price: 1500,
     price_unit: 'per_day',
     neighborhood: 'Westside',
@@ -211,7 +211,7 @@ const listings = [
     title: '6-person camping tent + sleeping pads (weekend bundle)',
     image_url: IMG('1500534314209-a25ddb2bd429'), // camping tent
     description: 'REI Co-op 6-person tent in great condition, plus 4 foam sleeping pads. Perfect for Big Basin, Henry Cowell, or a Steelhead beach weekend. Fits in a sedan. Available most weekends — message to check dates. Deposit held via Stripe.',
-    category: 'transport',
+    category: 'outdoor_adventure',
     price: 4000,
     price_unit: 'per_day',
     neighborhood: 'Westside',
@@ -227,7 +227,7 @@ const listings = [
     title: 'Website setup for small businesses & makers',
     image_url: IMG('1467232004584-a241de8bcf5d'), // laptop / web design
     description: 'I design and build simple, clean websites for Santa Cruz County small businesses, artists, and makers. Squarespace, Wix, or basic WordPress. I can also help with Google Business Profile setup, basic SEO, and connecting online ordering. Flat-rate packages available — message me to discuss your project.',
-    category: 'tech',
+    category: 'tech_creative',
     price: 8000,
     price_unit: 'per_hour',
     neighborhood: 'Downtown',
@@ -241,7 +241,7 @@ const listings = [
     title: 'Social media content creation & strategy',
     image_url: IMG('1611162617213-7d7a39e9b1d7'), // phone / social media
     description: 'Consistent, on-brand social media is hard to keep up with. I can create a month\'s worth of posts, set up a content calendar, or help you define your brand voice. I work with Instagram, Facebook, and TikTok. I understand Santa Cruz\'s community vibe and what resonates locally.',
-    category: 'creative',
+    category: 'tech_creative',
     price: 5000,
     price_unit: 'per_hour',
     neighborhood: 'Downtown',
@@ -255,7 +255,7 @@ const listings = [
     title: 'Cargo e-bike rental — errands, beach, farmers market',
     image_url: IMG('1571333250630-f0230c320b6d'), // cargo e-bike
     description: 'Rad Power Bikes RadWagon cargo e-bike. Perfect for the farmers market, beach runs, or getting around without a car. Can carry 350 lbs including rider + cargo. Helmet included. Pick up near downtown SC. Message to check availability. Daily or half-day rates.',
-    category: 'transport',
+    category: 'outdoor_adventure',
     price: 3000,
     price_unit: 'per_day',
     neighborhood: 'Downtown',
@@ -271,7 +271,7 @@ const listings = [
     title: 'Yard cleanup, debris removal & hauling',
     image_url: IMG('1523741543316-beb7fc7023d8'), // yard / outdoor work
     description: 'Full yard cleanup service — leaf blowing, raking, bagging, and hauling away. Great for seasonal cleanups, storm debris, or getting your yard ready for guests. I bring my own truck and tools. Live Oak and surrounding neighborhoods. Quick turnaround, fair prices.',
-    category: 'home_garden',
+    category: 'home_yard',
     price: 7500,
     price_unit: 'per_hour',
     neighborhood: 'Live Oak',
@@ -285,7 +285,7 @@ const listings = [
     title: 'Tree & shrub pruning',
     image_url: IMG('1562159278-1253a58da141'), // tree / shrub pruning
     description: 'Proper pruning keeps your trees healthy and your yard looking great. I prune fruit trees, ornamental trees, hedges, and large shrubs. I know what cuts promote growth and what damages trees. Cleanup included. Serving Live Oak, Capitola, Soquel, and Aptos.',
-    category: 'home_garden',
+    category: 'home_yard',
     price: 8500,
     price_unit: 'per_hour',
     neighborhood: 'Live Oak',
@@ -299,7 +299,7 @@ const listings = [
     title: 'Gas lawn mower — self-propelled, pick up in Live Oak',
     image_url: IMG('1559827260-dc66d52bef19'), // lawn mower
     description: 'Honda HRX 21-inch self-propelled gas mower. Sharp blade, runs great. Perfect for a one-time mow or if yours is in the shop. Pick up in Live Oak. Gas is on you. Leave it clean and full of gas when you return it.',
-    category: 'home_garden',
+    category: 'garden_yard',
     price: 2500,
     price_unit: 'per_day',
     neighborhood: 'Live Oak',
@@ -313,7 +313,7 @@ const listings = [
     title: 'Cordless drill + bit kit (DeWalt 20V)',
     image_url: IMG('1530124566582-a618bc2615dc'), // cordless drill
     description: 'DeWalt 20V MAX cordless drill/driver with 2 batteries, charger, and a full bit set (drill bits, screwdriver bits, hole saws). Good for furniture assembly, hanging shelves, light construction. Pick up in Live Oak. Half-day rate available — just ask.',
-    category: 'tools',
+    category: 'tools_equipment',
     price: 1200,
     price_unit: 'per_day',
     neighborhood: 'Live Oak',
@@ -357,7 +357,7 @@ const listings = [
     title: 'Watercolor painting classes — beginners welcome',
     image_url: IMG('1541701494587-cb58502866ab'), // watercolor paints
     description: 'Fun, relaxed watercolor painting classes for adults and teens. No experience needed — I start from scratch and meet you where you are. We paint local scenes: the wharf, redwoods, the bay. Classes at my Aptos studio (up to 4 people) or I can come to you for group events.',
-    category: 'creative',
+    category: 'lessons',
     price: 4500,
     price_unit: 'per_hour',
     neighborhood: 'Aptos',
@@ -371,7 +371,7 @@ const listings = [
     title: 'Singer Heavy Duty sewing machine rental',
     image_url: IMG('1558618666-fcd25c85cd64'), // sewing machine
     description: 'Singer Heavy Duty 4452 sewing machine — handles denim, canvas, and multiple layers. Perfect for a weekend project, Halloween costume, or repairs. Comes with the manual and a starter kit of thread and needles. Pick up in Aptos.',
-    category: 'creative',
+    category: 'tools_equipment',
     price: 2000,
     price_unit: 'per_day',
     neighborhood: 'Aptos',
@@ -387,7 +387,7 @@ const listings = [
     title: 'Fence installation & repair',
     image_url: IMG('1499793983690-e29da59ef1c2'), // wood fence
     description: 'Wood or vinyl fence installation, repair, and staining. I\'ve built hundreds of fences in Santa Cruz County over 15 years. I handle everything: post holes, framing, boards, and hardware. Free estimates for jobs over $500. Serving Soquel, Capitola, Live Oak, and Aptos.',
-    category: 'home_garden',
+    category: 'home_yard',
     price: 9000,
     price_unit: 'per_hour',
     neighborhood: 'Soquel',
@@ -401,7 +401,7 @@ const listings = [
     title: 'Furniture assembly & light carpentry',
     image_url: IMG('1528892952291-009c663ce843'), // carpentry / woodworking
     description: 'IKEA, Wayfair, or custom — I assemble furniture fast and correctly. I also do small carpentry projects: shelving, closet organizers, TV mounts, baby gates. I bring all my own tools. Available evenings and weekends. Soquel base but will travel county-wide for larger jobs.',
-    category: 'home_garden',
+    category: 'home_yard',
     price: 5500,
     price_unit: 'per_hour',
     neighborhood: 'Soquel',
@@ -415,7 +415,7 @@ const listings = [
     title: 'Gas pressure washer — 3100 PSI',
     image_url: IMG('1580341289255-5b47c98a59dd'), // pressure washing deck
     description: 'Simpson 3100 PSI gas pressure washer. Excellent for driveways, decks, fences, siding, and patio furniture. Comes with 4 nozzle tips and 25 ft hose. You provide the gas. Pick up in Soquel. Available most weekdays and some weekends — message to check.',
-    category: 'tools',
+    category: 'tools_equipment',
     price: 4500,
     price_unit: 'per_day',
     neighborhood: 'Soquel',
@@ -429,7 +429,7 @@ const listings = [
     title: 'Wet tile saw — Dewalt 10"',
     image_url: IMG('1530124566582-a618bc2615dc'), // power saw / tools
     description: 'DeWalt 10-inch wet tile saw with diamond blade. Cuts ceramic, porcelain, and stone tile cleanly. Includes stand and extra blade. Ideal for bathroom/kitchen tile projects. Pick up in Soquel. Message for multi-day rates.',
-    category: 'tools',
+    category: 'tools_equipment',
     price: 3500,
     price_unit: 'per_day',
     neighborhood: 'Soquel',
@@ -445,7 +445,7 @@ const listings = [
     title: 'Laptop, phone & tablet repair',
     image_url: IMG('1488590528505-98d2b5aba04b'), // laptop on desk
     description: 'I repair Windows PCs, MacBooks, iPhones, and Android devices. Screen replacements, battery swaps, software issues, virus removal, slow computer tune-ups, data recovery. I come to you (Eastside SC and surrounding areas) or you can drop off at my place. Fast turnaround — usually same or next day.',
-    category: 'tech',
+    category: 'tech_creative',
     price: 6000,
     price_unit: 'per_hour',
     neighborhood: 'Eastside',
@@ -459,7 +459,7 @@ const listings = [
     title: 'Home WiFi setup & network troubleshooting',
     image_url: IMG('1517336714731-489689fd1ca8'), // router / wifi setup
     description: 'Bad WiFi signal? Devices not connecting? I set up routers, mesh networks, and smart home devices (Ring, Nest, Hue). I also help with printer setup, smart TV issues, and basic cybersecurity. Flat-rate pricing — no hourly surprises. Serving all of Santa Cruz city and nearby.',
-    category: 'tech',
+    category: 'tech_creative',
     price: 7500,
     price_unit: 'flat',
     neighborhood: 'Eastside',
