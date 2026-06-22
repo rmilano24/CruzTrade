@@ -67,20 +67,20 @@
 		{/if}
 
 		<CarouselSection
-			slug="hire"
-			title="Hire a Neighbor"
-			icon="🤝"
-			listings={hireListings}
-			href="/hire"
-			categories={serviceCategories}
-		/>
-
-		<CarouselSection
 			slug="trade"
 			title="Trade Skills"
 			icon="🔄"
 			listings={tradeListings}
 			href="/trade"
+			categories={serviceCategories}
+		/>
+
+		<CarouselSection
+			slug="hire"
+			title="Hire a Neighbor"
+			icon="🤝"
+			listings={hireListings}
+			href="/hire"
 			categories={serviceCategories}
 		/>
 
