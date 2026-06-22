@@ -28,7 +28,7 @@
 
 <a
 	href="/listings/{listing.id}"
-	class="group flex flex-col bg-bg-card border border-border rounded-lg shadow-card hover:shadow-modal hover:-translate-y-0.5 transition-all duration-150"
+	class="group flex flex-col h-full bg-bg-card border border-border rounded-lg shadow-card hover:shadow-modal hover:-translate-y-0.5 transition-all duration-150"
 >
 	<!-- Image -->
 	{#if listing.image_url}
