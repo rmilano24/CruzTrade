@@ -101,8 +101,8 @@
 		<nav class="hidden md:flex items-center gap-1">
 			{#each [
 				{ label: 'All',   icon: '✦',  href: '/',       active: $page.url.pathname === '/' },
-				{ label: 'Hire',  icon: '🤝', href: '/hire',   active: $page.url.pathname === '/hire' },
 				{ label: 'Trade', icon: '🔄', href: '/trade',  active: $page.url.pathname === '/trade' },
+				{ label: 'Hire',  icon: '🤝', href: '/hire',   active: $page.url.pathname === '/hire' },
 				{ label: 'Rent',  icon: '🔧', href: '/rent',   active: $page.url.pathname === '/rent' },
 			] as cat}
 				<a href={cat.href}
