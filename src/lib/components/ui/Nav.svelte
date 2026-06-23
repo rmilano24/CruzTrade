@@ -213,7 +213,7 @@
 									My bookings
 								</a>
 								<a
-									href="/settings"
+									href="/edit-profile"
 									on:click={closeDropdown}
 									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
 								>
@@ -223,6 +223,7 @@
 										<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
 									</svg>
 									Edit profile
+
 								</a>
 								<a
 									href="/messages"
@@ -245,10 +246,9 @@
 							<div class="border-t border-border"></div>
 
 							<!-- Log out -->
-							<form method="POST" action="/auth/logout" use:enhance>
+							<form method="POST" action="/auth/logout">
 								<button
 									type="submit"
-									on:click={closeDropdown}
 									class="w-full flex items-center gap-3 px-4 py-3 text-sm text-text-muted hover:bg-bg-card transition-colors"
 								>
 									<!-- Exit icon -->

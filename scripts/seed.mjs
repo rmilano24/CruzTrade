@@ -501,7 +501,7 @@ const listings = [
     provider: 'jake.t.seed@cruztrade.com',
     type: 'service',
     title: 'Dog walking & pet sitting — Westside',
-    image_url: IMG('1587300003688-93a500fdf813'), // dog on leash
+    image_url: IMG('1551717743-49959800b1f6'), // dogs on leash
     description: 'Reliable dog walker and pet sitter on the Westside. Daily walks, drop-in visits, or overnight stays at your place. I have two dogs of my own and genuinely love animals. Great with high-energy breeds. Available most mornings and afternoons. Message me to set up a meet-and-greet.',
     category: 'care_errands',
     price: 2500,
@@ -515,7 +515,7 @@ const listings = [
     provider: 'priya.s.seed@cruztrade.com',
     type: 'service',
     title: 'Errand running & grocery shopping',
-    image_url: IMG('1579113800080-6969a704e5c2'), // grocery bags
+    image_url: IMG('1542838132-92c53300491e'), // grocery bags
     description: 'Need groceries, pharmacy pickup, post office runs, or other errands done? I cover all of Santa Cruz city and nearby neighborhoods. I use a reliable car and can handle multiple stops in one trip. Great for busy professionals, seniors, or anyone who just needs a hand. Flat rate per trip.',
     category: 'care_errands',
     price: 3500,
@@ -545,7 +545,7 @@ const listings = [
     provider: 'jake.t.seed@cruztrade.com',
     type: 'tool_rental',
     title: 'Two mountain bikes — trail-ready, Westside pickup',
-    image_url: IMG('1558981403-65a9b6b1b5b8'), // mountain bikes
+    image_url: IMG('1571188654248-7a89213915f7'), // mountain bikes
     description: 'Two 29er hardtail mountain bikes, medium and large frames. Dialed in and ready for Wilder Ranch, Demo Forest, or UCSC trails. Helmets included. Pick up on the Westside. Deposit required via Stripe — returned when bikes come back clean and undamaged.',
     category: 'outdoor_adventure',
     price: 4000,
@@ -635,7 +635,7 @@ const listings = [
     provider: 'jake.t.seed@cruztrade.com',
     type: 'tool_rental',
     title: '5x8 enclosed cargo trailer rental',
-    image_url: IMG('1567808485489-a7c0de6bd625'), // cargo trailer
+    image_url: IMG('1519337265831-281ec6cc8514'), // cargo trailer
     description: 'U-Haul-style 5x8 enclosed cargo trailer — fits a full apartment\'s worth of furniture. Tow hitch required (2-inch ball, available to borrow). Perfect for moving furniture, hauling gear, or a Costco run. I\'ll show you how to hitch it safely. Pick up on the Westside.',
     category: 'vehicles',
     price: 5000,

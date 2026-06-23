@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user } = await locals.safeGetSession();
-	if (!user) redirect(303, '/auth/login?next=/settings');
+	if (!user) redirect(303, '/auth/login?next=/edit-profile');
 	if (!locals.supabase) error(503, 'Database unavailable');
 
 	const { data: profile, error: err } = await locals.supabase
@@ -23,13 +23,15 @@ export const actions: Actions = {
 		if (!user || !locals.supabase) return fail(401, { error: 'Not authenticated' });
 
 		const form = await request.formData();
-		const full_name = (form.get('full_name') as string)?.trim();
+		const first_name = (form.get('first_name') as string)?.trim();
+		const last_name = (form.get('last_name') as string)?.trim();
+		const full_name = [first_name, last_name].filter(Boolean).join(' ');
 		const username = (form.get('username') as string)?.trim().toLowerCase();
 		const bio = (form.get('bio') as string)?.trim() || null;
-		const neighborhood = (form.get('neighborhood') as string) || null;
+		const neighborhood = (form.get('neighborhood') as string)?.trim() || null;
 		const language_preference = (form.get('language_preference') as string) || 'en';
 
-		if (!full_name) return fail(400, { error: 'Full name is required' });
+		if (!full_name) return fail(400, { error: 'First name is required' });
 		if (!username) return fail(400, { error: 'Username is required' });
 		if (!/^[a-z0-9_]+$/.test(username)) {
 			return fail(400, { error: 'Username may only contain letters, numbers, and underscores' });

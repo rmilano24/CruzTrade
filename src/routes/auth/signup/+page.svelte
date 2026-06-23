@@ -22,17 +22,12 @@
 	<title>{m.page_signup_title()} · Cruz Trade</title>
 </svelte:head>
 
-<div class="min-h-screen bg-bg flex items-center justify-center px-4 py-16">
+<div class="min-h-screen bg-bg-card flex items-center justify-center px-4 py-16">
 	<div class="w-full max-w-sm">
-
-		<!-- Logo -->
-		<a href="/" class="block text-center text-xl font-bold text-text-primary mb-8">
-			Cruz Trade
-		</a>
 
 		{#if form?.success}
 			<!-- Success state -->
-			<div class="bg-bg-card border border-border rounded-lg p-8 shadow-card text-center">
+			<div class="bg-bg border border-border rounded-xl p-8 text-center">
 				<div class="w-12 h-12 bg-bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
 					<svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -45,7 +40,7 @@
 			</div>
 		{:else}
 			<!-- Sign up form -->
-			<div class="bg-bg-card border border-border rounded-lg p-8 shadow-card">
+			<div class="bg-bg border border-border rounded-xl p-8">
 				<h1 class="text-lg font-bold text-text-primary mb-1">{m.auth_signup_heading()}</h1>
 				<p class="text-sm text-text-muted mb-6">{m.auth_signup_subheading()}</p>
 
@@ -99,7 +94,7 @@
 							required
 							value={form?.email ?? ''}
 							placeholder="you@example.com"
-							class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
+							class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
 						/>
 					</div>
 
@@ -115,7 +110,7 @@
 								autocomplete="new-password"
 								required
 								placeholder="••••••••"
-								class="w-full bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 pr-10 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
+								class="w-full bg-bg border border-border rounded-md px-3.5 py-2.5 pr-10 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
 							/>
 							<button
 								type="button"

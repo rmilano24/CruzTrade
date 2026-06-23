@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatPrice, categoryLabel, typeLabel } from '$lib/utils/format';
+	import { formatPrice, categoryLabel } from '$lib/utils/format';
 	import { languageTag } from '$lib/paraglide/runtime';
 
 	export let listing: {
@@ -18,95 +18,87 @@
 	};
 
 	$: lang = languageTag() as 'en' | 'es';
+
+	// "Carlos Milano" → "Carlos M."
+	$: displayName = (() => {
+		const name = listing.profiles?.full_name ?? listing.profiles?.username ?? 'Provider';
+		const parts = name.trim().split(' ').filter(Boolean);
+		if (parts.length >= 2) return `${parts[0]} ${parts[1][0]}.`;
+		return parts[0] ?? 'Provider';
+	})();
+
 	$: initials = (listing.profiles?.full_name ?? 'U')
 		.split(' ')
 		.slice(0, 2)
-		.map((w) => w[0])
+		.map((w: string) => w[0])
 		.join('')
 		.toUpperCase();
 </script>
 
 <a
 	href="/listings/{listing.id}"
-	class="group flex flex-col h-full bg-bg-card border border-border rounded-lg shadow-card hover:shadow-modal hover:-translate-y-0.5 transition-all duration-150"
+	class="group flex flex-col h-full bg-bg border border-border rounded-xl shadow-card hover:shadow-modal hover:-translate-y-0.5 transition-all duration-150"
 >
-	<!-- Image -->
-	{#if listing.image_url}
-		<div class="w-full h-40 overflow-hidden rounded-t-lg bg-bg-secondary">
-			<img src={listing.image_url} alt={listing.title}
-				class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-		</div>
-	{/if}
-
-	<!-- Card body -->
-	<div class="p-4 flex flex-col flex-1 gap-3">
-
-		<!-- Badges row -->
-		<div class="flex items-center gap-2 flex-wrap">
-			<span class="bg-bg-secondary text-text-muted text-xs px-2.5 py-1 rounded-full">
-				{categoryLabel(listing.category, lang)}
+	<!-- Image with overlaid badges -->
+	<div class="relative w-full h-44 bg-bg-muted rounded-t-xl overflow-hidden shrink-0">
+		{#if listing.image_url}
+			<img
+				src={listing.image_url}
+				alt={listing.title}
+				class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+			/>
+		{/if}
+		<!-- Category badge -->
+		<span class="absolute top-3 left-3 bg-white text-text-primary text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">
+			{categoryLabel(listing.category, lang)}
+		</span>
+		<!-- Rental badge -->
+		{#if listing.type === 'tool_rental'}
+			<span class="absolute top-3 right-3 bg-text-primary text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+				Rental
 			</span>
-			{#if listing.type === 'tool_rental'}
-				<span class="bg-bg-secondary text-text-muted text-xs px-2.5 py-1 rounded-full">
-					{typeLabel(listing.type, lang)}
-				</span>
-			{/if}
-			{#if listing.language === 'es'}
-				<span class="bg-bg-secondary text-text-muted text-xs px-2.5 py-1 rounded-full">ES</span>
-			{/if}
-		</div>
-
-		<!-- Title + description -->
-		<div class="flex-1">
-			<h3 class="text-base font-semibold text-text-primary group-hover:text-primary transition-colors leading-snug mb-1">
-				{listing.title}
-			</h3>
-			<p class="text-sm text-text-muted line-clamp-2 leading-relaxed">
-				{listing.description}
-			</p>
-		</div>
-
-		<!-- Neighborhood -->
-		{#if listing.neighborhood}
-			<p class="text-xs text-text-muted flex items-center gap-1">
-				<svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-						d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-						d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-				</svg>
-				{listing.neighborhood}
-			</p>
 		{/if}
 	</div>
 
-	<!-- Card footer -->
-	<div class="px-4 pb-4 flex items-center justify-between gap-2 border-t border-border pt-3">
-		<!-- Price + trade badge -->
-		<div class="flex items-center gap-2 flex-wrap">
-			<span class="text-md font-bold text-text-primary">
+	<!-- Content -->
+	<div class="p-4 flex flex-col flex-1 gap-2.5">
+		<!-- Title + Price -->
+		<div class="flex items-start justify-between gap-3">
+			<h3 class="text-sm font-bold text-text-primary leading-snug group-hover:text-primary transition-colors flex-1 min-w-0">
+				{listing.title}
+			</h3>
+			<span class="text-sm font-bold text-text-primary shrink-0 whitespace-nowrap">
 				{formatPrice(listing.price, listing.price_unit)}
 			</span>
-			{#if listing.accepts_trade}
-				<span class="text-xs text-primary font-medium bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">
-					+ Trade
-				</span>
-			{/if}
 		</div>
 
-		<!-- Provider -->
-		<div class="flex items-center gap-1.5 shrink-0">
+		<!-- Provider row -->
+		<div class="flex items-center gap-1.5">
 			{#if listing.profiles?.avatar_url}
-				<img src={listing.profiles.avatar_url} alt={listing.profiles.full_name ?? ''}
-					class="w-6 h-6 rounded-full object-cover" />
+				<img
+					src={listing.profiles.avatar_url}
+					alt=""
+					class="w-5 h-5 rounded-full object-cover shrink-0"
+				/>
 			{:else}
-				<div class="w-6 h-6 rounded-full bg-bg-muted flex items-center justify-center text-xs font-semibold text-text-muted">
+				<div class="w-5 h-5 rounded-full bg-bg-secondary flex items-center justify-center text-[10px] font-semibold text-text-muted shrink-0">
 					{initials}
 				</div>
 			{/if}
-			<span class="text-xs text-text-muted truncate max-w-[80px]">
-				{listing.profiles?.full_name ?? listing.profiles?.username ?? 'Provider'}
+			<span class="text-xs text-text-muted truncate">
+				{displayName}{listing.neighborhood ? ` · ${listing.neighborhood}` : ''}
 			</span>
+		</div>
+
+		<!-- Tags -->
+		<div class="flex items-center gap-2 flex-wrap mt-auto">
+			{#if listing.accepts_trade}
+				<span class="text-xs text-primary font-medium">Accepts Trade</span>
+			{:else if listing.type === 'service'}
+				<span class="text-xs text-text-muted border border-border px-2.5 py-0.5 rounded-full">Service only</span>
+			{:else if listing.type === 'tool_rental'}
+				<span class="text-xs text-text-muted border border-border px-2.5 py-0.5 rounded-full">Requires deposit</span>
+			{/if}
 		</div>
 	</div>
 </a>

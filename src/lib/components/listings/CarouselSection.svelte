@@ -111,7 +111,7 @@
 	<div
 		bind:this={scrollEl}
 		on:scroll={updateState}
-		class="flex items-stretch gap-4 overflow-x-auto no-scrollbar pb-1"
+		class="flex items-stretch gap-4 overflow-x-auto no-scrollbar py-4 -my-4"
 	>
 		{#each displayed as listing (listing.id)}
 			<div class="w-72 shrink-0 flex flex-col">

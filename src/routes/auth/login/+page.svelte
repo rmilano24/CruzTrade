@@ -22,15 +22,10 @@
 	<title>{m.page_login_title()} · Cruz Trade</title>
 </svelte:head>
 
-<div class="min-h-screen bg-bg flex items-center justify-center px-4 py-16">
+<div class="min-h-screen bg-bg-card flex items-center justify-center px-4 py-16">
 	<div class="w-full max-w-sm">
 
-		<!-- Logo -->
-		<a href="/" class="block text-center text-xl font-bold text-text-primary mb-8">
-			Cruz Trade
-		</a>
-
-		<div class="bg-bg-card border border-border rounded-lg p-8 shadow-card">
+		<div class="bg-bg border border-border rounded-xl p-8">
 			<h1 class="text-lg font-bold text-text-primary mb-1">{m.auth_login_heading()}</h1>
 			<p class="text-sm text-text-muted mb-6">{m.auth_login_subheading()}</p>
 
@@ -84,7 +79,7 @@
 						required
 						value={form?.email ?? ''}
 						placeholder="you@example.com"
-						class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
+						class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
 					/>
 				</div>
 
@@ -105,7 +100,7 @@
 							autocomplete="current-password"
 							required
 							placeholder="••••••••"
-							class="w-full bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 pr-10 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
+							class="w-full bg-bg border border-border rounded-md px-3.5 py-2.5 pr-10 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
 						/>
 						<button
 							type="button"

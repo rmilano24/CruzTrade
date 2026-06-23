@@ -3,6 +3,8 @@
 	import { availableLanguageTags, languageTag } from '$lib/paraglide/runtime';
 	import { i18n } from '$lib/i18n';
 	import { page } from '$app/stores';
+
+	$: user = $page.data.user;
 </script>
 
 <footer class="bg-bg border-t border-border">
@@ -31,9 +33,20 @@
 			<div class="flex flex-col gap-3">
 				<p class="text-xs font-semibold text-text-primary uppercase tracking-wider">{m.footer_account()}</p>
 				<nav class="flex flex-col gap-2">
-					<a href="/auth/signup" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_signup()}</a>
-					<a href="/auth/login" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_login()}</a>
-					<a href="/settings" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_settings()}</a>
+					{#if user}
+						<a href="/my-listings" class="text-sm text-text-muted hover:text-text-primary transition-colors">My listings</a>
+						<a href="/my-bookings" class="text-sm text-text-muted hover:text-text-primary transition-colors">My bookings</a>
+						<a href="/messages" class="text-sm text-text-muted hover:text-text-primary transition-colors">Messages</a>
+						<a href="/edit-profile" class="text-sm text-text-muted hover:text-text-primary transition-colors">Edit profile</a>
+						<form method="POST" action="/auth/logout">
+							<button type="submit" class="text-sm text-text-muted hover:text-text-primary transition-colors">
+								Log out
+							</button>
+						</form>
+					{:else}
+						<a href="/auth/signup" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_signup()}</a>
+						<a href="/auth/login" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_login()}</a>
+					{/if}
 				</nav>
 			</div>
 
