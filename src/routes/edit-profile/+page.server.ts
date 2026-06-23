@@ -32,20 +32,35 @@ export const actions: Actions = {
 		const language_preference = (form.get('language_preference') as string) || 'en';
 
 		if (!full_name) return fail(400, { error: 'First name is required' });
-		if (!username) return fail(400, { error: 'Username is required' });
-		if (!/^[a-z0-9_]+$/.test(username)) {
-			return fail(400, { error: 'Username may only contain letters, numbers, and underscores' });
+
+		let resolvedUsername = username;
+
+		if (!resolvedUsername || !/^[a-z0-9_]+$/.test(resolvedUsername)) {
+			// Auto-generate from full_name (same logic as onboarding)
+			const base = full_name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) || 'user';
+			let attempt = base;
+			let suffix = 1;
+			while (suffix < 1000) {
+				const { data: taken } = await locals.supabase
+					.from('profiles')
+					.select('id')
+					.eq('username', attempt)
+					.neq('id', user.id)
+					.maybeSingle();
+				if (!taken) { resolvedUsername = attempt; break; }
+				attempt = `${base}${suffix++}`;
+			}
+			if (!resolvedUsername) return fail(500, { error: 'Could not generate a username. Please try again.' });
+		} else {
+			// Validate uniqueness for manually provided username
+			const { data: existing } = await locals.supabase
+				.from('profiles')
+				.select('id')
+				.eq('username', resolvedUsername)
+				.neq('id', user.id)
+				.single();
+			if (existing) return fail(400, { error: 'That username is already taken' });
 		}
-
-		// Check username uniqueness (excluding self)
-		const { data: existing } = await locals.supabase
-			.from('profiles')
-			.select('id')
-			.eq('username', username)
-			.neq('id', user.id)
-			.single();
-
-		if (existing) return fail(400, { error: 'That username is already taken' });
 
 		// Handle optional avatar upload
 		const avatarFile = form.get('avatar') as File | null;
@@ -77,7 +92,7 @@ export const actions: Actions = {
 		}
 
 		const updates: Record<string, unknown> = {
-			full_name, username, bio, neighborhood, language_preference,
+			full_name, username: resolvedUsername, bio, neighborhood, language_preference,
 			updated_at: new Date().toISOString()
 		};
 		if (avatar_url) updates.avatar_url = avatar_url;
