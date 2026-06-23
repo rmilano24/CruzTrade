@@ -88,7 +88,7 @@
 	$: placeholder = twText + (twCursor ? '|' : ' ');
 </script>
 
-<header class="bg-bg border-b border-border">
+<header class="bg-bg border-b border-border pb-3">
 	<div class="h-16 flex items-center px-6">
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
 
@@ -282,8 +282,8 @@
 
 	<!-- Search bar — homepage + browse pages -->
 	{#if ['/', '/hire', '/trade', '/rent'].includes($page.url.pathname) || $page.url.pathname.startsWith('/browse')}
-		<div class="border-t border-border px-6 py-3">
-			<div class="max-w-content mx-auto">
+		<div class="px-6">
+			<div class="max-w-[640px] mx-auto">
 				<form action={$page.url.pathname} method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
 					{#if $page.url.searchParams.get('type')}
 						<input type="hidden" name="type" value={$page.url.searchParams.get('type')} />
