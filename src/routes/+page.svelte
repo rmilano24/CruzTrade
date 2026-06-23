@@ -45,10 +45,10 @@
 			Now live in Santa Cruz County
 		</div>
 		<h1 class="text-4xl md:text-5xl font-black text-text-primary leading-[1.05] tracking-tight">
-			Trade skills.<br />Rent tools.<br />Build community.
+			Trade skills.<br />Hire a neighbor.<br />Rent tools.
 		</h1>
 		<p class="text-base text-text-muted leading-relaxed max-w-md">
-			Connect with skilled neighbors in Santa Cruz.<br />Hire, trade, or rent — all in one place.
+			Connect with skilled neighbors in Santa Cruz.<br />Trade, hire, or rent — all in one place.
 		</p>
 	</div>
 </section>
