@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
+	saveProfile: async ({ request, locals }) => {
 		const { user } = await locals.safeGetSession();
 		if (!user || !locals.supabase) return fail(401, { error: 'Not authenticated' });
 
@@ -105,5 +105,18 @@ export const actions: Actions = {
 		if (updateErr) return fail(500, { error: updateErr.message });
 
 		return { success: true };
+	},
+
+	sendPasswordReset: async ({ locals, url }) => {
+		const { user } = await locals.safeGetSession();
+		if (!user?.email || !locals.supabase) return fail(401, { error: 'Not authenticated' });
+
+		const { error: resetErr } = await locals.supabase.auth.resetPasswordForEmail(user.email, {
+			redirectTo: `${url.origin}/auth/login`
+		});
+
+		if (resetErr) return fail(500, { error: resetErr.message });
+
+		return { resetSent: true };
 	}
 };
