@@ -48,7 +48,7 @@
 			Trade skills.<br />Rent tools.<br />Build community.
 		</h1>
 		<p class="text-base text-text-muted leading-relaxed max-w-md">
-			Connect with skilled neighbors in Santa Cruz. Hire, trade, or rent — all in one place.
+			Connect with skilled neighbors in Santa Cruz.<br />Hire, trade, or rent — all in one place.
 		</p>
 	</div>
 </section>
