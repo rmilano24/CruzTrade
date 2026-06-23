@@ -48,7 +48,7 @@
 			Trade skills.<br />Hire a neighbor.<br />Rent tools.
 		</h1>
 		<p class="text-base text-text-muted leading-relaxed max-w-md">
-			Connect with skilled neighbors in Santa Cruz.<br />Trade, hire, or rent — all in one place.
+			Connect with skilled neighbors in Santa Cruz County.<br />Trade, hire, or rent — all in one place.
 		</p>
 	</div>
 </section>
@@ -69,7 +69,7 @@
 		<CarouselSection
 			slug="trade"
 			title="Trade Skills"
-			icon="🔄"
+			icon="🤝"
 			listings={tradeListings}
 			href="/trade"
 			categories={serviceCategories}
@@ -78,7 +78,7 @@
 		<CarouselSection
 			slug="hire"
 			title="Hire a Neighbor"
-			icon="🤝"
+			icon="🛠️"
 			listings={hireListings}
 			href="/hire"
 			categories={serviceCategories}
@@ -87,7 +87,7 @@
 		<CarouselSection
 			slug="rent"
 			title="Rent Tools & Gear"
-			icon="🛠️"
+			icon="🪜"
 			listings={rentListings}
 			href="/rent"
 			categories={rentalCategories}

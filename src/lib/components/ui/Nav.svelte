@@ -101,15 +101,15 @@
 		<!-- Category nav -->
 		<nav class="hidden md:flex items-center gap-1">
 			{#each [
-				{ label: 'All',   icon: '✦',  href: '/',       active: $page.url.pathname === '/' },
-				{ label: 'Trade', icon: '🔄', href: '/trade',  active: $page.url.pathname === '/trade' },
-				{ label: 'Hire',  icon: '🤝', href: '/hire',   active: $page.url.pathname === '/hire' },
-				{ label: 'Rent',  icon: '🔧', href: '/rent',   active: $page.url.pathname === '/rent' },
+				{ label: 'All',   icon: '✨',  href: '/',       active: $page.url.pathname === '/' },
+				{ label: 'Trade', icon: '🤝', href: '/trade',  active: $page.url.pathname === '/trade' },
+				{ label: 'Hire',  icon: '🛠️', href: '/hire',   active: $page.url.pathname === '/hire' },
+				{ label: 'Rent',  icon: '🪜', href: '/rent',   active: $page.url.pathname === '/rent' },
 			] as cat}
 				<a href={cat.href}
 					class="relative flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors
 						{cat.active ? 'text-text-primary' : 'text-text-muted hover:text-text-primary hover:bg-bg-secondary'}">
-					<span>{cat.icon}</span>
+					<span class="text-lg leading-none">{cat.icon}</span>
 					<span>{cat.label}</span>
 					{#if cat.active}
 						<span class="absolute bottom-0 left-3 right-3 h-0.5 bg-text-primary rounded-full"></span>

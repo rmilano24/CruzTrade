@@ -4,10 +4,26 @@
 	import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 	import * as m from '$lib/paraglide/messages';
 
+	import { goto } from '$app/navigation';
+	import { onDestroy } from 'svelte';
+
 	export let form: { error?: string; email?: string; success?: boolean } | null = null;
 
 	let loading = false;
 	let showPassword = false;
+	let unsubscribe: (() => void) | null = null;
+
+	// When the confirmation email is sent, listen for the user confirming in
+	// another tab — Supabase broadcasts SIGNED_IN across tabs via storage events.
+	$: if (form?.success) {
+		const supabase = createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
+		const { data } = supabase.auth.onAuthStateChange((event) => {
+			if (event === 'SIGNED_IN') goto('/auth/onboarding');
+		});
+		unsubscribe = data.subscription.unsubscribe;
+	}
+
+	onDestroy(() => unsubscribe?.());
 
 	async function signInWithGoogle() {
 		const supabase = createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
@@ -34,9 +50,10 @@
 					</svg>
 				</div>
 				<h1 class="text-md font-bold text-text-primary mb-2">{m.auth_signup_success_heading()}</h1>
-				<p class="text-sm text-text-muted">
+				<p class="text-sm text-text-muted mb-3">
 					{m.auth_signup_success_body({ email: form.email ?? '' })}
 				</p>
+				<p class="text-xs text-text-muted">This page will redirect automatically once you confirm.</p>
 			</div>
 		{:else}
 			<!-- Sign up form -->
