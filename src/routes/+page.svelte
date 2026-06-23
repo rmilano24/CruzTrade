@@ -38,7 +38,7 @@
 
 <!-- Hero (hidden during search) -->
 {#if !data.filters.q}
-<section class="bg-bg py-14 px-6">
+<section class="bg-bg-card py-14 px-6">
 	<div class="max-w-2xl mx-auto flex flex-col items-center text-center gap-4">
 		<div class="inline-flex items-center gap-2 border border-orange-200 bg-orange-50 text-orange-700 text-sm font-medium px-4 py-1.5 rounded-full">
 			<span class="w-2 h-2 rounded-full bg-primary"></span>
