@@ -65,9 +65,7 @@
 				};
 			}}
 		>
-			<!-- Hidden username so it's preserved without showing the field -->
-			<input type="hidden" name="username" value={profile.username ?? ''} />
-
+	
 			<div class="bg-bg border border-border rounded-2xl p-8 flex flex-col gap-6">
 
 				<!-- Avatar -->
@@ -131,6 +129,27 @@
 							class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
 						/>
 					</div>
+				</div>
+
+				<!-- Username -->
+				<div class="flex flex-col gap-1.5">
+					<label for="username" class="text-sm font-medium text-text-primary">Username</label>
+					<div class="flex items-center border border-border rounded-md overflow-hidden focus-within:border-primary transition-colors bg-bg">
+						<span class="px-3 py-2.5 text-base text-text-muted bg-bg-secondary border-r border-border select-none shrink-0">
+							cruztrade.com/profile/
+						</span>
+						<input
+							id="username"
+							name="username"
+							type="text"
+							autocomplete="off"
+							spellcheck="false"
+							value={profile.username ?? ''}
+							placeholder="yourname"
+							class="flex-1 px-3 py-2.5 text-base text-text-primary bg-bg focus:outline-none"
+						/>
+					</div>
+					<p class="text-xs text-text-muted">Letters, numbers, and underscores only</p>
 				</div>
 
 				<!-- Bio -->
