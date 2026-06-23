@@ -88,7 +88,8 @@
 	$: placeholder = twText + (twCursor ? '|' : ' ');
 </script>
 
-<header class="bg-bg border-b border-border pb-3">
+<header class="bg-bg border-b border-border"
+	class:pb-3={['/', '/hire', '/trade', '/rent'].includes($page.url.pathname) || $page.url.pathname.startsWith('/browse')}>
 	<div class="h-16 flex items-center px-6">
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
 
