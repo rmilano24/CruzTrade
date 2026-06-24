@@ -21,7 +21,7 @@
 	function updateState() {
 		if (!scrollEl) return;
 		atStart = scrollEl.scrollLeft <= 4;
-		atEnd = scrollEl.scrollLeft + scrollEl.clientWidth >= scrollEl.scrollWidth - 4;
+		atEnd = scrollEl.scrollLeft + scrollEl.clientWidth >= scrollEl.scrollWidth - 20;
 	}
 
 	// Reset scroll and arrow state whenever displayed listings change
@@ -111,7 +111,7 @@
 	<div
 		bind:this={scrollEl}
 		on:scroll={updateState}
-		class="flex items-stretch gap-4 overflow-x-auto no-scrollbar py-4 -my-4"
+		class="flex items-stretch gap-4 overflow-x-auto no-scrollbar py-4 -my-4 pl-4 -ml-4"
 	>
 		{#each displayed as listing (listing.id)}
 			<div class="w-72 shrink-0 flex flex-col">
@@ -124,6 +124,9 @@
 				No listings yet in this category — be the first to post!
 			</p>
 		{/if}
+
+		<!-- 16px spacer so the last card's right shadow isn't clipped -->
+		<div class="w-4 shrink-0" aria-hidden="true"></div>
 	</div>
 </section>
 
