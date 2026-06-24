@@ -38,18 +38,13 @@
 
 <!-- Hero (hidden during search) -->
 {#if !data.filters.q}
-<section class="bg-bg-card py-14 px-6">
-	<div class="max-w-2xl mx-auto flex flex-col items-center text-center gap-4">
-		<div class="inline-flex items-center gap-2 border border-orange-200 bg-orange-50 text-orange-700 text-sm font-medium px-4 py-1.5 rounded-full">
-			<span class="w-2 h-2 rounded-full bg-primary"></span>
+<section class="bg-bg-card py-5 px-6">
+	<div class="max-w-content mx-auto flex items-center gap-3">
+		<div class="inline-flex items-center gap-2 border border-orange-200 bg-orange-50 text-orange-700 text-sm font-medium px-3 py-1 rounded-full shrink-0">
+			<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
 			Now live in Santa Cruz County
 		</div>
-		<h1 class="text-4xl md:text-5xl font-black text-text-primary leading-[1.05] tracking-tight">
-			Trade skills.<br />Hire a neighbor.<br />Rent tools.
-		</h1>
-		<p class="text-base text-text-muted leading-relaxed max-w-md">
-			Connect with skilled neighbors in Santa Cruz County.<br />Trade, hire, or rent — all in one place.
-		</p>
+		<p class="text-sm text-text-muted hidden sm:block">Your neighborhood marketplace for skills, tools, and trades.</p>
 	</div>
 </section>
 {/if}
