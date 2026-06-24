@@ -115,11 +115,11 @@
 			] as cat}
 				<a href={cat.href}
 					class="relative flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors
-						{cat.active ? 'text-text-primary' : 'text-text-muted hover:text-text-primary hover:bg-bg-secondary'}">
+						{cat.active ? 'text-primary' : 'text-text-muted hover:text-text-primary hover:bg-bg-secondary'}">
 					<span class="text-lg leading-none">{cat.icon}</span>
 					<span>{cat.label}</span>
 					{#if cat.active}
-						<span class="absolute bottom-0 left-3 right-3 h-0.5 bg-text-primary rounded-full"></span>
+						<span class="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full"></span>
 					{/if}
 				</a>
 			{/each}
