@@ -14,7 +14,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	if (err || !profile) error(404, 'Profile not found');
 
-	return { profile };
+	return {
+		profile,
+		provider: (user.app_metadata?.provider ?? 'email') as string
+	};
 };
 
 export const actions: Actions = {
@@ -107,16 +110,32 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
-	sendPasswordReset: async ({ locals, url }) => {
+	changePassword: async ({ request, locals }) => {
 		const { user } = await locals.safeGetSession();
 		if (!user?.email || !locals.supabase) return fail(401, { error: 'Not authenticated' });
 
-		const { error: resetErr } = await locals.supabase.auth.resetPasswordForEmail(user.email, {
-			redirectTo: `${url.origin}/auth/login`
+		const form = await request.formData();
+		const currentPassword = form.get('current_password') as string;
+		const newPassword = form.get('new_password') as string;
+		const confirmPassword = form.get('confirm_password') as string;
+
+		if (!currentPassword || !newPassword || !confirmPassword)
+			return fail(400, { pwError: 'All password fields are required' });
+		if (newPassword.length < 8)
+			return fail(400, { pwError: 'New password must be at least 8 characters' });
+		if (newPassword !== confirmPassword)
+			return fail(400, { pwError: 'Passwords do not match' });
+
+		// Verify current password by re-authenticating
+		const { error: signInErr } = await locals.supabase.auth.signInWithPassword({
+			email: user.email,
+			password: currentPassword
 		});
+		if (signInErr) return fail(400, { pwError: 'Current password is incorrect' });
 
-		if (resetErr) return fail(500, { error: resetErr.message });
+		const { error: updateErr } = await locals.supabase.auth.updateUser({ password: newPassword });
+		if (updateErr) return fail(500, { pwError: updateErr.message });
 
-		return { resetSent: true };
+		return { pwSuccess: true };
 	}
 };
