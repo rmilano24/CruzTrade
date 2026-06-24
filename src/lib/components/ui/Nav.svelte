@@ -99,9 +99,15 @@
 	});
 
 	$: placeholder = twText + (twCursor ? '|' : ' ');
+
+	let scrolled = false;
+	function onScroll() { scrolled = window.scrollY > 0; }
 </script>
 
-<header class="bg-bg border-b border-border"
+<svelte:window on:scroll={onScroll} />
+
+<header class="bg-bg border-b border-border sticky top-0 z-30 transition-shadow duration-200"
+	class:shadow-modal={scrolled}
 	class:pb-3={['/', '/hire', '/trade', '/rent'].includes($page.url.pathname) || $page.url.pathname.startsWith('/browse')}>
 	<div class="h-16 flex items-center px-6">
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
