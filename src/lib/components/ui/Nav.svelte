@@ -22,18 +22,6 @@
 	function toggleDropdown() { dropdownOpen = !dropdownOpen; }
 	function closeDropdown() { dropdownOpen = false; }
 
-	// Mobile category pill
-	const mobileCats = [
-		{ label: 'All',   icon: '✨', href: '/' },
-		{ label: 'Trade', icon: '🤝', href: '/trade' },
-		{ label: 'Hire',  icon: '🛠️', href: '/hire' },
-		{ label: 'Rent',  icon: '🪜', href: '/rent' },
-	];
-	$: activeMobileCat = mobileCats.find(c =>
-		c.href === '/' ? $page.url.pathname === '/' : $page.url.pathname === c.href || $page.url.pathname.startsWith(c.href + '/')
-	) ?? mobileCats[0];
-	let mobileCatOpen = false;
-	function closeMobileCat() { mobileCatOpen = false; }
 
 	// Typewriter placeholder
 	const twPhrases: Record<string, string[]> = {
@@ -116,39 +104,6 @@
 		<a href="/" class="font-exile text-[24px] text-primary hover:opacity-80 transition-opacity leading-none">
 			Cruz Trade
 		</a>
-
-		<!-- Mobile category pill (below md only) -->
-		<div class="md:hidden relative">
-			{#if mobileCatOpen}
-				<div class="fixed inset-0 z-10" on:click={closeMobileCat} role="none"></div>
-			{/if}
-			<button
-				type="button"
-				on:click={() => mobileCatOpen = !mobileCatOpen}
-				class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-sm font-medium text-text-primary hover:bg-bg-secondary transition-colors"
-			>
-				<span class="text-base leading-none">{activeMobileCat.icon}</span>
-				<span>{activeMobileCat.label}</span>
-				<svg class="w-3 h-3 text-text-muted transition-transform {mobileCatOpen ? 'rotate-180' : ''}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-				</svg>
-			</button>
-			{#if mobileCatOpen}
-				<div class="absolute left-0 top-full mt-2 w-44 bg-bg border border-border rounded-xl shadow-modal z-20 overflow-hidden py-1">
-					{#each mobileCats as cat}
-						<a href={cat.href}
-							on:click={closeMobileCat}
-							class="flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors
-								{activeMobileCat.href === cat.href
-									? 'text-primary font-semibold bg-orange-50'
-									: 'text-text-primary hover:bg-bg-card'}">
-							<span class="text-base leading-none">{cat.icon}</span>
-							{cat.label}
-						</a>
-					{/each}
-				</div>
-			{/if}
-		</div>
 
 		<!-- Category nav -->
 		<nav class="hidden md:flex items-center gap-1">
