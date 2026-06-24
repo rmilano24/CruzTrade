@@ -7,6 +7,7 @@
 	import { i18n } from '$lib/i18n';
 	import Nav from '$lib/components/ui/Nav.svelte';
 	import Footer from '$lib/components/ui/Footer.svelte';
+	import MobileBottomNav from '$lib/components/ui/MobileBottomNav.svelte';
 	import { notifications } from '$lib/stores/notifications';
 	import '../app.css';
 
@@ -76,11 +77,14 @@
 <ParaglideJS {i18n}>
 	<div class="flex flex-col min-h-screen">
 		<Nav />
-		<main class="bg-bg">
+		<main class="bg-bg pb-16 md:pb-0">
 			<slot />
 		</main>
 		{#if !$page.url.pathname.startsWith('/messages')}
 			<Footer />
 		{/if}
 	</div>
+	{#if !$page.url.pathname.startsWith('/auth')}
+		<MobileBottomNav />
+	{/if}
 </ParaglideJS>
