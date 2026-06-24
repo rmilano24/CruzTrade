@@ -9,7 +9,7 @@
 </script>
 
 <nav
-	class="fixed bottom-0 inset-x-0 md:hidden bg-bg border-t-2 border-primary z-40"
+	class="fixed bottom-0 inset-x-0 md:hidden bg-bg border-t border-border z-40"
 	style="padding-bottom: env(safe-area-inset-bottom)"
 >
 	<div class="flex items-end h-16">
@@ -19,7 +19,7 @@
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
 				{isActive('/') ? 'text-primary' : 'text-text-muted'}">
 			{#if isActive('/')}
-				<span class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
+				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">✨</span>
 			<span class="text-[10px] font-medium">All</span>
@@ -30,7 +30,7 @@
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
 				{isActive('/trade') ? 'text-primary' : 'text-text-muted'}">
 			{#if isActive('/trade')}
-				<span class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
+				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🤝</span>
 			<span class="text-[10px] font-medium">Trade</span>
@@ -52,7 +52,7 @@
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
 				{isActive('/hire') ? 'text-primary' : 'text-text-muted'}">
 			{#if isActive('/hire')}
-				<span class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
+				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🛠️</span>
 			<span class="text-[10px] font-medium">Hire</span>
@@ -63,7 +63,7 @@
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
 				{isActive('/rent') ? 'text-primary' : 'text-text-muted'}">
 			{#if isActive('/rent')}
-				<span class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
+				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🪜</span>
 			<span class="text-[10px] font-medium">Rent</span>
