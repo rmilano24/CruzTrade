@@ -36,16 +36,17 @@
 			<span class="text-[10px] font-medium">Trade</span>
 		</a>
 
-		<!-- Post — elevated orange circle -->
-		<a href="/post"
-			class="flex-1 flex flex-col items-center justify-center h-full -mt-5">
-			<div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-modal">
-				<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
-				</svg>
-			</div>
-			<span class="text-[10px] font-medium text-text-muted mt-1">Post</span>
-		</a>
+		<!-- Post — circle floats above the nav bar -->
+		<div class="flex-1 relative flex flex-col items-center justify-end pb-2">
+			<a href="/post" class="absolute -top-7 left-1/2 -translate-x-1/2">
+				<div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-modal">
+					<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
+					</svg>
+				</div>
+			</a>
+			<span class="text-[10px] font-medium text-text-muted">Post</span>
+		</div>
 
 		<!-- Hire -->
 		<a href="/hire"
