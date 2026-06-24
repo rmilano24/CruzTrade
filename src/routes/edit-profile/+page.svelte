@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 
-	export let data: { profile: any; provider: string };
+	export let data: { profile: any; provider: string; email: string };
 	export let form: { error?: string; success?: boolean; pwError?: string; pwSuccess?: boolean } | null = null;
 
 	$: profile = data.profile;
@@ -132,6 +132,18 @@
 							value={lastName}
 							class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
 						/>
+					</div>
+				</div>
+
+				<!-- Email (read-only) -->
+				<div class="flex flex-col gap-1.5">
+					<label class="text-sm font-medium text-text-primary">Email</label>
+					<div class="flex items-center gap-2 bg-bg-secondary border border-border rounded-md px-3.5 py-2.5">
+						<span class="flex-1 text-base text-text-muted">{data.email}</span>
+						<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+							<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+							<path d="M7 11V7a5 5 0 0110 0v4"/>
+						</svg>
 					</div>
 				</div>
 
