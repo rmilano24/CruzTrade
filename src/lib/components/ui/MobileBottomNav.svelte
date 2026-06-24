@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
-	$: pathname = $page.url.pathname;
-
-	function isActive(href: string) {
-		return href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
-	}
+	$: activeAll   = $page.url.pathname === '/';
+	$: activeTrade = $page.url.pathname === '/trade' || $page.url.pathname.startsWith('/trade/');
+	$: activeHire  = $page.url.pathname === '/hire'  || $page.url.pathname.startsWith('/hire/');
+	$: activeRent  = $page.url.pathname === '/rent'  || $page.url.pathname.startsWith('/rent/');
 </script>
 
 <nav
@@ -17,8 +16,8 @@
 		<!-- All -->
 		<a href="/"
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
-				{isActive('/') ? 'text-primary' : 'text-text-muted'}">
-			{#if isActive('/')}
+				{activeAll ? 'text-primary' : 'text-text-muted'}">
+			{#if activeAll}
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">✨</span>
@@ -28,8 +27,8 @@
 		<!-- Trade -->
 		<a href="/trade"
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
-				{isActive('/trade') ? 'text-primary' : 'text-text-muted'}">
-			{#if isActive('/trade')}
+				{activeTrade ? 'text-primary' : 'text-text-muted'}">
+			{#if activeTrade}
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🤝</span>
@@ -51,8 +50,8 @@
 		<!-- Hire -->
 		<a href="/hire"
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
-				{isActive('/hire') ? 'text-primary' : 'text-text-muted'}">
-			{#if isActive('/hire')}
+				{activeHire ? 'text-primary' : 'text-text-muted'}">
+			{#if activeHire}
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🛠️</span>
@@ -62,8 +61,8 @@
 		<!-- Rent -->
 		<a href="/rent"
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
-				{isActive('/rent') ? 'text-primary' : 'text-text-muted'}">
-			{#if isActive('/rent')}
+				{activeRent ? 'text-primary' : 'text-text-muted'}">
+			{#if activeRent}
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🪜</span>
