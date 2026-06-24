@@ -11,7 +11,7 @@
 	class="fixed bottom-0 inset-x-0 md:hidden bg-bg border-t border-border z-40"
 	style="padding-bottom: env(safe-area-inset-bottom)"
 >
-	<div class="flex items-end h-16">
+	<div class="flex items-stretch h-16">
 
 		<!-- All -->
 		<a href="/"
@@ -37,7 +37,7 @@
 
 		<!-- Post — circle floats above the nav bar -->
 		<div class="flex-1 relative flex flex-col items-center justify-end pb-2">
-			<a href="/post" class="absolute -top-7 left-1/2 -translate-x-1/2">
+			<a href="/post" class="absolute -top-5 left-1/2 -translate-x-1/2">
 				<div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-modal">
 					<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
