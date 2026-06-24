@@ -105,8 +105,10 @@
 			Cruz Trade
 		</a>
 
-		<!-- Category nav -->
-		<nav class="hidden md:flex items-center gap-1">
+		<!-- Category nav (hidden on auth pages) -->
+		<nav class="hidden md:flex items-center gap-1"
+			class:invisible={$page.url.pathname.startsWith('/auth')}
+			class:pointer-events-none={$page.url.pathname.startsWith('/auth')}>
 			{#each [
 				{ label: 'All',   icon: '✨',  href: '/',       active: $page.url.pathname === '/' },
 				{ label: 'Trade', icon: '🤝', href: '/trade',  active: $page.url.pathname === '/trade' },
