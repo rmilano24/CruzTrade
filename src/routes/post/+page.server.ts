@@ -40,10 +40,9 @@ export const actions: Actions = {
 		if (!['service', 'tool_rental'].includes(type)) errors.type = 'Please select a listing type';
 		if (!title || title.length < 5) errors.title = 'Title must be at least 5 characters';
 		if (title && title.length > 120) errors.title = 'Title must be under 120 characters';
-		if (!description || description.length < 20) errors.description = 'Description must be at least 20 characters';
-		if (!['home_garden', 'tech', 'tools', 'wellness', 'creative', 'transport'].includes(category)) {
-			errors.category = 'Please select a category';
-		}
+		if (!description) errors.description = 'Please add a description';
+		const validCategories = ['home_yard','tech_creative','lessons','wellness','care_errands','tools_equipment','outdoor_adventure','party_events','garden_yard','vehicles'];
+		if (!validCategories.includes(category)) errors.category = 'Please select a category';
 		const priceNum = parseFloat(priceRaw);
 		if (isNaN(priceNum) || priceNum < 0) errors.price = 'Enter a valid price';
 		if (!['flat', 'per_hour', 'per_day'].includes(price_unit)) errors.price_unit = 'Please select a price unit';
