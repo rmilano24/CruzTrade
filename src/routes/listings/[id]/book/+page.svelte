@@ -51,6 +51,10 @@
 		quantity = parseFloat(val) || 1;
 	}
 
+	function handleDurationChange(e: Event) {
+		quantity = parseFloat((e.currentTarget as HTMLSelectElement).value) || 1;
+	}
+
 	// Get today's date as min value for date picker
 	const today = new Date().toISOString().split('T')[0];
 
@@ -188,7 +192,7 @@
 										id="quantity"
 										name="quantity"
 										value={v.quantity ?? '1'}
-										on:change={(e) => { quantity = parseFloat((e.currentTarget as HTMLSelectElement).value) || 1; }}
+										on:change={handleDurationChange}
 										class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 											{errors.quantity ? 'border-red-400' : 'border-border'}"
 									>
