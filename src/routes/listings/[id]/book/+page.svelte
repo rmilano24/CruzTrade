@@ -24,7 +24,17 @@
 	$: v = form?.values ?? {};
 	$: errors = form?.errors ?? {};
 
+	const rentalDurations = [
+		{ value: '0.5', label: '4 hours (half day)' },
+		{ value: '1',   label: '1 day'              },
+		{ value: '2',   label: '2 days'             },
+		{ value: '3',   label: '3 days'             },
+		{ value: '7',   label: '1 week'             },
+	];
+
 	$: quantity = parseFloat(v.quantity ?? '1') || 1;
+	$: rentalDurationLabel = rentalDurations.find(d => parseFloat(d.value) === quantity)?.label
+		?? `${quantity} day${quantity !== 1 ? 's' : ''}`;
 	$: subtotal = (() => {
 		if (isTrade) return 0;
 		if (listing.price_unit === 'flat') return listing.price;
@@ -171,20 +181,35 @@
 						{#if !isTrade && listing.price_unit !== 'flat'}
 							<div class="flex flex-col gap-1.5">
 								<label for="quantity" class="text-sm font-medium text-text-primary">
-									{isRental ? m.book_days_label() : m.book_hours_label()}
+									{isRental ? 'Duration' : m.book_hours_label()}
 								</label>
-								<input
-									id="quantity"
-									name="quantity"
-									type="number"
-									min="0.5"
-									step={isRental ? '1' : '0.5'}
-									placeholder={isRental ? m.book_days_placeholder() : m.book_hours_placeholder()}
-									value={v.quantity ?? '1'}
-									on:input={handleQuantityInput}
-									class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
-										{errors.quantity ? 'border-red-400' : 'border-border'}"
-								/>
+								{#if isRental}
+									<select
+										id="quantity"
+										name="quantity"
+										value={v.quantity ?? '1'}
+										on:change={(e) => { quantity = parseFloat((e.currentTarget as HTMLSelectElement).value) || 1; }}
+										class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+											{errors.quantity ? 'border-red-400' : 'border-border'}"
+									>
+										{#each rentalDurations as d}
+											<option value={d.value} selected={(v.quantity ?? '1') === d.value}>{d.label}</option>
+										{/each}
+									</select>
+								{:else}
+									<input
+										id="quantity"
+										name="quantity"
+										type="number"
+										min="0.5"
+										step="0.5"
+										placeholder={m.book_hours_placeholder()}
+										value={v.quantity ?? '1'}
+										on:input={handleQuantityInput}
+										class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+											{errors.quantity ? 'border-red-400' : 'border-border'}"
+									/>
+								{/if}
 								{#if errors.quantity}
 									<p class="text-xs text-red-600">{errors.quantity}</p>
 								{/if}
@@ -277,8 +302,8 @@
 							<div class="flex justify-between text-text-muted">
 								<span>
 									{formatPrice(listing.price, 'flat')}
-									× {quantity}
-									{isRental ? 'day' : 'hr'}{quantity !== 1 ? 's' : ''}
+									×
+									{#if isRental}{rentalDurationLabel}{:else}{quantity} hr{quantity !== 1 ? 's' : ''}{/if}
 								</span>
 								<span>{formatPrice(subtotal, 'flat')}</span>
 							</div>
