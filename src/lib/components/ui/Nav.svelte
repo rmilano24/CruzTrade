@@ -270,6 +270,28 @@
 								</button>
 							</form>
 
+							<!-- Mobile-only utility links -->
+							<div class="md:hidden border-t border-border">
+								<nav class="py-1">
+									<a href="/how-it-works" on:click={closeDropdown}
+										class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-bg-card transition-colors">
+										How it works
+									</a>
+									<a href="/about" on:click={closeDropdown}
+										class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-bg-card transition-colors">
+										About
+									</a>
+									<a href="/contact" on:click={closeDropdown}
+										class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-bg-card transition-colors">
+										Contact
+									</a>
+									<a href="/terms" on:click={closeDropdown}
+										class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-bg-card transition-colors">
+										Terms &amp; Privacy
+									</a>
+								</nav>
+							</div>
+
 						</div>
 					{/if}
 				</div>
