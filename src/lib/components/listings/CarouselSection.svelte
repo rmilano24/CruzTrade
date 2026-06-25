@@ -111,7 +111,7 @@
 	<div
 		bind:this={scrollEl}
 		on:scroll={updateState}
-		class="flex items-stretch gap-4 overflow-x-auto no-scrollbar py-4 -my-4 pl-4 -ml-4"
+		class="flex items-stretch gap-4 overflow-x-auto no-scrollbar py-4 -my-4 pl-4 -ml-4 pr-6 -mr-6"
 	>
 		{#each displayed as listing (listing.id)}
 			<div class="w-72 shrink-0 flex flex-col">
@@ -125,8 +125,6 @@
 			</p>
 		{/if}
 
-		<!-- 32px spacer so the last card's right shadow isn't clipped (shadow blur = 24px) -->
-		<div class="w-8 shrink-0" aria-hidden="true"></div>
 	</div>
 </section>
 
