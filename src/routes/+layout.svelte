@@ -83,6 +83,18 @@
 		{#if !$page.url.pathname.startsWith('/messages')}
 			<Footer />
 		{/if}
+		<!-- Logged-out mobile users: slim utility link strip (avatar dropdown not available) -->
+		{#if !data.user && !$page.url.pathname.startsWith('/auth')}
+			<div class="md:hidden bg-bg border-t border-border px-6 py-4 pb-20">
+				<nav class="flex flex-wrap gap-x-5 gap-y-2">
+					<a href="/how-it-works" class="text-sm text-text-muted hover:text-text-primary transition-colors">How it works</a>
+					<a href="/about"        class="text-sm text-text-muted hover:text-text-primary transition-colors">About</a>
+					<a href="/contact"      class="text-sm text-text-muted hover:text-text-primary transition-colors">Contact</a>
+					<a href="/terms"        class="text-sm text-text-muted hover:text-text-primary transition-colors">Terms</a>
+					<a href="/privacy"      class="text-sm text-text-muted hover:text-text-primary transition-colors">Privacy</a>
+				</nav>
+			</div>
+		{/if}
 	</div>
 	{#if !$page.url.pathname.startsWith('/auth')}
 		<MobileBottomNav />
