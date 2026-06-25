@@ -64,7 +64,7 @@ export const actions: Actions = {
 		// Fetch listing + seller stripe account
 		const { data: listing } = await locals.supabase
 			.from('listings')
-			.select('id, type, title, price, price_unit, profiles!user_id(id, stripe_account_id)')
+			.select('id, type, title, price, price_unit, image_url, profiles!user_id(id, stripe_account_id)')
 			.eq('id', params.id)
 			.single();
 
@@ -144,7 +144,8 @@ export const actions: Actions = {
 							name: listing.title as string,
 							description: deposit > 0
 								? `Includes $${(deposit / 100).toFixed(0)} refundable deposit`
-								: undefined
+								: undefined,
+							...(listing.image_url ? { images: [listing.image_url as string] } : {})
 						}
 					}
 				}
