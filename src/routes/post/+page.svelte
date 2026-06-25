@@ -136,7 +136,7 @@
 			<div class="flex flex-col gap-1.5">
 				<label for="category" class="text-sm font-medium text-text-primary">{m.post_category_label()}</label>
 				<select id="category" name="category"
-					class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+					class="bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 						{errors.category ? 'border-red-400' : 'border-border'}">
 					<option value="" disabled selected={!v.category}>{m.post_category_placeholder()}</option>
 					{#each categories as [key, labels]}
@@ -148,7 +148,7 @@
 			<div class="flex flex-col gap-1.5">
 				<label for="language" class="text-sm font-medium text-text-primary">{m.post_language_label()}</label>
 				<select id="language" name="language"
-					class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
+					class="bg-bg-secondary border border-border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
 					<option value="en" selected={!v.language || v.language === 'en'}>{m.post_language_en()}</option>
 					<option value="es" selected={v.language === 'es'}>{m.post_language_es()}</option>
 					<option value="both" selected={v.language === 'both'}>{m.post_language_both()}</option>
@@ -172,7 +172,7 @@
 			<div class="flex flex-col gap-1.5">
 				<label for="price_unit" class="text-sm font-medium text-text-primary">{m.post_price_unit_label()}</label>
 				<select id="price_unit" name="price_unit"
-					class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
+					class="bg-bg-secondary border border-border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
 					<option value="flat" selected={!v.price_unit || v.price_unit === 'flat'}>{m.post_price_unit_flat()}</option>
 					<option value="per_hour" selected={v.price_unit === 'per_hour'}>{m.post_price_unit_hour()}</option>
 					<option value="per_day" selected={v.price_unit === 'per_day'}>{m.post_price_unit_day()}</option>
@@ -184,7 +184,7 @@
 		<div class="flex flex-col gap-1.5">
 			<label for="neighborhood" class="text-sm font-medium text-text-primary">{m.post_neighborhood_label()}</label>
 			<select id="neighborhood" name="neighborhood"
-				class="bg-bg-secondary border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
+				class="bg-bg-secondary border border-border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
 				<option value="">{m.post_neighborhood_placeholder()}</option>
 				{#each data.neighborhoods as hood}
 					<option value={hood} selected={v.neighborhood === hood}>{hood}</option>

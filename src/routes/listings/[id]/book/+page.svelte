@@ -193,7 +193,7 @@
 										name="quantity"
 										value={v.quantity ?? '1'}
 										on:change={handleDurationChange}
-										class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+										class="bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 											{errors.quantity ? 'border-red-400' : 'border-border'}"
 									>
 										{#each rentalDurations as d}
@@ -234,7 +234,7 @@
 						<select
 							id="neighborhood"
 							name="neighborhood"
-							class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+							class="bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 								{errors.neighborhood ? 'border-red-400' : 'border-border'}"
 						>
 							<option value="" disabled selected={!v.neighborhood}>{m.book_neighborhood_placeholder()}</option>
