@@ -87,10 +87,10 @@
 
 	<!-- Category pills -->
 	{#if categories.length > 0}
-		<div class="flex gap-2 flex-wrap mb-5">
+		<div class="flex gap-2 overflow-x-auto no-scrollbar -mx-6 px-6 mb-5 pr-6">
 			<button
 				on:click={() => activeCategory = null}
-				class="text-sm px-3.5 py-1.5 rounded-full border transition-all
+				class="shrink-0 text-sm px-3.5 py-1.5 rounded-full border transition-all
 					{!activeCategory
 						? 'bg-text-primary text-white border-text-primary'
 						: 'bg-bg border-border text-text-muted hover:border-text-muted hover:text-text-primary'}"
@@ -98,7 +98,7 @@
 			{#each categories as cat}
 				<button
 					on:click={() => selectCategory(cat.slug)}
-					class="text-sm px-3.5 py-1.5 rounded-full border transition-all
+					class="shrink-0 text-sm px-3.5 py-1.5 rounded-full border transition-all whitespace-nowrap
 						{activeCategory === cat.slug
 							? 'bg-text-primary text-white border-text-primary'
 							: 'bg-bg border-border text-text-muted hover:border-text-muted hover:text-text-primary'}"
