@@ -188,18 +188,23 @@
 									{isRental ? 'Duration' : m.book_hours_label()}
 								</label>
 								{#if isRental}
-									<select
-										id="quantity"
-										name="quantity"
-										value={v.quantity ?? '1'}
-										on:change={handleDurationChange}
-										class="bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
-											{errors.quantity ? 'border-red-400' : 'border-border'}"
-									>
-										{#each rentalDurations as d}
-											<option value={d.value} selected={(v.quantity ?? '1') === d.value}>{d.label}</option>
-										{/each}
-									</select>
+									<div class="relative">
+										<select
+											id="quantity"
+											name="quantity"
+											value={v.quantity ?? '1'}
+											on:change={handleDurationChange}
+											class="appearance-none w-full bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+												{errors.quantity ? 'border-red-400' : 'border-border'}"
+										>
+											{#each rentalDurations as d}
+												<option value={d.value} selected={(v.quantity ?? '1') === d.value}>{d.label}</option>
+											{/each}
+										</select>
+										<svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+										</svg>
+									</div>
 								{:else}
 									<input
 										id="quantity"
@@ -231,17 +236,22 @@
 						<label for="neighborhood" class="text-sm font-medium text-text-primary">
 							{m.book_neighborhood_label()}
 						</label>
-						<select
-							id="neighborhood"
-							name="neighborhood"
-							class="bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
-								{errors.neighborhood ? 'border-red-400' : 'border-border'}"
-						>
-							<option value="" disabled selected={!v.neighborhood}>{m.book_neighborhood_placeholder()}</option>
-							{#each neighborhoods as hood}
-								<option value={hood} selected={v.neighborhood === hood}>{hood}</option>
-							{/each}
-						</select>
+						<div class="relative">
+							<select
+								id="neighborhood"
+								name="neighborhood"
+								class="appearance-none w-full bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+									{errors.neighborhood ? 'border-red-400' : 'border-border'}"
+							>
+								<option value="" disabled selected={!v.neighborhood}>{m.book_neighborhood_placeholder()}</option>
+								{#each neighborhoods as hood}
+									<option value={hood} selected={v.neighborhood === hood}>{hood}</option>
+								{/each}
+							</select>
+							<svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+							</svg>
+						</div>
 						{#if errors.neighborhood}
 							<p class="text-xs text-red-600">{errors.neighborhood}</p>
 						{/if}
