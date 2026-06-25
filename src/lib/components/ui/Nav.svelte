@@ -221,18 +221,29 @@
 									</svg>
 									My bookings
 								</a>
+								{#if username}
+									<a
+										href="/profile/{username}"
+										on:click={closeDropdown}
+										class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
+									>
+										<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+											<circle cx="12" cy="8" r="4"/>
+											<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+										</svg>
+										View profile
+									</a>
+								{/if}
 								<a
 									href="/edit-profile"
 									on:click={closeDropdown}
 									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
 								>
-									<!-- Person icon -->
 									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-										<circle cx="12" cy="8" r="4"/>
-										<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+										<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+										<path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
 									</svg>
 									Edit profile
-
 								</a>
 								<a
 									href="/messages"
