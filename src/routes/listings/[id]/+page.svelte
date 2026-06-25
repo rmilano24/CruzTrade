@@ -72,7 +72,7 @@
 			<!-- Image carousel (on gray bg, no card) -->
 			{#if allImages.length > 0}
 				<div class="mb-4">
-					<div class="w-full h-80 rounded-xl overflow-hidden bg-bg-secondary">
+					<div class="w-full aspect-[4/3] rounded-xl overflow-hidden bg-bg-secondary">
 						<img src={allImages[activeImageIdx].url} alt={listing.title}
 							class="w-full h-full object-cover" />
 					</div>
