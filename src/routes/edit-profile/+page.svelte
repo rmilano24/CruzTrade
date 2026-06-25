@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { availableLanguageTags, languageTag } from '$lib/paraglide/runtime';
+	import { i18n } from '$lib/i18n';
+	import { page } from '$app/stores';
 
 	export let data: { profile: any; provider: string; email: string };
 	export let form: { error?: string; success?: boolean; pwError?: string; pwSuccess?: boolean } | null = null;
@@ -13,7 +16,8 @@
 	let avatarPreview: string | null = null;
 	let avatarError = '';
 	let bio = data.profile?.bio ?? '';
-	let selectedLang = data.profile?.language_preference ?? 'en';
+	// Keep selectedLang in sync with the actual active Paraglide language (URL-based)
+	$: selectedLang = languageTag();
 
 	$: firstName = (profile?.full_name ?? '').split(' ')[0] ?? '';
 	$: lastName = (profile?.full_name ?? '').split(' ').slice(1).join(' ');
@@ -202,25 +206,20 @@
 				<div class="flex flex-col gap-2">
 					<p class="text-sm font-medium text-text-primary">Preferred language</p>
 					<div class="grid grid-cols-2 gap-3">
-						{#each [{ val: 'en', label: 'English' }, { val: 'es', label: 'Español' }] as opt}
-							<label class="cursor-pointer">
-								<input
-									type="radio"
-									name="language_preference"
-									value={opt.val}
-									checked={selectedLang === opt.val}
-									on:change={() => selectedLang = opt.val}
-									class="sr-only"
-								/>
-								<span class="block text-center py-2.5 rounded-md border-2 text-sm font-medium transition-all
-									{selectedLang === opt.val
+						{#each availableLanguageTags as lang}
+							<a
+								href={i18n.route($page.url.pathname)}
+								hreflang={lang}
+								class="block text-center py-2.5 rounded-md border-2 text-sm font-medium transition-all
+									{selectedLang === lang
 										? 'border-primary text-primary'
 										: 'border-border text-text-muted hover:border-text-muted'}">
-									{opt.label}
-								</span>
-							</label>
+								{lang === 'en' ? 'English' : 'Español'}
+							</a>
 						{/each}
 					</div>
+					<!-- Carries the active language into the save action -->
+					<input type="hidden" name="language_preference" value={selectedLang} />
 				</div>
 
 				<div class="h-px bg-border"></div>
