@@ -22,7 +22,7 @@ export const actions: Actions = {
 			return fail(400, { error: 'Password must be at least 8 characters', email });
 		}
 
-		const { error } = await locals.supabase.auth.signUp({
+		const { data: signUpData, error } = await locals.supabase.auth.signUp({
 			email,
 			password,
 			options: { emailRedirectTo: `${url.origin}/auth/callback` }
@@ -32,6 +32,12 @@ export const actions: Actions = {
 			return fail(400, { error: error.message, email });
 		}
 
+		// Email confirmation disabled — session returned immediately, go straight to onboarding
+		if (signUpData.session) {
+			redirect(303, '/auth/onboarding');
+		}
+
+		// Email confirmation enabled — show "check your email" screen
 		return { success: true, email };
 	},
 
