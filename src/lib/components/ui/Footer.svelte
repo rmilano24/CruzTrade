@@ -110,7 +110,7 @@
 	<div class="border-b border-border bg-bg-card">
 		<div class="max-w-content mx-auto px-6 py-12">
 
-			<h2 class="text-2xl font-bold text-text-primary mb-6">Ideas for your next trade, hire, or rental</h2>
+			<h2 class="font-exile text-3xl text-text-primary mb-6">Ideas for your next trade, hire, or rental</h2>
 
 			<!-- Tabs -->
 			<div class="flex gap-6 border-b border-border mb-8">
