@@ -335,10 +335,8 @@
 			<!-- Sticky footer -->
 			<div class="shrink-0 px-6 py-4 border-t border-border bg-bg rounded-b-xl">
 				<button type="submit" disabled={submitting || !isValid}
-					class="w-full font-semibold px-5 py-3 rounded-md transition-colors text-base
-						{isValid
-							? 'bg-primary text-white hover:bg-primary-hover cursor-pointer'
-							: 'bg-bg-secondary text-text-muted cursor-not-allowed'}">
+					class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md transition-all text-base
+						{isValid ? 'opacity-100 hover:bg-primary-hover cursor-pointer' : 'opacity-30 cursor-not-allowed'}">
 					{submitting ? '…' : m.post_submit()}
 				</button>
 			</div>
