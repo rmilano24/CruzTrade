@@ -107,7 +107,7 @@
 <footer class="hidden md:block bg-bg border-t border-border">
 
 	<!-- Inspiration section -->
-	<div class="border-b border-border">
+	<div class="border-b border-border bg-bg-card">
 		<div class="max-w-content mx-auto px-6 py-12">
 
 			<h2 class="text-2xl font-bold text-text-primary mb-6">Ideas for your next trade, hire, or rental</h2>
