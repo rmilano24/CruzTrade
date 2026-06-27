@@ -18,6 +18,7 @@
 	const categories = Object.entries(CATEGORY_LABELS);
 
 	let submitting = false;
+	let listingType = 'service';
 	let title = '';
 	let description = '';
 	let category = '';
@@ -131,8 +132,8 @@
 					<legend class="text-sm font-medium text-text-primary mb-3">{m.post_type_label()}</legend>
 					<div class="flex flex-col sm:flex-row gap-3">
 						<label class="flex-1 flex items-start gap-3 bg-bg-card border rounded-lg p-4 cursor-pointer transition-colors
-							{v.type === 'service' || !v.type ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-text-muted'}">
-							<input type="radio" name="type" value="service" checked={v.type === 'service' || !v.type}
+							{listingType === 'service' ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-text-muted'}">
+							<input type="radio" name="type" value="service" bind:group={listingType}
 								class="mt-0.5 accent-primary" />
 							<div>
 								<span class="text-sm font-semibold text-text-primary">{m.post_type_service()}</span>
@@ -140,8 +141,8 @@
 							</div>
 						</label>
 						<label class="flex-1 flex items-start gap-3 bg-bg-card border rounded-lg p-4 cursor-pointer transition-colors
-							{v.type === 'tool_rental' ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-text-muted'}">
-							<input type="radio" name="type" value="tool_rental" checked={v.type === 'tool_rental'}
+							{listingType === 'tool_rental' ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-text-muted'}">
+							<input type="radio" name="type" value="tool_rental" bind:group={listingType}
 								class="mt-0.5 accent-primary" />
 							<div>
 								<span class="text-sm font-semibold text-text-primary">{m.post_type_tool()}</span>
@@ -254,7 +255,11 @@
 
 				<!-- Trade toggle -->
 				<div class="flex flex-col gap-3">
-					<label class="flex items-center gap-3 cursor-pointer">
+					<label class="flex items-center justify-between gap-4 bg-bg-card border border-border rounded-lg px-4 py-3.5 cursor-pointer">
+						<div>
+							<p class="text-sm font-semibold text-text-primary">Open to trade / barter</p>
+							<p class="text-xs text-text-muted mt-0.5">Let neighbors propose an exchange instead of cash</p>
+						</div>
 						<div class="relative shrink-0">
 							<input type="checkbox" name="accepts_trade" checked={showTrade} on:change={handleToggle}
 								class="sr-only peer" />
@@ -265,7 +270,6 @@
 								{showTrade ? 'translate-x-5' : 'translate-x-0'}">
 							</div>
 						</div>
-						<span class="text-sm text-text-primary">{m.post_trade_toggle()}</span>
 					</label>
 					{#if showTrade}
 						<div class="flex flex-col gap-1.5 ml-7">
