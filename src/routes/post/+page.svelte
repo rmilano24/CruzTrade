@@ -18,6 +18,18 @@
 	const categories = Object.entries(CATEGORY_LABELS);
 
 	let submitting = false;
+	let title = '';
+	let description = '';
+	let category = '';
+	let price = '';
+
+	$: isValid =
+		title.trim().length >= 5 &&
+		description.trim().length > 0 &&
+		category !== '' &&
+		price !== '' &&
+		!isNaN(parseFloat(price)) &&
+		parseFloat(price) >= 0;
 	type PickedImage = { file: File; preview: string };
 	let pickedImages: PickedImage[] = [];
 	let featuredIndex = 0;
@@ -146,7 +158,7 @@
 					<label for="title" class="text-sm font-medium text-text-primary">{m.post_title_label()}</label>
 					<input
 						id="title" name="title" type="text" maxlength="120"
-						placeholder={m.post_title_placeholder()} value={v.title ?? ''}
+						placeholder={m.post_title_placeholder()} bind:value={title}
 						class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 							{errors.title ? 'border-red-400' : 'border-border'}"
 					/>
@@ -159,9 +171,10 @@
 					<textarea
 						id="description" name="description" rows="4"
 						placeholder={m.post_description_placeholder()}
+						bind:value={description}
 						class="bg-bg-secondary border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors resize-y
 							{errors.description ? 'border-red-400' : 'border-border'}"
-					>{v.description ?? ''}</textarea>
+					></textarea>
 					{#if errors.description}<p class="text-xs text-red-600">{errors.description}</p>{/if}
 				</div>
 
@@ -170,12 +183,12 @@
 					<div class="flex flex-col gap-1.5">
 						<label for="category" class="text-sm font-medium text-text-primary">{m.post_category_label()}</label>
 						<div class="relative">
-							<select id="category" name="category"
+							<select id="category" name="category" bind:value={category}
 								class="appearance-none w-full bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 									{errors.category ? 'border-red-400' : 'border-border'}">
-								<option value="" disabled selected={!v.category}>{m.post_category_placeholder()}</option>
+								<option value="">{m.post_category_placeholder()}</option>
 								{#each categories as [key, labels]}
-									<option value={key} selected={v.category === key}>{labels.en}</option>
+									<option value={key}>{labels.en}</option>
 								{/each}
 							</select>
 							<svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
@@ -203,7 +216,7 @@
 						<div class="relative">
 							<span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-sm">$</span>
 							<input id="price" name="price" type="number" min="0" step="0.01"
-								placeholder={m.post_price_placeholder()} value={v.price ?? ''}
+								placeholder={m.post_price_placeholder()} bind:value={price}
 								class="w-full bg-bg-secondary border rounded-md pl-7 pr-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 									{errors.price ? 'border-red-400' : 'border-border'}" />
 						</div>
