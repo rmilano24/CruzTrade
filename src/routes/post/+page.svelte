@@ -88,6 +88,7 @@
 
 		<!-- Sticky header -->
 		<div class="shrink-0 flex items-center justify-between px-6 py-4 border-b border-border rounded-t-xl">
+			<div class="w-8" />
 			<h2 class="text-base font-bold text-text-primary">Post a listing</h2>
 			<button
 				type="button"
