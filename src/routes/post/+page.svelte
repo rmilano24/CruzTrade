@@ -241,8 +241,16 @@
 				<!-- Trade toggle -->
 				<div class="flex flex-col gap-3">
 					<label class="flex items-center gap-3 cursor-pointer">
-						<input type="checkbox" name="accepts_trade" checked={showTrade} on:change={handleToggle}
-							class="w-4 h-4 accent-primary" />
+						<div class="relative shrink-0">
+							<input type="checkbox" name="accepts_trade" checked={showTrade} on:change={handleToggle}
+								class="sr-only peer" />
+							<div class="w-11 h-6 rounded-full border-2 transition-colors
+								{showTrade ? 'bg-primary border-primary' : 'bg-bg-secondary border-border'}">
+							</div>
+							<div class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform
+								{showTrade ? 'translate-x-5' : 'translate-x-0'}">
+							</div>
+						</div>
 						<span class="text-sm text-text-primary">{m.post_trade_toggle()}</span>
 					</label>
 					{#if showTrade}
