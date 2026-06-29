@@ -11,6 +11,7 @@
 
 	let loading = false;
 	let showPassword = false;
+	let termsAccepted = false;
 	let unsubscribe: (() => void) | null = null;
 
 	// When the confirmation email is sent, listen for the user confirming in
@@ -150,10 +151,24 @@
 						<p class="text-xs text-text-muted">{m.auth_password_hint()}</p>
 					</div>
 
+					<label class="flex items-start gap-2.5 cursor-pointer">
+						<input
+							type="checkbox"
+							name="terms_accepted"
+							bind:checked={termsAccepted}
+							class="mt-0.5 accent-primary shrink-0"
+						/>
+						<span class="text-xs text-text-muted leading-relaxed">
+							I agree to the Cruz Trade
+							<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>.
+							I am 18 or older and a resident of or connected to Santa Cruz County.
+						</span>
+					</label>
+
 					<button
 						type="submit"
-						disabled={loading}
-						class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+						disabled={loading || !termsAccepted}
+						class="w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-30 disabled:cursor-not-allowed mt-2"
 					>
 						{loading ? '…' : m.auth_signup_submit()}
 					</button>

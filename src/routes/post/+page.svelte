@@ -23,6 +23,7 @@
 	let description = '';
 	let category = '';
 	let price = '';
+	let listingTermsAccepted = false;
 
 	$: isValid =
 		title.trim().length >= 5 &&
@@ -30,7 +31,8 @@
 		category !== '' &&
 		price !== '' &&
 		!isNaN(parseFloat(price)) &&
-		parseFloat(price) >= 0;
+		parseFloat(price) >= 0 &&
+		listingTermsAccepted;
 	type PickedImage = { file: File; preview: string };
 	let pickedImages: PickedImage[] = [];
 	let featuredIndex = 0;
@@ -338,9 +340,22 @@
 			</div>
 
 			<!-- Sticky footer -->
-			<div class="shrink-0 px-6 py-4 border-t border-border bg-bg rounded-b-xl">
-				<button type="submit" disabled={submitting}
-					class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-base">
+			<div class="shrink-0 px-6 pt-4 pb-5 border-t border-border bg-bg rounded-b-xl flex flex-col gap-3">
+				<label class="flex items-start gap-2.5 cursor-pointer">
+					<input
+						type="checkbox"
+						name="listing_terms_accepted"
+						bind:checked={listingTermsAccepted}
+						class="mt-0.5 accent-primary shrink-0"
+					/>
+					<span class="text-xs text-text-muted leading-relaxed">
+						I confirm I hold all required licenses, permits, and certifications for the services I'm listing,
+						and I agree to the Cruz Trade
+						<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>.
+					</span>
+				</label>
+				<button type="submit" disabled={submitting || !isValid}
+					class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-base">
 					{submitting ? '…' : m.post_submit()}
 				</button>
 			</div>

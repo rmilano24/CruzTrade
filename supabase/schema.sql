@@ -30,6 +30,8 @@ create table public.profiles (
   language_preference text not null default 'en' check (language_preference in ('en','es')),
   is_verified         boolean not null default false,
   stripe_account_id   text,
+  terms_accepted_at   timestamptz,
+  terms_version       text,
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()
 );

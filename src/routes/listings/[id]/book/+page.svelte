@@ -45,6 +45,7 @@
 	$: total = subtotal + platformFee;
 
 	let submitting = false;
+	let bookingTermsAccepted = false;
 
 	function handleQuantityInput(e: Event) {
 		const val = (e.currentTarget as HTMLInputElement).value;
@@ -272,11 +273,36 @@
 					</div>
 				{/if}
 
+				<!-- T&C checkbox -->
+				<label class="flex items-start gap-2.5 cursor-pointer">
+					<input
+						type="checkbox"
+						name="booking_terms_accepted"
+						bind:checked={bookingTermsAccepted}
+						class="mt-0.5 accent-primary shrink-0"
+					/>
+					<span class="text-xs text-text-muted leading-relaxed">
+						{#if isRental && !isTrade}
+							I accept responsibility for any damage, loss, or theft of this item during the rental period,
+							and I agree to the Cruz Trade
+							<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>.
+						{:else if isTrade}
+							I understand that the fair market value of this trade may constitute taxable income,
+							and I agree to the Cruz Trade
+							<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>.
+						{:else}
+							I agree to the Cruz Trade
+							<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>,
+							including the refund and escrow policy.
+						{/if}
+					</span>
+				</label>
+
 				<!-- Submit -->
 				<button
 					type="submit"
-					disabled={submitting}
-					class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-base"
+					disabled={submitting || !bookingTermsAccepted}
+					class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-base"
 				>
 					{submitting ? m.book_submitting() : isTrade ? m.book_submit_trade() : m.book_submit()}
 				</button>

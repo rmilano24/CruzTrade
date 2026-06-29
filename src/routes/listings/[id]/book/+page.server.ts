@@ -150,6 +150,14 @@ export const actions: Actions = {
 					}
 				}
 			],
+			consent_collection: {
+				terms_of_service: 'required'
+			},
+			custom_text: {
+				terms_of_service_acceptance: {
+					message: `I agree to the Cruz Trade [Terms and Conditions](${origin}/terms).`
+				}
+			},
 			metadata: { transaction_id: transaction.id },
 			success_url: `${origin}/listings/${params.id}/book/confirmation?tx=${transaction.id}`,
 			cancel_url: `${origin}/listings/${params.id}/book?cancelled=1`
