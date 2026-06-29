@@ -363,7 +363,7 @@
 				</button>
 			</div>
 
-			<TermsModal bind:open={showTermsModal} />
+			<TermsModal bind:open={showTermsModal} on:accept={() => listingTermsAccepted = true} />
 
 		</form>
 	</div>

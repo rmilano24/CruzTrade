@@ -168,7 +168,7 @@
 						</span>
 					</label>
 
-					<TermsModal bind:open={showTermsModal} />
+					<TermsModal bind:open={showTermsModal} on:accept={() => termsAccepted = true} />
 
 					<button
 						type="submit"

@@ -303,7 +303,7 @@
 					</span>
 				</label>
 
-				<TermsModal bind:open={showTermsModal} />
+				<TermsModal bind:open={showTermsModal} on:accept={() => bookingTermsAccepted = true} />
 
 				<!-- Submit -->
 				<button

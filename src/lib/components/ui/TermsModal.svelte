@@ -1,6 +1,31 @@
 <script lang="ts">
+	import { createEventDispatcher, tick } from 'svelte';
+
 	export let open = false;
+
+	const dispatch = createEventDispatcher<{ accept: void }>();
+
+	let scrollContainer: HTMLElement;
+	let scrolledToBottom = false;
+
 	function close() { open = false; }
+
+	function accept() {
+		dispatch('accept');
+		open = false;
+	}
+
+	function checkScrollBottom() {
+		if (!scrollContainer) return;
+		const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+		scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 24;
+	}
+
+	// Reset state each time modal opens, then check if content fits without scrolling
+	$: if (open) {
+		scrolledToBottom = false;
+		tick().then(() => checkScrollBottom());
+	}
 </script>
 
 {#if open}
@@ -38,7 +63,11 @@
 		</div>
 
 		<!-- Scrollable body -->
-		<div class="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6 text-sm text-text-muted leading-relaxed">
+		<div
+			class="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6 text-sm text-text-muted leading-relaxed"
+			bind:this={scrollContainer}
+			on:scroll={checkScrollBottom}
+		>
 
 			<div>
 				<p class="text-xs text-text-muted mb-1">Effective Date: July 1, 2026</p>
@@ -230,11 +259,18 @@
 		<div class="shrink-0 px-6 py-4 border-t border-border bg-bg rounded-b-xl">
 			<button
 				type="button"
-				on:click={close}
-				class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md hover:bg-primary-hover transition-colors text-base"
+				on:click={accept}
+				disabled={!scrolledToBottom}
+				class="w-full bg-primary text-white font-semibold px-5 py-3 rounded-md transition-all text-base
+					{scrolledToBottom
+						? 'opacity-100 hover:bg-primary-hover cursor-pointer'
+						: 'opacity-50 cursor-not-allowed'}"
 			>
-				Close
+				Accept Terms and Conditions
 			</button>
+			{#if !scrolledToBottom}
+				<p class="text-center text-xs text-text-muted mt-2">Scroll to the bottom to accept</p>
+			{/if}
 		</div>
 
 	</div>
