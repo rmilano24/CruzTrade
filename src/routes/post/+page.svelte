@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { CATEGORY_LABELS } from '$lib/utils/format';
 	import * as m from '$lib/paraglide/messages';
+	import TermsModal from '$lib/components/ui/TermsModal.svelte';
 
 	export let data: { neighborhoods: readonly string[] };
 	export let form: {
@@ -24,6 +25,7 @@
 	let category = '';
 	let price = '';
 	let listingTermsAccepted = false;
+	let showTermsModal = false;
 
 	$: isValid =
 		title.trim().length >= 5 &&
@@ -351,7 +353,8 @@
 					<span class="text-xs text-text-muted leading-relaxed">
 						I confirm I hold all required licenses, permits, and certifications for the services I'm listing,
 						and I agree to the Cruz Trade
-						<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>.
+						<button type="button" on:click|stopPropagation={() => showTermsModal = true}
+							class="text-primary hover:underline font-medium">Terms and Conditions</button>.
 					</span>
 				</label>
 				<button type="submit" disabled={submitting || !isValid}
@@ -359,6 +362,8 @@
 					{submitting ? '…' : m.post_submit()}
 				</button>
 			</div>
+
+			<TermsModal bind:open={showTermsModal} />
 
 		</form>
 	</div>

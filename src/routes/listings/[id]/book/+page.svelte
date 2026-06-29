@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import { formatPrice } from '$lib/utils/format';
 	import * as m from '$lib/paraglide/messages';
+	import TermsModal from '$lib/components/ui/TermsModal.svelte';
 
 	export let data: {
 		listing: any;
@@ -46,6 +47,7 @@
 
 	let submitting = false;
 	let bookingTermsAccepted = false;
+	let showTermsModal = false;
 
 	function handleQuantityInput(e: Event) {
 		const val = (e.currentTarget as HTMLInputElement).value;
@@ -285,18 +287,23 @@
 						{#if isRental && !isTrade}
 							I accept responsibility for any damage, loss, or theft of this item during the rental period,
 							and I agree to the Cruz Trade
-							<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>.
+							<button type="button" on:click|stopPropagation={() => showTermsModal = true}
+								class="text-primary hover:underline font-medium">Terms and Conditions</button>.
 						{:else if isTrade}
 							I understand that the fair market value of this trade may constitute taxable income,
 							and I agree to the Cruz Trade
-							<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>.
+							<button type="button" on:click|stopPropagation={() => showTermsModal = true}
+								class="text-primary hover:underline font-medium">Terms and Conditions</button>.
 						{:else}
 							I agree to the Cruz Trade
-							<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>,
+							<button type="button" on:click|stopPropagation={() => showTermsModal = true}
+								class="text-primary hover:underline font-medium">Terms and Conditions</button>,
 							including the refund and escrow policy.
 						{/if}
 					</span>
 				</label>
+
+				<TermsModal bind:open={showTermsModal} />
 
 				<!-- Submit -->
 				<button

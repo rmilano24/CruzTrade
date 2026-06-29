@@ -6,12 +6,14 @@
 
 	import { goto } from '$app/navigation';
 	import { onDestroy } from 'svelte';
+	import TermsModal from '$lib/components/ui/TermsModal.svelte';
 
 	export let form: { error?: string; email?: string; success?: boolean } | null = null;
 
 	let loading = false;
 	let showPassword = false;
 	let termsAccepted = false;
+	let showTermsModal = false;
 	let unsubscribe: (() => void) | null = null;
 
 	// When the confirmation email is sent, listen for the user confirming in
@@ -160,10 +162,13 @@
 						/>
 						<span class="text-xs text-text-muted leading-relaxed">
 							I agree to the Cruz Trade
-							<a href="/terms" target="_blank" class="text-primary hover:underline">Terms and Conditions</a>.
+							<button type="button" on:click|stopPropagation={() => showTermsModal = true}
+								class="text-primary hover:underline font-medium">Terms and Conditions</button>.
 							I am 18 or older and a resident of or connected to Santa Cruz County.
 						</span>
 					</label>
+
+					<TermsModal bind:open={showTermsModal} />
 
 					<button
 						type="submit"
