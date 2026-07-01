@@ -25,10 +25,8 @@
 
 	// Typewriter placeholder
 	const twPhrases: Record<string, string[]> = {
-		'/':      ['Find a handyman…', 'Book a music lesson…', 'Rent a pressure washer…', 'Trade skills with a neighbor…', 'Hire an electrician…', 'Find a dog walker…'],
-		'/hire':  ['Hire a plumber…', 'Find a music teacher…', 'Book an electrician…', 'Hire a dog walker…', 'Find a photographer…', 'Hire a handyman…', 'Book a yoga instructor…'],
-		'/trade': ['Trade a guitar lesson for web design…', 'Swap painting for plumbing…', 'Trade Spanish lessons for cooking…', 'Offer what you know, get what you need…', 'Trade photography for carpentry…'],
-		'/rent':  ['Rent a pressure washer…', 'Borrow a bounce house…', 'Find a trailer for the weekend…', 'Rent a ladder…', 'Borrow a standing desk…', 'Rent a tile saw…'],
+		'/':       ['Find a handyman…', 'Book a music lesson…', 'Rent a pressure washer…', 'Trade skills with a neighbor…', 'Hire an electrician…', 'Find a dog walker…'],
+		'/browse': ['Find a handyman…', 'Book a music lesson…', 'Rent a pressure washer…', 'Trade skills with a neighbor…', 'Hire an electrician…', 'Find a dog walker…'],
 	};
 
 	const TYPE_MS = 70;
@@ -90,13 +88,25 @@
 
 	let scrolled = false;
 	function onScroll() { scrolled = window.scrollY > 0; }
+
+	$: navItems = (() => {
+		const isBrowse = $page.url.pathname === '/browse';
+		const bType = $page.url.searchParams.get('type');
+		const bTrade = $page.url.searchParams.get('accepts_trade');
+		return [
+			{ label: 'All',   icon: '✨',  href: '/browse',                    active: isBrowse && !bType && bTrade !== 'true' },
+			{ label: 'Trade', icon: '🤝', href: '/browse?accepts_trade=true', active: isBrowse && bTrade === 'true' },
+			{ label: 'Hire',  icon: '🛠️', href: '/browse?type=service',       active: isBrowse && bType === 'service' },
+			{ label: 'Rent',  icon: '🪜', href: '/browse?type=tool_rental',   active: isBrowse && bType === 'tool_rental' },
+		];
+	})();
 </script>
 
 <svelte:window on:scroll={onScroll} />
 
 <header class="bg-bg border-b border-border sticky top-0 z-30 transition-shadow duration-200"
 	class:shadow-modal={scrolled}
-	class:pb-3={['/', '/hire', '/trade', '/rent'].includes($page.url.pathname) || $page.url.pathname.startsWith('/browse')}>
+	class:pb-3={$page.url.pathname === '/' || $page.url.pathname.startsWith('/browse')}>
 	<div class="h-16 flex items-center px-6">
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
 
@@ -109,12 +119,7 @@
 		<nav class="hidden md:flex items-center gap-1"
 			class:invisible={$page.url.pathname.startsWith('/auth')}
 			class:pointer-events-none={$page.url.pathname.startsWith('/auth')}>
-			{#each [
-				{ label: 'All',   icon: '✨',  href: '/',       active: $page.url.pathname === '/' },
-				{ label: 'Trade', icon: '🤝', href: '/trade',  active: $page.url.pathname === '/trade' },
-				{ label: 'Hire',  icon: '🛠️', href: '/hire',   active: $page.url.pathname === '/hire' },
-				{ label: 'Rent',  icon: '🪜', href: '/rent',   active: $page.url.pathname === '/rent' },
-			] as cat}
+			{#each navItems as cat}
 				<a href={cat.href}
 					class="relative flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors
 						{cat.active ? 'text-primary' : 'text-text-muted hover:text-text-primary hover:bg-bg-secondary'}">
@@ -324,10 +329,10 @@
 	</div>
 
 	<!-- Search bar — homepage + browse pages -->
-	{#if ['/', '/hire', '/trade', '/rent'].includes($page.url.pathname) || $page.url.pathname.startsWith('/browse')}
+	{#if $page.url.pathname === '/' || $page.url.pathname.startsWith('/browse')}
 		<div class="px-6">
 			<div class="max-w-[640px] mx-auto">
-				<form action={$page.url.pathname} method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
+				<form action="/browse" method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
 					{#if $page.url.searchParams.get('type')}
 						<input type="hidden" name="type" value={$page.url.searchParams.get('type')} />
 					{/if}

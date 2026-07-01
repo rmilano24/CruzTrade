@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cruz Trade — Route & Flow Map</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: #f5f5f5;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 17px;
+      font-weight: 700;
+      color: #f97316;
+      letter-spacing: -0.3px;
+    }
+
+    .title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #666;
+      margin-left: auto;
+    }
+
+    .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 14px 32px;
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      align-items: center;
+    }
+
+    .legend-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 4px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #444;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1.5px solid;
+    }
+
+    .swatch-public    { background: #f0fdf4; border-color: #16a34a; }
+    .swatch-auth      { background: #dbeafe; border-color: #2563eb; }
+    .swatch-protected { background: #fef9c3; border-color: #d97706; }
+    .swatch-external  { background: #fdf4ff; border-color: #9333ea; }
+    .swatch-modal     { background: #f8fafc; border-color: #94a3b8; }
+    .swatch-gate      { background: #fee2e2; border-color: #dc2626; }
+
+    .diagram-wrapper {
+      padding: 40px 32px;
+      overflow-x: auto;
+    }
+
+    .mermaid {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 11px;
+      color: #999;
+      border-top: 1px solid #e0e0e0;
+      background: #fff;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">Cruz Trade</span>
+  <span class="title">Route &amp; User Flow Map</span>
+  <span class="subtitle">SvelteKit · Supabase · Stripe · June 2026</span>
+</header>
+
+<div class="legend">
+  <span class="legend-label">Key</span>
+  <div class="legend-item"><div class="swatch swatch-public"></div> Public route</div>
+  <div class="legend-item"><div class="swatch swatch-auth"></div> Auth route</div>
+  <div class="legend-item"><div class="swatch swatch-protected"></div> Protected (login required)</div>
+  <div class="legend-item"><div class="swatch swatch-external"></div> External service</div>
+  <div class="legend-item"><div class="swatch swatch-modal"></div> In-page modal</div>
+  <div class="legend-item"><div class="swatch swatch-gate"></div> Auth decision gate</div>
+</div>
+
+<div class="diagram-wrapper">
+  <div class="mermaid">
+flowchart TD
+  classDef pub      fill:#f0fdf4,stroke:#16a34a,color:#166534
+  classDef auth     fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+  classDef prot     fill:#fef9c3,stroke:#d97706,color:#713f12
+  classDef ext      fill:#fdf4ff,stroke:#9333ea,color:#4c1d95
+  classDef modal    fill:#f8fafc,stroke:#94a3b8,color:#334155
+  classDef gate     fill:#fee2e2,stroke:#dc2626,color:#991b1b
+
+  VISITOR([👤 Visitor]) --> HOME
+
+  %% ── PUBLIC ──────────────────────────────────────────────────
+  subgraph PUB ["🌐 Public Routes"]
+    HOME["/ · Landing"]:::pub
+    BROWSE["/browse · All Listings"]:::pub
+    HIRE["/hire · Services"]:::pub
+    RENT["/rent · Tool Rentals"]:::pub
+    TRADE["/trade · Open to Trade"]:::pub
+    LISTING["/listings/[id] · Detail"]:::pub
+    PROFILE["/profile/[username]"]:::pub
+    STATIC["/about · /how-it-works\n/contact · /terms\n/privacy · /changelog"]:::pub
+  end
+
+  %% ── AUTH ─────────────────────────────────────────────────────
+  subgraph AUTHZONE ["🔐 Auth Routes"]
+    SIGNUP["/auth/signup"]:::auth
+    EMAIL_SENT["📧 Check email\n(success state)"]:::auth
+    LOGIN["/auth/login"]:::auth
+    FORGOT["/auth/forgot-password"]:::auth
+    RESET["/auth/reset-password"]:::auth
+    CALLBACK["/auth/callback\nOAuth + email handler"]:::auth
+    ONBOARD["/auth/onboarding\nStep 1 · Profile\nStep 2 · Neighborhood\nStep 3 · Intent"]:::auth
+    LOGOUT["/auth/logout"]:::auth
+  end
+
+  %% ── PROTECTED ────────────────────────────────────────────────
+  subgraph PROTZONE ["🔒 Protected Routes"]
+    DASH["/dashboard · Hub"]:::prot
+    POST["/post · modal overlay"]:::prot
+    BOOK["/listings/[id]/book"]:::prot
+    BOOKCONF["/listings/[id]/book/confirmation"]:::prot
+    EDITL["/listings/[id]/edit"]:::prot
+    MSGS["/messages · Inbox + Thread"]:::prot
+    MYBOOK["/my-bookings"]:::prot
+    MYBID["/my-bookings/[id]"]:::prot
+    MYLIST["/my-listings"]:::prot
+    REVIEW["/reviews/[tx_id]"]:::prot
+    EDITPROF["/edit-profile"]:::prot
+  end
+
+  %% ── EXTERNAL ─────────────────────────────────────────────────
+  STRIPE[["☁ Stripe Checkout"]]:::ext
+  REALTIME(["⚡ Supabase Realtime"]):::ext
+
+  %% ── MODALS ───────────────────────────────────────────────────
+  TERMS{{"📄 Terms Modal\nscroll-to-accept"}}:::modal
+  DEL{{"🗑 Delete Confirm"}}:::modal
+
+  %% ── AUTH GATE ────────────────────────────────────────────────
+  GATE{"Logged in?"}:::gate
+
+  %% ════════════════════════════════════════════════════════════
+  %% FLOWS
+  %% ════════════════════════════════════════════════════════════
+
+  %% Landing
+  HOME --> BROWSE
+  HOME --> HIRE
+  HOME --> RENT
+  HOME --> TRADE
+  HOME -->|"Logged out CTA"| SIGNUP
+  HOME -->|"Logged in CTA"| DASH
+  HOME -.->|"Footer / Nav"| STATIC
+
+  %% Discovery
+  BROWSE --> LISTING
+  HIRE --> LISTING
+  RENT --> LISTING
+  TRADE --> LISTING
+  LISTING --> PROFILE
+
+  %% Listing Detail auth gate
+  LISTING --> GATE
+  GATE -->|"No — redirect"| LOGIN
+  GATE -->|"Yes → Hire / Book"| BOOK
+  GATE -->|"Yes → Propose Trade"| BOOK
+  GATE -->|"Yes → Message"| MSGS
+  GATE -->|"Owner → Edit"| EDITL
+  GATE -->|"Owner → Delete"| DEL
+  DEL -->|"Confirmed"| PROFILE
+
+  %% Sign Up
+  SIGNUP -->|"Email · confirm ON"| EMAIL_SENT
+  EMAIL_SENT -->|"Clicks email link"| CALLBACK
+  SIGNUP -->|"Email · confirm OFF"| ONBOARD
+  SIGNUP -->|"Google OAuth"| CALLBACK
+  SIGNUP -->|"Opens"| TERMS
+  TERMS -->|"Scrolled + Accepted"| SIGNUP
+  SIGNUP -->|"Have account?"| LOGIN
+
+  %% Login
+  LOGIN -->|"Success"| HOME
+  LOGIN -->|"?next=/listings/.../book"| BOOK
+  LOGIN -->|"?next=/post"| POST
+  LOGIN -->|"?next=/messages"| MSGS
+  LOGIN -->|"Google OAuth"| CALLBACK
+  LOGIN --> FORGOT
+
+  %% Callback
+  CALLBACK -->|"New Google user"| ONBOARD
+  CALLBACK -->|"Existing user"| HOME
+  CALLBACK -->|"?next= redirect"| BOOK
+
+  %% Onboarding
+  ONBOARD -->|"All 3 steps complete"| DASH
+
+  %% Password reset
+  FORGOT -->|"Email sent"| RESET
+  RESET -->|"Updated"| HOME
+
+  %% Logout
+  LOGOUT --> HOME
+
+  %% Post listing
+  DASH --> POST
+  MYLIST --> POST
+  POST -->|"Opens"| TERMS
+  TERMS -->|"Scrolled + Accepted"| POST
+  POST -->|"Published"| LISTING
+
+  %% Booking
+  BOOK -->|"Opens"| TERMS
+  TERMS -->|"Scrolled + Accepted"| BOOK
+  BOOK -->|"Trade mode"| BOOKCONF
+  BOOK -->|"Pay mode"| STRIPE
+  STRIPE -->|"Success"| BOOKCONF
+  STRIPE -->|"Cancelled"| BOOK
+  BOOKCONF -->|"Message provider"| MSGS
+  BOOKCONF -->|"Keep browsing"| BROWSE
+
+  %% Edit listing
+  MYLIST --> EDITL
+  EDITL -->|"Saved"| LISTING
+
+  %% Messages & Realtime
+  MSGS <-->|"Live subscription"| REALTIME
+  MSGS -->|"Buyer: Mark Complete"| REVIEW
+  MSGS -->|"Cancel booking"| MYBOOK
+
+  %% My Bookings
+  DASH --> MYBOOK
+  MYBOOK --> MYBID
+  MYBID -->|"Seller: Confirm"| MYBID
+  MYBID -->|"Buyer: Mark Complete"| REVIEW
+  MYBID -->|"Cancel"| MYBOOK
+
+  %% Review
+  REVIEW -->|"Submitted"| MSGS
+
+  %% Dashboard hub
+  DASH --> MSGS
+  DASH --> MYLIST
+
+  %% Profiles
+  PROFILE -->|"Own profile"| EDITPROF
+  PROFILE -->|"Other user"| MSGS
+  EDITPROF -->|"Saved"| PROFILE
+  </div>
+</div>
+
+<footer>
+  Cruz Trade · Route &amp; Flow Map · Generated June 2026 · SvelteKit + Supabase + Stripe
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#f97316',
+      primaryTextColor: '#111111',
+      primaryBorderColor: '#e0e0e0',
+      lineColor: '#999999',
+      secondaryColor: '#f5f5f5',
+      tertiaryColor: '#ffffff',
+      fontFamily: '-apple-system, BlinkMacSystemFont, Inter, sans-serif',
+      fontSize: '13px',
+      edgeLabelBackground: '#ffffff',
+    },
+    flowchart: {
+      rankSpacing: 60,
+      nodeSpacing: 40,
+      curve: 'basis',
+      padding: 20,
+    }
+  });
+</script>
+
+</body>
+</html>

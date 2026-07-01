@@ -8,15 +8,48 @@
 		listings: any[];
 		filters: { type: string | null; category: string | null; neighborhood: string | null; q: string | null; acceptsTrade: boolean | null };
 		neighborhoods: readonly string[];
+		totalCount: number;
+		filteredCount: number;
+		currentPage: number;
+		totalPages: number;
+		categoryCounts: Record<string, number>;
 	};
 
-	$: ({ listings, filters, neighborhoods } = data);
-	$: hasFilters = !!(filters.type || filters.category || filters.neighborhood || filters.q || filters.acceptsTrade);
+	$: ({ listings, filters, neighborhoods, totalCount, filteredCount, currentPage, totalPages, categoryCounts } = data);
+	// Trade toggle: ON by default (show all). OFF = cash only (accepts_trade=false).
+	$: isTradeOn = $page.url.searchParams.get('accepts_trade') !== 'false';
+	// Show on All and Hire tabs — not Trade (already filtered) or Rent (cash-only by design)
+	$: showTradeSwitch = $page.url.searchParams.get('accepts_trade') !== 'true'
+		&& $page.url.searchParams.get('type') !== 'tool_rental';
+	$: tradeToggleHref = filterUrl('accepts_trade', isTradeOn ? 'false' : null);
+	$: hasFilters = !!(filters.category || filters.neighborhood || filters.q || filters.acceptsTrade === false);
+	// Clear page-level filters but keep the nav tab (type)
+	$: clearFiltersUrl = (() => {
+		const bType = $page.url.searchParams.get('type');
+		return bType ? `/browse?type=${bType}` : '/browse';
+	})();
+
+	// Nav-level params (type, accepts_trade) come from $page.url — they update
+	// synchronously when a nav tab is clicked, so category chips always stay
+	// within the current tab's scope even if server data hasn't loaded yet.
+	// Page-level params (category, neighborhood, q) come from server `filters`
+	// so they stay consistent with the displayed chip counts.
 	function filterUrl(key: string, value: string | null): string {
-		const p = new URLSearchParams($page.url.searchParams);
-		if (value) p.set(key, value);
-		else p.delete(key);
-		const qs = p.toString();
+		const params: Record<string, string> = {};
+		const bType = $page.url.searchParams.get('type');
+		const bTrade = $page.url.searchParams.get('accepts_trade');
+		if (bType) params['type'] = bType;
+		if (bTrade) params['accepts_trade'] = bTrade;
+		if (filters.category) params['category'] = filters.category;
+		if (filters.neighborhood) params['neighborhood'] = filters.neighborhood;
+		if (filters.q) params['q'] = filters.q;
+
+		if (value !== null) params[key] = value;
+		else delete params[key];
+
+		if (key === 'type') delete params['category'];
+
+		const qs = new URLSearchParams(params).toString();
 		return `/browse${qs ? '?' + qs : ''}`;
 	}
 
@@ -26,6 +59,28 @@
 		const val = (e.currentTarget as HTMLSelectElement).value;
 		window.location.href = filterUrl('neighborhood', val || null);
 	}
+
+	// Pagination — preserves all current URL params, just changes page
+	function pageUrl(n: number): string {
+		const p = new URLSearchParams($page.url.searchParams);
+		if (n > 1) p.set('page', String(n));
+		else p.delete('page');
+		const qs = p.toString();
+		return `/browse${qs ? '?' + qs : ''}`;
+	}
+
+	$: pageNumbers = (() => {
+		if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1) as (number | '...')[];
+		const pages: (number | '...')[] = [];
+		if (currentPage <= 4) {
+			pages.push(1, 2, 3, 4, 5, '...', totalPages);
+		} else if (currentPage >= totalPages - 3) {
+			pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+		} else {
+			pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+		}
+		return pages;
+	})();
 </script>
 
 <svelte:head>
@@ -42,37 +97,16 @@
 			</h1>
 		</div>
 		<span class="text-sm text-text-muted shrink-0">
-			{m.browse_count({ count: listings.length })}
+			{#if hasFilters}
+				{m.browse_count_filtered({ count: filteredCount, total: totalCount })}
+			{:else}
+				{m.browse_count({ count: totalCount })}
+			{/if}
 		</span>
 	</div>
 
 	<!-- Filters -->
 	<div class="flex flex-col gap-3 mb-8">
-
-		<!-- Type pills -->
-		<div class="flex items-center gap-2 flex-wrap">
-			<a href={filterUrl('type', null)}
-				class="text-sm px-4 py-1.5 rounded-full border transition-colors
-					{!filters.type
-						? 'bg-primary text-white border-primary'
-						: 'border-border text-text-muted hover:border-text-muted'}">
-				{m.browse_filter_all_types()}
-			</a>
-			<a href={filterUrl('type', 'service')}
-				class="text-sm px-4 py-1.5 rounded-full border transition-colors
-					{filters.type === 'service'
-						? 'bg-primary text-white border-primary'
-						: 'border-border text-text-muted hover:border-text-muted'}">
-				{m.browse_filter_services()}
-			</a>
-			<a href={filterUrl('type', 'tool_rental')}
-				class="text-sm px-4 py-1.5 rounded-full border transition-colors
-					{filters.type === 'tool_rental'
-						? 'bg-primary text-white border-primary'
-						: 'border-border text-text-muted hover:border-text-muted'}">
-				{m.browse_filter_tools()}
-			</a>
-		</div>
 
 		<!-- Category chips + neighborhood in a row -->
 		<div class="flex items-center gap-3 flex-wrap">
@@ -86,15 +120,35 @@
 					{m.browse_filter_all_categories()}
 				</a>
 				{#each categories as cat}
-					<a href={filterUrl('category', cat)}
-						class="text-xs px-3 py-1 rounded-full border transition-colors
-							{filters.category === cat
-								? 'bg-text-primary text-white border-text-primary'
-								: 'border-border text-text-muted hover:border-text-muted'}">
-						{CATEGORY_LABELS[cat].en}
-					</a>
+					{#if categoryCounts[cat]}
+						<a href={filterUrl('category', cat)}
+							class="text-xs px-3 py-1 rounded-full border transition-colors inline-flex items-center gap-1.5
+								{filters.category === cat
+									? 'bg-text-primary text-white border-text-primary'
+									: 'border-border text-text-muted hover:border-text-muted'}">
+							{CATEGORY_LABELS[cat].en}
+							<span class="text-[10px] font-semibold opacity-70">{categoryCounts[cat]}</span>
+						</a>
+					{/if}
 				{/each}
 			</div>
+
+			<!-- Trade toggle switch (Hire / Rent tabs only) -->
+			{#if showTradeSwitch}
+				<a href={tradeToggleHref} class="flex items-center gap-2 shrink-0 group">
+					<span class="text-xs text-text-muted group-hover:text-text-primary transition-colors select-none">
+						Includes trade
+					</span>
+					<div class="relative shrink-0">
+						<div class="w-11 h-6 rounded-full border-2 transition-colors
+							{isTradeOn ? 'bg-primary border-primary' : 'bg-bg-secondary border-border'}">
+						</div>
+						<div class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform
+							{isTradeOn ? 'translate-x-5' : 'translate-x-0'}">
+						</div>
+					</div>
+				</a>
+			{/if}
 
 			<!-- Neighborhood select -->
 			<div class="ml-auto">
@@ -113,7 +167,7 @@
 		<!-- Clear filters -->
 		{#if hasFilters}
 			<div>
-				<a href="/browse" class="text-xs text-primary hover:underline">
+				<a href={clearFiltersUrl} class="text-xs text-primary hover:underline">
 					{m.browse_filter_clear()}
 				</a>
 			</div>
@@ -127,6 +181,43 @@
 				<ListingCard {listing} />
 			{/each}
 		</div>
+
+		<!-- Pagination -->
+		{#if totalPages > 1}
+			<div class="flex items-center justify-center gap-1 mt-10">
+				{#if currentPage > 1}
+					<a href={pageUrl(currentPage - 1)}
+						class="px-3 py-2 text-sm border border-border rounded-md text-text-muted hover:border-text-muted transition-colors">
+						←
+					</a>
+				{:else}
+					<span class="px-3 py-2 text-sm border border-border rounded-md text-border cursor-not-allowed select-none">←</span>
+				{/if}
+
+				{#each pageNumbers as p}
+					{#if p === '...'}
+						<span class="px-2 py-2 text-sm text-text-muted select-none">…</span>
+					{:else}
+						<a href={pageUrl(p)}
+							class="min-w-[36px] px-3 py-2 text-sm border rounded-md text-center transition-colors
+								{p === currentPage
+									? 'bg-primary text-white border-primary font-semibold'
+									: 'border-border text-text-muted hover:border-text-muted'}">
+							{p}
+						</a>
+					{/if}
+				{/each}
+
+				{#if currentPage < totalPages}
+					<a href={pageUrl(currentPage + 1)}
+						class="px-3 py-2 text-sm border border-border rounded-md text-text-muted hover:border-text-muted transition-colors">
+						→
+					</a>
+				{:else}
+					<span class="px-3 py-2 text-sm border border-border rounded-md text-border cursor-not-allowed select-none">→</span>
+				{/if}
+			</div>
+		{/if}
 	{:else}
 		<div class="text-center py-20">
 			<p class="text-lg font-semibold text-text-primary mb-2">{m.browse_no_listings()}</p>

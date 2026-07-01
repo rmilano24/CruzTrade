@@ -775,7 +775,7 @@ async function run() {
   console.log('  Provider login password: CruzTrade-seed-2026!\n');
 }
 
-run().catch(err => {
+run().then(() => process.exit(0)).catch(err => {
   console.error('\nSeed failed:', err.message);
   process.exit(1);
 });
