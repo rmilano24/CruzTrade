@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
 		redirect(303, `/listings/${params.id}`);
 	}
 
-	const mode = url.searchParams.get('mode') === 'trade' && listing.accepts_trade ? 'trade' : 'pay';
+	const mode = url.searchParams.get('mode') === 'trade' && listing.type === 'service' && listing.accepts_trade ? 'trade' : 'pay';
 
 	return { listing, mode, neighborhoods: SANTA_CRUZ_NEIGHBORHOODS };
 };

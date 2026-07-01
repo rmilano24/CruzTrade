@@ -176,7 +176,7 @@
 									<span class="text-sm font-bold text-text-primary">
 										{formatPrice(listing.price, listing.price_unit)}
 									</span>
-									{#if listing.accepts_trade}
+									{#if listing.type === 'service' && listing.accepts_trade}
 										<span class="text-xs text-primary font-medium bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">
 											+ Trade
 										</span>

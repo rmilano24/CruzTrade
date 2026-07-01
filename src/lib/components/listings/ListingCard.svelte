@@ -92,7 +92,7 @@
 
 		<!-- Tags -->
 		<div class="flex items-center gap-2 flex-wrap mt-auto">
-			{#if listing.accepts_trade}
+			{#if listing.type === 'service' && listing.accepts_trade}
 				<span class="text-xs text-primary font-medium">Accepts Trade</span>
 			{:else if listing.type === 'service'}
 				<span class="text-xs text-text-muted border border-border px-2.5 py-0.5 rounded-full">Service only</span>

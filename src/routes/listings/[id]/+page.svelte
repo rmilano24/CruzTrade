@@ -136,7 +136,7 @@
 							{m.listing_tool_rental()}
 						</span>
 					{/if}
-					{#if listing.accepts_trade}
+					{#if listing.type === 'service' && listing.accepts_trade}
 						<span class="text-primary text-xs px-2.5 py-1 rounded-full border border-orange-200 bg-orange-50 font-medium">
 							{m.listing_accepts_trade()}
 						</span>
@@ -277,7 +277,7 @@
 								class="block w-full text-center bg-primary text-white font-semibold px-5 py-3 rounded-lg hover:bg-primary-hover transition-colors">
 								{listing.type === 'tool_rental' ? m.listing_book() : `${m.listing_hire()} ${providerFirstName}`}
 							</a>
-							{#if listing.accepts_trade}
+							{#if listing.type === 'service' && listing.accepts_trade}
 								<a href="/listings/{listing.id}/book?mode=trade"
 									class="block w-full text-center border border-primary text-primary font-semibold px-5 py-3 rounded-lg hover:bg-orange-50 transition-colors text-sm">
 									{m.listing_propose_trade()}

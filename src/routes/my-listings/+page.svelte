@@ -94,7 +94,7 @@
 							{#if listing.neighborhood}
 								<span>· {listing.neighborhood}</span>
 							{/if}
-							{#if listing.accepts_trade}
+							{#if listing.type === 'service' && listing.accepts_trade}
 								<span class="text-primary font-medium border border-orange-200 bg-orange-50 px-2 py-0.5 rounded-full">
 									Acepta intercambios
 								</span>

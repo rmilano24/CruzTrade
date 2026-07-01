@@ -12,7 +12,7 @@
 
 	// Split into the three homepage sections
 	$: hireListings  = data.listings.filter(l => l.type === 'service' && !l.accepts_trade);
-	$: tradeListings = data.listings.filter(l => l.accepts_trade === true);
+	$: tradeListings = data.listings.filter(l => l.type === 'service' && l.accepts_trade === true);
 	$: rentListings  = data.listings.filter(l => l.type === 'tool_rental');
 
 	const serviceCategories = [
