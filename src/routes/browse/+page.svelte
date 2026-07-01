@@ -2,10 +2,11 @@
 	import ListingCard from '$lib/components/listings/ListingCard.svelte';
 	import { CATEGORY_LABELS } from '$lib/utils/format';
 	import * as m from '$lib/paraglide/messages';
-	import { page } from '$app/stores';
+	import { page, navigating } from '$app/stores';
 
 	export let data: {
 		listings: any[];
+		allListings: any[];
 		filters: { type: string | null; category: string | null; neighborhood: string | null; q: string | null; acceptsTrade: boolean | null };
 		neighborhoods: readonly string[];
 		totalCount: number;
@@ -15,12 +16,40 @@
 		categoryCounts: Record<string, number>;
 	};
 
+	const BROWSE_PAGE_SIZE = 24;
+	let browseCategory: string | null = null;
+	let browsePage = 1;
+
+	$: browseListings = browseCategory ? data.allListings.filter(l => l.category === browseCategory) : data.allListings;
+	$: browseTotalPages = Math.ceil(browseListings.length / BROWSE_PAGE_SIZE);
+	$: browsePagedListings = browseListings.slice((browsePage - 1) * BROWSE_PAGE_SIZE, browsePage * BROWSE_PAGE_SIZE);
+	$: browseCategoryCounts = Object.fromEntries(
+		Object.keys(CATEGORY_LABELS).map(cat => [cat, data.allListings.filter(l => l.category === cat).length])
+	);
+
+	function setBrowseCategory(cat: string | null) {
+		browseCategory = cat;
+		browsePage = 1;
+	}
+
+	$: browsePageNumbers = (() => {
+		if (browseTotalPages <= 7) return Array.from({ length: browseTotalPages }, (_, i) => i + 1) as (number | '...')[];
+		const pages: (number | '...')[] = [];
+		if (browsePage <= 4) {
+			pages.push(1, 2, 3, 4, 5, '...', browseTotalPages);
+		} else if (browsePage >= browseTotalPages - 3) {
+			pages.push(1, '...', browseTotalPages - 4, browseTotalPages - 3, browseTotalPages - 2, browseTotalPages - 1, browseTotalPages);
+		} else {
+			pages.push(1, '...', browsePage - 1, browsePage, browsePage + 1, '...', browseTotalPages);
+		}
+		return pages;
+	})();
+
 	$: ({ listings, filters, neighborhoods, totalCount, filteredCount, currentPage, totalPages, categoryCounts } = data);
 	// Trade toggle: ON by default (show all). OFF = cash only (accepts_trade=false).
 	$: isTradeOn = $page.url.searchParams.get('accepts_trade') !== 'false';
-	// Show on All and Hire tabs — not Trade (already filtered) or Rent (cash-only by design)
-	$: showTradeSwitch = $page.url.searchParams.get('accepts_trade') !== 'true'
-		&& $page.url.searchParams.get('type') !== 'tool_rental';
+	// Only show on Hire tab — Trade is already filtered, Rent is cash-only
+	$: showTradeSwitch = $page.url.searchParams.get('type') === 'service';
 	$: tradeToggleHref = filterUrl('accepts_trade', isTradeOn ? 'false' : null);
 	$: hasFilters = !!(filters.category || filters.neighborhood || filters.q || filters.acceptsTrade === false);
 	// Clear page-level filters but keep the nav tab (type)
@@ -97,7 +126,9 @@
 			</h1>
 		</div>
 		<span class="text-sm text-text-muted shrink-0">
-			{#if hasFilters}
+			{#if filters.q}
+				{filteredCount} listing{filteredCount !== 1 ? 's' : ''}
+			{:else if hasFilters}
 				{m.browse_count_filtered({ count: filteredCount, total: totalCount })}
 			{:else}
 				{m.browse_count({ count: totalCount })}
@@ -105,13 +136,14 @@
 		</span>
 	</div>
 
-	<!-- Filters -->
+	<!-- Filters (hidden when searching) -->
+	{#if !filters.q}
 	<div class="flex flex-col gap-3 mb-8">
 
 		<!-- Category chips + neighborhood in a row -->
 		<div class="flex items-center gap-3 flex-wrap">
-			<!-- Category scroll -->
-			<div class="flex items-center gap-2 flex-wrap">
+			<!-- Category scroll — hidden while navigating to prevent stale-type clicks -->
+			<div class="flex items-center gap-2 flex-wrap {$navigating ? 'pointer-events-none opacity-40' : ''}">
 				<a href={filterUrl('category', null)}
 					class="text-xs px-3 py-1 rounded-full border transition-colors
 						{!filters.category
@@ -173,6 +205,7 @@
 			</div>
 		{/if}
 	</div>
+	{/if}
 
 	<!-- Grid -->
 	{#if listings.length > 0}
@@ -227,6 +260,69 @@
 					class="inline-block border border-border text-text-primary font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-bg-secondary transition-colors">
 					{m.browse_filter_clear()}
 				</a>
+			{/if}
+		</div>
+	{/if}
+
+	<!-- Browse all listings below search results -->
+	{#if filters.q && data.allListings.length > 0}
+		<div class="border-t border-border mt-10 pt-8">
+			<h2 class="text-lg font-bold text-text-primary mb-5">
+				Browse all {filters.type === 'service' ? 'services' : filters.type === 'tool_rental' ? 'rentals' : 'services and rentals'}
+			</h2>
+
+			<div class="flex flex-wrap gap-2 mb-6">
+				<button on:click={() => setBrowseCategory(null)}
+					class="text-xs px-3 py-1 rounded-full border transition-colors
+						{!browseCategory ? 'bg-text-primary text-white border-text-primary' : 'border-border text-text-muted hover:border-text-muted'}">
+					All categories
+				</button>
+				{#each Object.keys(CATEGORY_LABELS) as cat}
+					{#if browseCategoryCounts[cat]}
+						<button on:click={() => setBrowseCategory(browseCategory === cat ? null : cat)}
+							class="text-xs px-3 py-1 rounded-full border transition-colors inline-flex items-center gap-1.5
+								{browseCategory === cat ? 'bg-text-primary text-white border-text-primary' : 'border-border text-text-muted hover:border-text-muted'}">
+							{CATEGORY_LABELS[cat].en}
+							<span class="text-[10px] font-semibold opacity-70">{browseCategoryCounts[cat]}</span>
+						</button>
+					{/if}
+				{/each}
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+				{#each browsePagedListings as listing (listing.id)}
+					<ListingCard {listing} />
+				{/each}
+			</div>
+
+			{#if browseTotalPages > 1}
+				<div class="flex items-center justify-center gap-1 mt-10">
+					{#if browsePage > 1}
+						<button on:click={() => browsePage--}
+							class="px-3 py-2 text-sm border border-border rounded-md text-text-muted hover:border-text-muted transition-colors">←</button>
+					{:else}
+						<span class="px-3 py-2 text-sm border border-border rounded-md text-border cursor-not-allowed select-none">←</span>
+					{/if}
+
+					{#each browsePageNumbers as p}
+						{#if p === '...'}
+							<span class="px-2 py-2 text-sm text-text-muted select-none">…</span>
+						{:else}
+							<button on:click={() => browsePage = p}
+								class="min-w-[36px] px-3 py-2 text-sm border rounded-md text-center transition-colors
+									{p === browsePage ? 'bg-primary text-white border-primary font-semibold' : 'border-border text-text-muted hover:border-text-muted'}">
+								{p}
+							</button>
+						{/if}
+					{/each}
+
+					{#if browsePage < browseTotalPages}
+						<button on:click={() => browsePage++}
+							class="px-3 py-2 text-sm border border-border rounded-md text-text-muted hover:border-text-muted transition-colors">→</button>
+					{:else}
+						<span class="px-3 py-2 text-sm border border-border rounded-md text-border cursor-not-allowed select-none">→</span>
+					{/if}
+				</div>
 			{/if}
 		</div>
 	{/if}

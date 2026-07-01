@@ -93,7 +93,7 @@
 		<!-- Tags -->
 		<div class="flex items-center gap-2 flex-wrap mt-auto">
 			{#if listing.type === 'service' && listing.accepts_trade}
-				<span class="text-xs text-primary font-medium">Accepts Trade</span>
+				<span class="text-xs text-primary border border-orange-200 px-2.5 py-0.5 rounded-full">Accepts Trade</span>
 			{:else if listing.type === 'service'}
 				<span class="text-xs text-text-muted border border-border px-2.5 py-0.5 rounded-full">Service only</span>
 			{:else if listing.type === 'tool_rental'}

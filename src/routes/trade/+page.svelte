@@ -1,42 +1,78 @@
 <script lang="ts">
-	import CategoryBar from '$lib/components/listings/CategoryBar.svelte';
 	import CategorySections from '$lib/components/listings/CategorySections.svelte';
-	export let data: { listings: any[]; filters: any };
+	import ListingCard from '$lib/components/listings/ListingCard.svelte';
+	export let data: { listings: any[]; allListings: any[]; filters: any };
 
 	const categories = [
-		{
-			slug: 'home_yard',
-			label: 'Home & Repairs',
-			icon: '🔧',
-			examples: ['plumbing for electrical', 'painting for landscaping'],
-		},
-		{
-			slug: 'tech_creative',
-			label: 'Creative & Digital',
-			icon: '🎨',
-			examples: ['design for photography', 'video for social media'],
-		},
-		{
-			slug: 'lessons',
-			label: 'Lessons & Teaching',
-			icon: '🎵',
-			examples: ['music for coding', 'language for fitness coaching'],
-		},
-		{
-			slug: 'wellness',
-			label: 'Wellness & Fitness',
-			icon: '🧘',
-			examples: ['yoga for massage', 'nutrition for personal training'],
-		},
-		{
-			slug: 'care_errands',
-			label: 'Outdoor & Lifestyle',
-			icon: '🏄',
-			examples: ['surf lessons for bike repair', 'gardening for meal prep'],
-		},
+		{ slug: 'home_yard',     label: 'Home & Repairs',     icon: '🔧' },
+		{ slug: 'tech_creative', label: 'Creative & Digital',  icon: '🎨' },
+		{ slug: 'lessons',       label: 'Lessons & Teaching',  icon: '🎵' },
+		{ slug: 'wellness',      label: 'Wellness & Fitness',  icon: '🧘' },
+		{ slug: 'care_errands',  label: 'Outdoor & Lifestyle', icon: '🏄' },
 	];
+
+	$: q = data.filters.q;
+	let activeCategory: string | null = null;
+
+	$: categoryCounts = Object.fromEntries(
+		categories.map(c => [c.slug, data.allListings.filter(l => l.category === c.slug).length])
+	);
+
+	$: browseListings = activeCategory
+		? data.allListings.filter(l => l.category === activeCategory)
+		: data.allListings;
 </script>
 
 <svelte:head><title>Trade Skills · Cruz Trade</title></svelte:head>
-<CategoryBar {categories} />
-<CategorySections listings={data.listings} {categories} q={data.filters.q} />
+
+{#if q}
+	<div class="px-6">
+		<div class="max-w-content mx-auto py-6">
+
+			<p class="text-base font-semibold text-text-primary mb-4">
+				{data.listings.length} result{data.listings.length !== 1 ? 's' : ''} for "<span class="text-primary">{q}</span>"
+			</p>
+
+			{#if data.listings.length > 0}
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+					{#each data.listings as listing (listing.id)}
+						<ListingCard {listing} />
+					{/each}
+				</div>
+			{:else}
+				<p class="text-sm text-text-muted mb-10">No exact matches — browse all trades below.</p>
+			{/if}
+
+			<div class="border-t border-border pt-8">
+				<h2 class="text-lg font-bold text-text-primary mb-5">Browse all trades</h2>
+
+				<div class="flex flex-wrap gap-2 mb-6">
+					<button on:click={() => activeCategory = null}
+						class="text-xs px-3 py-1 rounded-full border transition-colors
+							{!activeCategory ? 'bg-text-primary text-white border-text-primary' : 'border-border text-text-muted hover:border-text-muted'}">
+						All categories
+					</button>
+					{#each categories as cat}
+						{#if categoryCounts[cat.slug]}
+							<button on:click={() => activeCategory = activeCategory === cat.slug ? null : cat.slug}
+								class="text-xs px-3 py-1 rounded-full border transition-colors inline-flex items-center gap-1.5
+									{activeCategory === cat.slug ? 'bg-text-primary text-white border-text-primary' : 'border-border text-text-muted hover:border-text-muted'}">
+								{cat.label}
+								<span class="text-[10px] font-semibold opacity-70">{categoryCounts[cat.slug]}</span>
+							</button>
+						{/if}
+					{/each}
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+					{#each browseListings as listing (listing.id)}
+						<ListingCard {listing} />
+					{/each}
+				</div>
+			</div>
+
+		</div>
+	</div>
+{:else}
+	<CategorySections listings={data.listings} {categories} q={null} />
+{/if}

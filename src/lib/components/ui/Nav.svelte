@@ -89,15 +89,19 @@
 	let scrolled = false;
 	function onScroll() { scrolled = window.scrollY > 0; }
 
+	// Search submits to the current tab's route so results stay in context
+	$: searchAction = (() => {
+		const path = $page.url.pathname;
+		if (path === '/trade' || path === '/hire' || path === '/rent') return path;
+		return '/browse';
+	})();
+
 	$: navItems = (() => {
-		const isBrowse = $page.url.pathname === '/browse';
-		const bType = $page.url.searchParams.get('type');
-		const bTrade = $page.url.searchParams.get('accepts_trade');
+		const path = $page.url.pathname;
 		return [
-			{ label: 'All',   icon: '✨',  href: '/browse',                    active: isBrowse && !bType && bTrade !== 'true' },
-			{ label: 'Trade', icon: '🤝', href: '/browse?accepts_trade=true', active: isBrowse && bTrade === 'true' },
-			{ label: 'Hire',  icon: '🛠️', href: '/browse?type=service',       active: isBrowse && bType === 'service' },
-			{ label: 'Rent',  icon: '🪜', href: '/browse?type=tool_rental',   active: isBrowse && bType === 'tool_rental' },
+			{ label: 'Trade', icon: '🤝', href: '/trade', active: path === '/trade' || path.startsWith('/trade/') },
+			{ label: 'Hire',  icon: '🛠️', href: '/hire',  active: path === '/hire'  || path.startsWith('/hire/') },
+			{ label: 'Rent',  icon: '🏄', href: '/rent',  active: path === '/rent'  || path.startsWith('/rent/') },
 		];
 	})();
 </script>
@@ -106,7 +110,7 @@
 
 <header class="bg-bg border-b border-border sticky top-0 z-30 transition-shadow duration-200"
 	class:shadow-modal={scrolled}
-	class:pb-3={$page.url.pathname === '/' || $page.url.pathname.startsWith('/browse')}>
+	class:pb-3={$page.url.pathname === '/' || $page.url.pathname.startsWith('/browse') || $page.url.pathname === '/trade' || $page.url.pathname === '/hire' || $page.url.pathname === '/rent'}>
 	<div class="h-16 flex items-center px-6">
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
 
@@ -328,11 +332,11 @@
 	</div>
 	</div>
 
-	<!-- Search bar — homepage + browse pages -->
-	{#if $page.url.pathname === '/' || $page.url.pathname.startsWith('/browse')}
+	<!-- Search bar — homepage + browse + dedicated tab pages -->
+	{#if $page.url.pathname === '/' || $page.url.pathname.startsWith('/browse') || $page.url.pathname === '/trade' || $page.url.pathname === '/hire' || $page.url.pathname === '/rent'}
 		<div class="px-6">
 			<div class="max-w-[640px] mx-auto">
-				<form action="/browse" method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
+				<form action={searchAction} method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
 					{#if $page.url.searchParams.get('type')}
 						<input type="hidden" name="type" value={$page.url.searchParams.get('type')} />
 					{/if}

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
-	$: activeAll   = $page.url.pathname === '/';
-	$: activeTrade = $page.url.pathname === '/trade' || $page.url.pathname.startsWith('/trade/');
-	$: activeHire  = $page.url.pathname === '/hire'  || $page.url.pathname.startsWith('/hire/');
-	$: activeRent  = $page.url.pathname === '/rent'  || $page.url.pathname.startsWith('/rent/');
+	$: activeTrade  = $page.url.pathname === '/trade'  || $page.url.pathname.startsWith('/trade/');
+	$: activeHire   = $page.url.pathname === '/hire'   || $page.url.pathname.startsWith('/hire/');
+	$: activeRent   = $page.url.pathname === '/rent'   || $page.url.pathname.startsWith('/rent/');
+	$: activeBrowse = $page.url.pathname.startsWith('/browse');
 </script>
 
 <nav
@@ -12,17 +12,6 @@
 	style="padding-bottom: env(safe-area-inset-bottom)"
 >
 	<div class="flex items-stretch h-16">
-
-		<!-- All -->
-		<a href="/"
-			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
-				{activeAll ? 'text-primary' : 'text-text-muted'}">
-			{#if activeAll}
-				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
-			{/if}
-			<span class="text-xl leading-none">✨</span>
-			<span class="text-[10px] font-medium">All</span>
-		</a>
 
 		<!-- Trade -->
 		<a href="/trade"
@@ -33,6 +22,17 @@
 			{/if}
 			<span class="text-xl leading-none">🤝</span>
 			<span class="text-[10px] font-medium">Trade</span>
+		</a>
+
+		<!-- Hire -->
+		<a href="/hire"
+			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
+				{activeHire ? 'text-primary' : 'text-text-muted'}">
+			{#if activeHire}
+				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
+			{/if}
+			<span class="text-xl leading-none">🛠️</span>
+			<span class="text-[10px] font-medium">Hire</span>
 		</a>
 
 		<!-- Post — circle floats above the nav bar -->
@@ -47,17 +47,6 @@
 			<span class="text-[10px] font-medium text-text-muted">Post</span>
 		</div>
 
-		<!-- Hire -->
-		<a href="/hire"
-			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
-				{activeHire ? 'text-primary' : 'text-text-muted'}">
-			{#if activeHire}
-				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
-			{/if}
-			<span class="text-xl leading-none">🛠️</span>
-			<span class="text-[10px] font-medium">Hire</span>
-		</a>
-
 		<!-- Rent -->
 		<a href="/rent"
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
@@ -65,8 +54,19 @@
 			{#if activeRent}
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
-			<span class="text-xl leading-none">🪜</span>
+			<span class="text-xl leading-none">🏄</span>
 			<span class="text-[10px] font-medium">Rent</span>
+		</a>
+
+		<!-- Browse -->
+		<a href="/browse"
+			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
+				{activeBrowse ? 'text-primary' : 'text-text-muted'}">
+			{#if activeBrowse}
+				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
+			{/if}
+			<span class="text-xl leading-none">👀</span>
+			<span class="text-[10px] font-medium">Browse</span>
 		</a>
 
 	</div>

@@ -13,6 +13,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const q = url.searchParams.get('q')?.trim() || null;
 	const acceptsTradeRaw = url.searchParams.get('accepts_trade');
 	const acceptsTrade = acceptsTradeRaw === 'true' ? true : acceptsTradeRaw === 'false' ? false : null;
+
 	const currentPage = Math.max(1, parseInt(url.searchParams.get('page') ?? '1', 10));
 	const offset = (currentPage - 1) * PAGE_SIZE;
 
@@ -56,16 +57,31 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	if (acceptsTrade === true) ccQuery = ccQuery.eq('accepts_trade', true);
 	if (acceptsTrade === false) ccQuery = ccQuery.eq('accepts_trade', false);
 
+	// All listings (no q) for browse-below-search section
+	let allQuery = q ? locals.supabase
+		.from('listings')
+		.select(`id, type, title, description, category, price, price_unit,
+		         accepts_trade, neighborhood, language, image_url, created_at,
+		         profiles!user_id(id, username, full_name, avatar_url)`)
+		.eq('is_active', true)
+		.order('created_at', { ascending: false })
+		.limit(200) : null;
+	if (allQuery && type) allQuery = allQuery.eq('type', type);
+	if (allQuery && acceptsTrade === true) allQuery = allQuery.eq('accepts_trade', true);
+	if (allQuery && acceptsTrade === false) allQuery = allQuery.eq('accepts_trade', false);
+
 	const [
 		{ data: listings, error: err },
 		{ count: filteredCount },
 		{ count: totalCount },
-		{ data: ccData }
+		{ data: ccData },
+		allResult
 	] = await Promise.all([
 		query,
 		filteredCountQuery,
 		locals.supabase.from('listings').select('*', { count: 'exact', head: true }).eq('is_active', true),
-		ccQuery
+		ccQuery,
+		allQuery ?? Promise.resolve({ data: [] })
 	]);
 
 	if (err) error(500, err.message);
@@ -79,6 +95,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 	return {
 		listings: listings ?? [],
+		allListings: (allResult as any)?.data ?? [],
 		filters: { type, category, neighborhood, q, acceptsTrade },
 		neighborhoods: SANTA_CRUZ_NEIGHBORHOODS,
 		totalCount: totalCount ?? 0,
