@@ -4,11 +4,15 @@
 	export let data: { listings: any[]; allListings: any[]; filters: any };
 
 	const categories = [
-		{ slug: 'tools_equipment',   label: 'Tools & Equipment',   icon: '🛠️' },
-		{ slug: 'outdoor_adventure', label: 'Outdoor & Adventure',  icon: '🏄' },
-		{ slug: 'party_events',      label: 'Party & Events',       icon: '🎉' },
-		{ slug: 'garden_yard',       label: 'Garden & Yard',        icon: '🌿' },
-		{ slug: 'vehicles',          label: 'Vehicles & Trailers',  icon: '🚛' },
+		{ slug: 'outdoor_recreation',label: 'Outdoor & Recreation',   icon: '🏕️' },
+		{ slug: 'tools_equipment',   label: 'Tools & Equipment',      icon: '🔧' },
+		{ slug: 'garden_yard',       label: 'Garden & Yard',          icon: '🌿' },
+		{ slug: 'camera_av',         label: 'Camera & AV Equipment',  icon: '📷' },
+		{ slug: 'music_audio',       label: 'Music & Audio',          icon: '🎵' },
+		{ slug: 'vehicles',          label: 'Vehicles & Trailers',    icon: '🚐' },
+		{ slug: 'baby_kids',         label: 'Baby & Kids Gear',       icon: '👶' },
+		{ slug: 'costumes_seasonal', label: 'Costumes & Seasonal',    icon: '🎃' },
+		{ slug: 'party_events',      label: 'Party & Events',         icon: '🎊' },
 	];
 
 	$: q = data.filters.q;

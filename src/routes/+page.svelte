@@ -16,19 +16,31 @@
 	$: rentListings  = data.listings.filter(l => l.type === 'tool_rental');
 
 	const serviceCategories = [
-		{ slug: 'home_yard',      label: '🏡 Home & Yard' },
-		{ slug: 'tech_creative',  label: '💻 Tech & Creative' },
-		{ slug: 'lessons',        label: '📚 Lessons' },
-		{ slug: 'wellness',       label: '🧘 Wellness' },
-		{ slug: 'care_errands',   label: '🐾 Care & Errands' },
+		{ slug: 'handyman_repairs',     label: '🔨 Handyman & Repairs' },
+		{ slug: 'home_yard',            label: '🏡 Home & Yard' },
+		{ slug: 'automotive',           label: '🚗 Automotive' },
+		{ slug: 'tech_creative',        label: '💻 Tech & Creative' },
+		{ slug: 'photography_video',    label: '📸 Photography & Video' },
+		{ slug: 'cooking_meal_prep',    label: '🍳 Cooking & Meal Prep' },
+		{ slug: 'lessons',              label: '🎓 Lessons & Tutoring' },
+		{ slug: 'wellness',             label: '💆 Wellness & Beauty' },
+		{ slug: 'pets',                 label: '🐾 Pets' },
+		{ slug: 'events_entertainment', label: '🎉 Events & Entertainment' },
+		{ slug: 'moving_hauling',       label: '🚚 Moving & Hauling' },
+		{ slug: 'care_errands',         label: '✨ Care & Errands' },
+		{ slug: 'arts_music',           label: '🎨 Arts & Music' },
 	];
 
 	const rentalCategories = [
-		{ slug: 'tools_equipment',   label: '🛠️ Tools' },
-		{ slug: 'outdoor_adventure', label: '🏄 Outdoor' },
-		{ slug: 'party_events',      label: '🎉 Party & Events' },
-		{ slug: 'garden_yard',       label: '🌿 Garden & Yard' },
-		{ slug: 'vehicles',          label: '🚛 Vehicles' },
+		{ slug: 'outdoor_recreation', label: '🏕️ Outdoor & Recreation' },
+		{ slug: 'tools_equipment',    label: '🔧 Tools & Equipment' },
+		{ slug: 'garden_yard',        label: '🌿 Garden & Yard' },
+		{ slug: 'camera_av',          label: '📷 Camera & AV Equipment' },
+		{ slug: 'music_audio',        label: '🎵 Music & Audio' },
+		{ slug: 'vehicles',           label: '🚐 Vehicles & Trailers' },
+		{ slug: 'baby_kids',          label: '👶 Baby & Kids Gear' },
+		{ slug: 'costumes_seasonal',  label: '🎃 Costumes & Seasonal' },
+		{ slug: 'party_events',       label: '🎊 Party & Events' },
 	];
 </script>
 
@@ -81,8 +93,8 @@
 
 		<CarouselSection
 			slug="rent"
-			title="Rent Tools & Gear"
-			icon="🪜"
+			title="Rent Gear & Tools"
+			icon="🏄"
 			listings={rentListings}
 			href="/rent"
 			categories={rentalCategories}

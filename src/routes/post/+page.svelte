@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { CATEGORY_LABELS } from '$lib/utils/format';
+	import { CATEGORY_LABELS, SERVICE_CATEGORY_SLUGS, RENTAL_CATEGORY_SLUGS } from '$lib/utils/format';
 	import * as m from '$lib/paraglide/messages';
 	import TermsModal from '$lib/components/ui/TermsModal.svelte';
 
@@ -17,7 +17,9 @@
 	$: showTrade = v.accepts_trade ?? false;
 	$: if (listingType === 'tool_rental') showTrade = false;
 
-	const categories = Object.entries(CATEGORY_LABELS);
+	$: categories = listingType === 'tool_rental'
+		? RENTAL_CATEGORY_SLUGS.map(s => [s, CATEGORY_LABELS[s]] as const)
+		: SERVICE_CATEGORY_SLUGS.map(s => [s, CATEGORY_LABELS[s]] as const);
 
 	let submitting = false;
 	let listingType = 'service';

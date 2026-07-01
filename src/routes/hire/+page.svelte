@@ -4,11 +4,19 @@
 	export let data: { listings: any[]; allListings: any[]; filters: any };
 
 	const categories = [
-		{ slug: 'home_yard',     label: 'Home & Yard',         icon: '🏡' },
-		{ slug: 'tech_creative', label: 'Tech & Creative',      icon: '💻' },
-		{ slug: 'lessons',       label: 'Lessons & Tutoring',   icon: '📚' },
-		{ slug: 'wellness',      label: 'Wellness & Beauty',    icon: '🧘' },
-		{ slug: 'care_errands',  label: 'Care & Errands',       icon: '🐾' },
+		{ slug: 'handyman_repairs',     label: 'Handyman & Repairs',      icon: '🔨' },
+		{ slug: 'home_yard',            label: 'Home & Yard',             icon: '🏡' },
+		{ slug: 'automotive',           label: 'Automotive',               icon: '🚗' },
+		{ slug: 'tech_creative',        label: 'Tech & Creative',          icon: '💻' },
+		{ slug: 'photography_video',    label: 'Photography & Video',      icon: '📸' },
+		{ slug: 'cooking_meal_prep',    label: 'Cooking & Meal Prep',      icon: '🍳' },
+		{ slug: 'lessons',              label: 'Lessons & Tutoring',       icon: '🎓' },
+		{ slug: 'wellness',             label: 'Wellness & Beauty',        icon: '💆' },
+		{ slug: 'pets',                 label: 'Pets',                     icon: '🐾' },
+		{ slug: 'events_entertainment', label: 'Events & Entertainment',   icon: '🎉' },
+		{ slug: 'moving_hauling',       label: 'Moving & Hauling',         icon: '🚚' },
+		{ slug: 'care_errands',         label: 'Care & Errands',           icon: '✨' },
+		{ slug: 'arts_music',           label: 'Arts & Music',             icon: '🎨' },
 	];
 
 	$: q = data.filters.q;
