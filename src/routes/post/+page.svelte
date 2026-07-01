@@ -15,6 +15,7 @@
 	$: v = form?.values ?? {};
 	$: errors = form?.errors ?? {};
 	$: showTrade = v.accepts_trade ?? false;
+	$: if (listingType === 'tool_rental') showTrade = false;
 
 	const categories = Object.entries(CATEGORY_LABELS);
 
@@ -257,7 +258,8 @@
 					</div>
 				</div>
 
-				<!-- Trade toggle -->
+				<!-- Trade toggle (services only) -->
+				{#if listingType === 'service'}
 				<div class="flex flex-col gap-3">
 					<label class="flex items-center justify-between gap-4 bg-bg-card border border-border rounded-lg px-4 py-3.5 cursor-pointer">
 						<div>
@@ -286,6 +288,7 @@
 						</div>
 					{/if}
 				</div>
+				{/if}
 
 				<!-- Photos -->
 				<div class="flex flex-col gap-2">
