@@ -144,7 +144,7 @@
 								class="mt-0.5 accent-primary" />
 							<div>
 								<span class="text-sm font-semibold text-text-primary">{m.post_type_service()}</span>
-								<p class="text-xs text-text-muted mt-0.5">Gardening, repairs, tech help, wellness, lessons…</p>
+								<p class="text-xs text-text-muted mt-0.5">{m.post_type_service_hint()}</p>
 							</div>
 						</label>
 						<label class="flex-1 flex items-start gap-3 bg-bg-card border rounded-lg p-4 cursor-pointer transition-colors
@@ -153,7 +153,7 @@
 								class="mt-0.5 accent-primary" />
 							<div>
 								<span class="text-sm font-semibold text-text-primary">{m.post_type_tool()}</span>
-								<p class="text-xs text-text-muted mt-0.5">Drills, pressure washers, ladders, trailers…</p>
+								<p class="text-xs text-text-muted mt-0.5">{m.post_type_tool_hint()}</p>
 							</div>
 						</label>
 					</div>
@@ -294,7 +294,7 @@
 
 				<!-- Photos -->
 				<div class="flex flex-col gap-2">
-					<label class="text-sm font-medium text-text-primary">Photos (optional)</label>
+					<label class="text-sm font-medium text-text-primary">{m.post_photos_label()}</label>
 
 					{#if pickedImages.length > 0}
 						<div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -313,7 +313,7 @@
 									</button>
 									{#if i === featuredIndex}
 										<div class="absolute bottom-0 left-0 right-0 bg-primary/90 text-white text-[10px] font-semibold text-center py-0.5">
-											Featured
+											{m.post_photo_featured()}
 										</div>
 									{/if}
 								</div>
@@ -323,10 +323,10 @@
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 								</svg>
-								<span class="text-xs">Add photo</span>
+								<span class="text-xs">{m.post_photo_add()}</span>
 							</label>
 						</div>
-						<p class="text-xs text-text-muted">★ sets the featured photo shown on listing cards</p>
+						<p class="text-xs text-text-muted">{m.post_photo_star_hint()}</p>
 					{:else}
 						<label class="flex flex-col items-center justify-center gap-2 bg-bg-secondary border-2 border-dashed border-border rounded-lg p-6 cursor-pointer hover:border-primary transition-colors text-center">
 							<input type="file" accept="image/jpeg,image/png,image/webp" multiple on:change={handleImagePick} class="sr-only" />
@@ -334,8 +334,8 @@
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
 									d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
 							</svg>
-							<span class="text-sm text-text-muted">Click to add photos</span>
-							<span class="text-xs text-text-muted">JPG, PNG or WebP · Max 5 MB each · Multiple allowed</span>
+							<span class="text-sm text-text-muted">{m.post_photo_click()}</span>
+							<span class="text-xs text-text-muted">{m.post_photo_hint_multi()}</span>
 						</label>
 					{/if}
 
@@ -356,10 +356,9 @@
 						class="mt-0.5 accent-primary shrink-0"
 					/>
 					<span class="text-xs text-text-muted leading-relaxed">
-						I confirm I hold all required licenses, permits, and certifications for the services I'm listing,
-						and I agree to the Cruz Trade
+						{m.post_license_disclaimer()}
 						<button type="button" on:click|stopPropagation={() => showTermsModal = true}
-							class="text-primary hover:underline font-medium">Terms and Conditions</button>.
+							class="text-primary hover:underline font-medium">{m.auth_terms_link()}</button>.
 					</span>
 				</label>
 				<button type="submit" disabled={submitting || !isValid}

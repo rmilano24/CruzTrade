@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import ListingCard from './ListingCard.svelte';
+	import * as m from '$lib/paraglide/messages';
+	import { categoryLabel } from '$lib/utils/format';
+	import { languageTag } from '$lib/paraglide/runtime';
+
+	$: lang = languageTag() as 'en' | 'es';
 
 	export let slug: string;
 	export let title: string;
@@ -94,7 +99,7 @@
 					{!activeCategory
 						? 'bg-text-primary text-white border-text-primary'
 						: 'bg-bg border-border text-text-muted hover:border-text-muted hover:text-text-primary'}"
-			>All</button>
+			>{m.browse_filter_all_types()}</button>
 			{#each categories as cat}
 				<button
 					on:click={() => selectCategory(cat.slug)}
@@ -102,7 +107,7 @@
 						{activeCategory === cat.slug
 							? 'bg-text-primary text-white border-text-primary'
 							: 'bg-bg border-border text-text-muted hover:border-text-muted hover:text-text-primary'}"
-				>{cat.label}</button>
+				>{categoryLabel(cat.slug, lang)}</button>
 			{/each}
 		</div>
 	{/if}
@@ -121,7 +126,7 @@
 
 		{#if displayed.length === 0}
 			<p class="text-sm text-text-muted py-8">
-				No listings yet in this category — be the first to post!
+				{m.carousel_empty()}
 			</p>
 		{/if}
 

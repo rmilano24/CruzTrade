@@ -9,39 +9,41 @@
 	type IdeaType = 'trade' | 'hire' | 'rent';
 	type Tab = 'all' | IdeaType;
 
-	const ideas: Record<IdeaType, { label: string; neighborhood: string }[]> = {
+	$: lang = languageTag() as 'en' | 'es';
+
+	const ideas: Record<IdeaType, { label: string; label_es: string; neighborhood: string }[]> = {
 		trade: [
-			{ label: 'Swap a road bike',      neighborhood: 'Santa Cruz' },
-			{ label: 'Barter surfboard gear', neighborhood: 'Capitola' },
-			{ label: 'Trade home gym gear',   neighborhood: 'Scotts Valley' },
-			{ label: 'Swap furniture pieces', neighborhood: 'Aptos' },
-			{ label: 'Swap concert tickets',  neighborhood: 'Santa Cruz' },
-			{ label: 'Exchange power tools',  neighborhood: 'Watsonville' },
-			{ label: "Trade kids' clothes",   neighborhood: 'Santa Cruz' },
-			{ label: 'Swap garden plants',    neighborhood: 'Aptos' },
-			{ label: 'Trade a surfboard',     neighborhood: 'Capitola' },
+			{ label: 'Swap a road bike',      label_es: 'Intercambiar una bicicleta de ruta', neighborhood: 'Santa Cruz' },
+			{ label: 'Barter surfboard gear', label_es: 'Trocar equipo de surf',              neighborhood: 'Capitola' },
+			{ label: 'Trade home gym gear',   label_es: 'Intercambiar equipo de gimnasio',    neighborhood: 'Scotts Valley' },
+			{ label: 'Swap furniture pieces', label_es: 'Intercambiar muebles',               neighborhood: 'Aptos' },
+			{ label: 'Swap concert tickets',  label_es: 'Intercambiar boletos de concierto',  neighborhood: 'Santa Cruz' },
+			{ label: 'Exchange power tools',  label_es: 'Intercambiar herramientas eléctricas', neighborhood: 'Watsonville' },
+			{ label: "Trade kids' clothes",   label_es: 'Intercambiar ropa de niños',         neighborhood: 'Santa Cruz' },
+			{ label: 'Swap garden plants',    label_es: 'Intercambiar plantas de jardín',     neighborhood: 'Aptos' },
+			{ label: 'Trade a surfboard',     label_es: 'Intercambiar una tabla de surf',     neighborhood: 'Capitola' },
 		],
 		hire: [
-			{ label: 'Book a landscaper',    neighborhood: 'Santa Cruz' },
-			{ label: 'Book a handyman',      neighborhood: 'Aptos' },
-			{ label: 'Hire an electrician',  neighborhood: 'Capitola' },
-			{ label: 'Hire a dog walker',    neighborhood: 'Santa Cruz' },
-			{ label: 'Find a house cleaner', neighborhood: 'Scotts Valley' },
-			{ label: 'Book a photographer',  neighborhood: 'Soquel' },
-			{ label: 'Hire a yoga teacher',  neighborhood: 'Santa Cruz' },
-			{ label: 'Book a plumber',       neighborhood: 'Watsonville' },
-			{ label: 'Hire a tutor',         neighborhood: 'Aptos' },
+			{ label: 'Book a landscaper',    label_es: 'Contratar un jardinero',         neighborhood: 'Santa Cruz' },
+			{ label: 'Book a handyman',      label_es: 'Contratar un manitas',           neighborhood: 'Aptos' },
+			{ label: 'Hire an electrician',  label_es: 'Contratar un electricista',      neighborhood: 'Capitola' },
+			{ label: 'Hire a dog walker',    label_es: 'Contratar un paseador de perros', neighborhood: 'Santa Cruz' },
+			{ label: 'Find a house cleaner', label_es: 'Encontrar una limpiadora',       neighborhood: 'Scotts Valley' },
+			{ label: 'Book a photographer',  label_es: 'Contratar un fotógrafo',         neighborhood: 'Soquel' },
+			{ label: 'Hire a yoga teacher',  label_es: 'Contratar un instructor de yoga', neighborhood: 'Santa Cruz' },
+			{ label: 'Book a plumber',       label_es: 'Contratar un plomero',           neighborhood: 'Watsonville' },
+			{ label: 'Hire a tutor',         label_es: 'Contratar un tutor',             neighborhood: 'Aptos' },
 		],
 		rent: [
-			{ label: 'Rent a pressure washer', neighborhood: 'Santa Cruz' },
-			{ label: 'Borrow a generator',     neighborhood: 'Scotts Valley' },
-			{ label: 'Borrow a tile saw',      neighborhood: 'Capitola' },
-			{ label: 'Rent camera gear',       neighborhood: 'Santa Cruz' },
-			{ label: 'Rent a trailer',         neighborhood: 'Watsonville' },
-			{ label: 'Rent a kayak',           neighborhood: 'Aptos' },
-			{ label: 'Rent a tent',            neighborhood: 'Santa Cruz' },
-			{ label: 'Borrow a stand mixer',   neighborhood: 'Soquel' },
-			{ label: 'Rent a cargo bike',      neighborhood: 'Santa Cruz' },
+			{ label: 'Rent a pressure washer', label_es: 'Rentar una lavadora a presión', neighborhood: 'Santa Cruz' },
+			{ label: 'Borrow a generator',     label_es: 'Pedir prestado un generador',   neighborhood: 'Scotts Valley' },
+			{ label: 'Borrow a tile saw',      label_es: 'Pedir prestado una sierra',     neighborhood: 'Capitola' },
+			{ label: 'Rent camera gear',       label_es: 'Rentar equipo de cámara',       neighborhood: 'Santa Cruz' },
+			{ label: 'Rent a trailer',         label_es: 'Rentar un remolque',            neighborhood: 'Watsonville' },
+			{ label: 'Rent a kayak',           label_es: 'Rentar un kayak',               neighborhood: 'Aptos' },
+			{ label: 'Rent a tent',            label_es: 'Rentar una tienda de campaña',  neighborhood: 'Santa Cruz' },
+			{ label: 'Borrow a stand mixer',   label_es: 'Pedir prestado una batidora',   neighborhood: 'Soquel' },
+			{ label: 'Rent a cargo bike',      label_es: 'Rentar una bici de carga',      neighborhood: 'Santa Cruz' },
 		]
 	};
 
@@ -51,11 +53,11 @@
 		rent:  '/browse?type=tool_rental',
 	};
 
-	const typeLabel: Record<IdeaType, string> = {
-		trade: 'Trade',
-		hire:  'Hire',
-		rent:  'Rent',
-	};
+	$: typeLabel = {
+		trade: m.footer_type_trade(),
+		hire:  m.footer_type_hire(),
+		rent:  m.footer_type_rent(),
+	} as Record<IdeaType, string>;
 
 	let activeTab: Tab = 'all';
 	let showAll = false;
@@ -92,25 +94,25 @@
 		? ideas.trade.length > 6
 		: ideas[activeTab as IdeaType]?.length > 6;
 
-	const tabs: { value: Tab; label: string }[] = [
-		{ value: 'all',   label: 'All' },
-		{ value: 'trade', label: 'Trade' },
-		{ value: 'hire',  label: 'Hire' },
-		{ value: 'rent',  label: 'Rent' },
-	];
+	$: tabs = [
+		{ value: 'all',   label: m.browse_filter_all_types() },
+		{ value: 'trade', label: m.footer_type_trade() },
+		{ value: 'hire',  label: m.footer_type_hire() },
+		{ value: 'rent',  label: m.footer_type_rent() },
+	] as { value: Tab; label: string }[];
 
 	$: activeHref = activeTab === 'all' ? '/browse' : typeHref[activeTab];
 	$: activeTypeLabel = activeTab === 'all' ? '' : typeLabel[activeTab];
 	$: activeIdeas = activeTab === 'all' ? [] : (showAll ? ideas[activeTab] : ideas[activeTab].slice(0, 6));
 </script>
 
-<footer class="hidden md:block bg-bg border-t border-border">
+<footer class="hidden md:block bg-bg-card border-t border-border">
 
 	<!-- Inspiration section -->
 	<div class="border-b border-border bg-bg-card">
 		<div class="max-w-content mx-auto px-6 py-12">
 
-			<h2 class="font-exile text-3xl text-text-primary mb-6">Ideas for your next trade, hire, or rental</h2>
+			<h2 class="font-exile text-3xl text-text-primary mb-6">{m.footer_inspiration_title()}</h2>
 
 			<!-- Tabs -->
 			<div class="flex gap-6 border-b border-border mb-8">
@@ -133,7 +135,7 @@
 					{#each displayedAll as item}
 						<a href={typeHref[item.type]} class="group flex flex-col gap-0.5">
 							<span class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors leading-snug">
-								{item.label}
+								{lang === 'es' ? item.label_es : item.label}
 							</span>
 							<span class="text-xs text-text-muted">{typeLabel[item.type]} · {item.neighborhood}</span>
 						</a>
@@ -144,7 +146,7 @@
 					{#each activeIdeas as item}
 						<a href={activeHref} class="group flex flex-col gap-0.5">
 							<span class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors leading-snug">
-								{item.label}
+								{lang === 'es' ? item.label_es : item.label}
 							</span>
 							<span class="text-xs text-text-muted">{activeTypeLabel} · {item.neighborhood}</span>
 						</a>
@@ -158,7 +160,7 @@
 					on:click={() => showAll = true}
 					class="mt-8 flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-text-primary transition-colors"
 				>
-					Show more
+					{m.footer_show_more()}
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
 					</svg>

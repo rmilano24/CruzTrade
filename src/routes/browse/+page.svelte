@@ -1,6 +1,8 @@
 <script lang="ts">
 	import ListingCard from '$lib/components/listings/ListingCard.svelte';
-	import { CATEGORY_LABELS } from '$lib/utils/format';
+	import { CATEGORY_LABELS, categoryLabel } from '$lib/utils/format';
+	import { languageTag } from '$lib/paraglide/runtime';
+	$: lang = languageTag() as 'en' | 'es';
 	import * as m from '$lib/paraglide/messages';
 	import { page, navigating } from '$app/stores';
 
@@ -158,7 +160,7 @@
 								{filters.category === cat
 									? 'bg-text-primary text-white border-text-primary'
 									: 'border-border text-text-muted hover:border-text-muted'}">
-							{CATEGORY_LABELS[cat].en}
+							{categoryLabel(cat, lang)}
 							<span class="text-[10px] font-semibold opacity-70">{categoryCounts[cat]}</span>
 						</a>
 					{/if}
@@ -169,7 +171,7 @@
 			{#if showTradeSwitch}
 				<a href={tradeToggleHref} class="flex items-center gap-2 shrink-0 group">
 					<span class="text-xs text-text-muted group-hover:text-text-primary transition-colors select-none">
-						Includes trade
+						{m.browse_includes_trade()}
 					</span>
 					<div class="relative shrink-0">
 						<div class="w-11 h-6 rounded-full border-2 transition-colors
@@ -268,21 +270,21 @@
 	{#if filters.q && data.allListings.length > 0}
 		<div class="border-t border-border mt-10 pt-8">
 			<h2 class="text-lg font-bold text-text-primary mb-5">
-				Browse all {filters.type === 'service' ? 'services' : filters.type === 'tool_rental' ? 'rentals' : 'services and rentals'}
+				{filters.type === 'service' ? m.hire_browse_all() : filters.type === 'tool_rental' ? m.rent_browse_all() : m.browse_all_listings()}
 			</h2>
 
 			<div class="flex flex-wrap gap-2 mb-6">
 				<button on:click={() => setBrowseCategory(null)}
 					class="text-xs px-3 py-1 rounded-full border transition-colors
 						{!browseCategory ? 'bg-text-primary text-white border-text-primary' : 'border-border text-text-muted hover:border-text-muted'}">
-					All categories
+					{m.browse_filter_all_categories()}
 				</button>
 				{#each Object.keys(CATEGORY_LABELS) as cat}
 					{#if browseCategoryCounts[cat]}
 						<button on:click={() => setBrowseCategory(browseCategory === cat ? null : cat)}
 							class="text-xs px-3 py-1 rounded-full border transition-colors inline-flex items-center gap-1.5
 								{browseCategory === cat ? 'bg-text-primary text-white border-text-primary' : 'border-border text-text-muted hover:border-text-muted'}">
-							{CATEGORY_LABELS[cat].en}
+							{categoryLabel(cat, lang)}
 							<span class="text-[10px] font-semibold opacity-70">{browseCategoryCounts[cat]}</span>
 						</button>
 					{/if}

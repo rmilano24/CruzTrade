@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { formatPrice, categoryLabel } from '$lib/utils/format';
 	import { languageTag } from '$lib/paraglide/runtime';
+	import * as m from '$lib/paraglide/messages';
 
 	export let listing: {
 		id: string;
@@ -55,7 +56,7 @@
 		<!-- Rental badge -->
 		{#if listing.type === 'tool_rental'}
 			<span class="absolute top-3 right-3 bg-text-primary text-white text-xs font-semibold px-2.5 py-1 rounded-full">
-				Rental
+				{m.card_rental()}
 			</span>
 		{/if}
 	</div>
@@ -93,11 +94,11 @@
 		<!-- Tags -->
 		<div class="flex items-center gap-2 flex-wrap mt-auto">
 			{#if listing.type === 'service' && listing.accepts_trade}
-				<span class="text-xs text-primary border border-orange-200 px-2.5 py-0.5 rounded-full">Accepts Trade</span>
+				<span class="text-xs text-primary border border-orange-200 px-2.5 py-0.5 rounded-full">{m.browse_accepts_trade()}</span>
 			{:else if listing.type === 'service'}
-				<span class="text-xs text-text-muted border border-border px-2.5 py-0.5 rounded-full">Service only</span>
+				<span class="text-xs text-text-muted border border-border px-2.5 py-0.5 rounded-full">{m.card_service_only()}</span>
 			{:else if listing.type === 'tool_rental'}
-				<span class="text-xs text-text-muted border border-border px-2.5 py-0.5 rounded-full">Requires deposit</span>
+				<span class="text-xs text-text-muted border border-border px-2.5 py-0.5 rounded-full">{m.card_requires_deposit()}</span>
 			{/if}
 		</div>
 	</div>

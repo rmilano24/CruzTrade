@@ -56,7 +56,7 @@
 				<p class="text-sm text-text-muted mb-3">
 					{m.auth_signup_success_body({ email: form.email ?? '' })}
 				</p>
-				<p class="text-xs text-text-muted">This page will redirect automatically once you confirm.</p>
+				<p class="text-xs text-text-muted">{m.auth_signup_redirect_hint()}</p>
 			</div>
 		{:else}
 			<!-- Sign up form -->
@@ -74,13 +74,13 @@
 							<path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
 							<path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
 						</svg>
-						Continue with Google
+						{m.auth_google()}
 					</button>
 				</div>
 
 				<div class="flex items-center gap-3 mb-4">
 					<div class="flex-1 h-px bg-border"></div>
-					<span class="text-xs text-text-muted">or</span>
+					<span class="text-xs text-text-muted">{m.auth_or()}</span>
 					<div class="flex-1 h-px bg-border"></div>
 				</div>
 
@@ -161,10 +161,10 @@
 							class="mt-0.5 accent-primary shrink-0"
 						/>
 						<span class="text-xs text-text-muted leading-relaxed">
-							I agree to the Cruz Trade
+							{m.auth_terms_agree_prefix()}
 							<button type="button" on:click|stopPropagation={() => showTermsModal = true}
-								class="text-primary hover:underline font-medium">Terms and Conditions</button>.
-							I am 18 or older and a resident of or connected to Santa Cruz County.
+								class="text-primary hover:underline font-medium">{m.auth_terms_link()}</button>.
+							{m.auth_age_disclaimer()}
 						</span>
 					</label>
 

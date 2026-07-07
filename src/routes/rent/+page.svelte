@@ -1,6 +1,10 @@
 <script lang="ts">
 	import CategorySections from '$lib/components/listings/CategorySections.svelte';
 	import ListingCard from '$lib/components/listings/ListingCard.svelte';
+	import * as m from '$lib/paraglide/messages';
+	import { categoryLabel } from '$lib/utils/format';
+	import { languageTag } from '$lib/paraglide/runtime';
+	$: lang = languageTag() as 'en' | 'es';
 	export let data: { listings: any[]; allListings: any[]; filters: any };
 
 	const categories = [
@@ -44,11 +48,11 @@
 					{/each}
 				</div>
 			{:else}
-				<p class="text-sm text-text-muted mb-10">No exact matches — browse all rentals below.</p>
+				<p class="text-sm text-text-muted mb-10">{m.rent_no_results()}</p>
 			{/if}
 
 			<div class="border-t border-border pt-8">
-				<h2 class="text-lg font-bold text-text-primary mb-5">Browse all rentals</h2>
+				<h2 class="text-lg font-bold text-text-primary mb-5">{m.rent_browse_all()}</h2>
 
 				<div class="flex flex-wrap gap-2 mb-6">
 					<button on:click={() => activeCategory = null}
@@ -61,7 +65,7 @@
 							<button on:click={() => activeCategory = activeCategory === cat.slug ? null : cat.slug}
 								class="text-xs px-3 py-1 rounded-full border transition-colors inline-flex items-center gap-1.5
 									{activeCategory === cat.slug ? 'bg-text-primary text-white border-text-primary' : 'border-border text-text-muted hover:border-text-muted'}">
-								{cat.label}
+								{categoryLabel(cat.slug, lang)}
 								<span class="text-[10px] font-semibold opacity-70">{categoryCounts[cat.slug]}</span>
 							</button>
 						{/if}

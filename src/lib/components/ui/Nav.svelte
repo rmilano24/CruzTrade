@@ -99,9 +99,9 @@
 	$: navItems = (() => {
 		const path = $page.url.pathname;
 		return [
-			{ label: 'Trade', icon: '🤝', href: '/trade', active: path === '/trade' || path.startsWith('/trade/') },
-			{ label: 'Hire',  icon: '🛠️', href: '/hire',  active: path === '/hire'  || path.startsWith('/hire/') },
-			{ label: 'Rent',  icon: '🏄', href: '/rent',  active: path === '/rent'  || path.startsWith('/rent/') },
+			{ label: m.nav_tab_trade(), icon: '🤝', href: '/trade', active: path === '/trade' || path.startsWith('/trade/') },
+			{ label: m.nav_tab_hire(),  icon: '🛠️', href: '/hire',  active: path === '/hire'  || path.startsWith('/hire/') },
+			{ label: m.nav_tab_rent(),  icon: '🏄', href: '/rent',  active: path === '/rent'  || path.startsWith('/rent/') },
 		];
 	})();
 </script>
@@ -214,7 +214,7 @@
 										<rect x="3" y="14" width="7" height="7" rx="1"/>
 										<rect x="14" y="14" width="7" height="7" rx="1"/>
 									</svg>
-									My listings
+									{m.nav_my_listings()}
 								</a>
 								<a
 									href="/my-bookings"
@@ -228,7 +228,7 @@
 										<line x1="8" y1="2" x2="8" y2="6"/>
 										<line x1="3" y1="10" x2="21" y2="10"/>
 									</svg>
-									My bookings
+									{m.nav_my_bookings()}
 								</a>
 								{#if username}
 									<a
@@ -240,7 +240,7 @@
 											<circle cx="12" cy="8" r="4"/>
 											<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
 										</svg>
-										View profile
+										{m.nav_view_profile()}
 									</a>
 								{/if}
 								<a
@@ -252,7 +252,7 @@
 										<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
 										<path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
 									</svg>
-									Edit profile
+									{m.nav_edit_profile()}
 								</a>
 								<a
 									href="/messages"
@@ -263,7 +263,7 @@
 									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
 										<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
 									</svg>
-									Messages
+									{m.nav_messages()}
 									{#if unread > 0}
 										<span class="ml-auto min-w-[20px] h-5 bg-primary text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1.5 leading-none">
 											{unread > 99 ? '99+' : unread}
@@ -295,19 +295,19 @@
 								<nav class="py-1">
 									<a href="/how-it-works" on:click={closeDropdown}
 										class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-bg-card transition-colors">
-										How it works
+										{m.footer_how_it_works()}
 									</a>
 									<a href="/about" on:click={closeDropdown}
 										class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-bg-card transition-colors">
-										About
+										{m.footer_about()}
 									</a>
 									<a href="/contact" on:click={closeDropdown}
 										class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-bg-card transition-colors">
-										Contact
+										{m.footer_contact()}
 									</a>
 									<a href="/terms" on:click={closeDropdown}
 										class="flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-bg-card transition-colors">
-										Terms &amp; Privacy
+										{m.nav_terms_privacy()}
 									</a>
 								</nav>
 							</div>
@@ -320,11 +320,11 @@
 				<!-- Logged-out state -->
 				<a href="/auth/login"
 					class="text-sm font-semibold text-text-primary hover:text-primary transition-colors">
-					Log in
+					{m.nav_login()}
 				</a>
 				<a href="/auth/signup"
 					class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors">
-					Join for free
+					{m.nav_join_free()}
 				</a>
 			{/if}
 		</div>
@@ -361,7 +361,7 @@
 					/>
 					<button type="submit"
 						class="bg-primary text-white font-semibold text-sm px-5 py-2 rounded-full m-1 hover:bg-primary-hover transition-colors shrink-0">
-						Search
+						{m.nav_search()}
 					</button>
 				</form>
 			</div>

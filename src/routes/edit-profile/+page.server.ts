@@ -1,5 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { SANTA_CRUZ_NEIGHBORHOODS } from '$lib/neighborhoods';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user } = await locals.safeGetSession();
@@ -17,7 +18,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		profile,
 		email: user.email ?? '',
-		provider: (user.app_metadata?.provider ?? 'email') as string
+		provider: (user.app_metadata?.provider ?? 'email') as string,
+		neighborhoods: SANTA_CRUZ_NEIGHBORHOODS
 	};
 };
 
@@ -62,7 +64,7 @@ export const actions: Actions = {
 				.select('id')
 				.eq('username', resolvedUsername)
 				.neq('id', user.id)
-				.single();
+				.maybeSingle();
 			if (existing) return fail(400, { error: 'That username is already taken' });
 		}
 

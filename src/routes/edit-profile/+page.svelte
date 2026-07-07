@@ -4,7 +4,7 @@
 	import { i18n } from '$lib/i18n';
 	import { page } from '$app/stores';
 
-	export let data: { profile: any; provider: string; email: string };
+	export let data: { profile: any; provider: string; email: string; neighborhoods: readonly string[] };
 	export let form: { error?: string; success?: boolean; pwError?: string; pwSuccess?: boolean } | null = null;
 
 	$: profile = data.profile;
@@ -192,14 +192,19 @@
 				<!-- Neighborhood -->
 				<div class="flex flex-col gap-1.5">
 					<label for="neighborhood" class="text-sm font-medium text-text-primary">Neighborhood</label>
-					<input
-						id="neighborhood"
-						name="neighborhood"
-						type="text"
-						placeholder="e.g. Westside, Capitola…"
-						value={profile.neighborhood ?? ''}
-						class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
-					/>
+					<div class="relative">
+						<select
+							id="neighborhood"
+							name="neighborhood"
+							class="appearance-none w-full bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
+						>
+							<option value="">Select your neighborhood</option>
+							{#each data.neighborhoods as hood}
+								<option value={hood} selected={profile.neighborhood === hood}>{hood}</option>
+							{/each}
+						</select>
+						<svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+					</div>
 				</div>
 
 				<!-- Language -->
