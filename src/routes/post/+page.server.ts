@@ -41,7 +41,13 @@ export const actions: Actions = {
 		if (!title || title.length < 5) errors.title = 'Title must be at least 5 characters';
 		if (title && title.length > 120) errors.title = 'Title must be under 120 characters';
 		if (!description) errors.description = 'Please add a description';
-		const validCategories = ['home_yard','tech_creative','lessons','wellness','care_errands','tools_equipment','outdoor_adventure','party_events','garden_yard','vehicles'];
+		const validCategories = [
+			'home_yard','handyman_repairs','automotive','tech_creative','photography_video',
+			'cooking_meal_prep','lessons','wellness','pets','events_entertainment',
+			'moving_hauling','care_errands','arts_music',
+			'tools_equipment','garden_yard','outdoor_recreation','camera_av',
+			'music_audio','vehicles','baby_kids','costumes_seasonal','party_events'
+		];
 		if (!validCategories.includes(category)) errors.category = 'Please select a category';
 		const priceNum = parseFloat(priceRaw);
 		if (isNaN(priceNum) || priceNum < 0) errors.price = 'Enter a valid price';
