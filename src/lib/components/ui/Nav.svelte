@@ -5,6 +5,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { languageTag } from '$lib/paraglide/runtime';
 	import { notifications } from '$lib/stores/notifications';
+	import { showPostModal } from '$lib/stores/postModal';
 	import { i18n } from '$lib/i18n';
 
 	$: canonicalPath = i18n.route($page.url.pathname);
@@ -138,12 +139,13 @@
 		<div class="flex items-center gap-3">
 {#if user}
 				<!-- Post CTA -->
-				<a
-					href="/post"
+				<button
+					type="button"
+					on:click={() => showPostModal.set(true)}
 					class="hidden md:block bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors"
 				>
 					{m.nav_post()}
-				</a>
+				</button>
 
 				<!-- Avatar + dropdown -->
 				<div class="relative">

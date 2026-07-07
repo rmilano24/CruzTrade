@@ -8,7 +8,9 @@
 	import Nav from '$lib/components/ui/Nav.svelte';
 	import Footer from '$lib/components/ui/Footer.svelte';
 	import MobileBottomNav from '$lib/components/ui/MobileBottomNav.svelte';
+	import PostListingModal from '$lib/components/listings/PostListingModal.svelte';
 	import { notifications } from '$lib/stores/notifications';
+	import { showPostModal } from '$lib/stores/postModal';
 	import '../app.css';
 
 	export let data: { session: any; user: any; unreadCount: number; notifications: any[] };
@@ -99,4 +101,5 @@
 	{#if !$page.url.pathname.startsWith('/auth')}
 		<MobileBottomNav />
 	{/if}
+	<PostListingModal bind:open={$showPostModal} />
 </ParaglideJS>
