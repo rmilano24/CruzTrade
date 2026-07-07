@@ -16,7 +16,7 @@ export async function loadListings(
 		.select(
 			`id, type, title, description, category, price, price_unit,
 			 accepts_trade, neighborhood, language, image_url, created_at,
-			 profiles!user_id(id, username, full_name, avatar_url)`
+			 profiles!user_id(id, username, full_name, avatar_url, subscription_tier)`
 		)
 		.eq('is_active', true)
 		.order('created_at', { ascending: false })

@@ -67,10 +67,10 @@
 					</div>
 				{:else}
 					<div class="text-center py-24">
-						<p class="text-lg font-semibold text-text-primary mb-2">No listings yet</p>
-						<p class="text-sm text-text-muted mb-6">Be the first to post in this category.</p>
+						<p class="text-lg font-semibold text-text-primary mb-2">{m.browse_no_listings()}</p>
+						<p class="text-sm text-text-muted mb-6">{m.browse_no_listings_hint()}</p>
 						<a href="/post" class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors">
-							Post a listing
+							{m.post_heading()}
 						</a>
 					</div>
 				{/if}

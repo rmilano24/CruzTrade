@@ -2,6 +2,7 @@
 	import { formatPrice, categoryLabel } from '$lib/utils/format';
 	import { languageTag } from '$lib/paraglide/runtime';
 	import * as m from '$lib/paraglide/messages';
+	import ProBadge from '$lib/components/ui/ProBadge.svelte';
 
 	export let listing: {
 		id: string;
@@ -15,7 +16,7 @@
 		neighborhood: string | null;
 		language: string;
 		image_url?: string | null;
-		profiles: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
+		profiles: { username: string | null; full_name: string | null; avatar_url: string | null; subscription_tier?: string | null } | null;
 	};
 
 	$: lang = languageTag() as 'en' | 'es';
@@ -89,6 +90,9 @@
 			<span class="text-xs text-text-muted truncate">
 				{displayName}{listing.neighborhood ? ` · ${listing.neighborhood}` : ''}
 			</span>
+			{#if listing.profiles?.subscription_tier === 'pro'}
+				<ProBadge />
+			{/if}
 		</div>
 
 		<!-- Tags -->

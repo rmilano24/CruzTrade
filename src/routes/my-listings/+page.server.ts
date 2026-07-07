@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	const { data: listings, error: err } = await locals.supabase
 		.from('listings')
-		.select('id, type, title, price, price_unit, category, accepts_trade, neighborhood, is_active, image_url, created_at')
+		.select('id, type, title, price, price_unit, category, accepts_trade, neighborhood, is_active, image_url, created_at, listing_expires_at')
 		.eq('user_id', user.id)
 		.order('created_at', { ascending: false });
 

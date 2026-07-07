@@ -1,6 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { stripe } from '$lib/server/stripe';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { user } = await locals.safeGetSession();
@@ -12,7 +11,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		.select(`
 			id, status, type, amount, platform_fee, deposit_amount, deposit_status,
 			scheduled_date, created_at, buyer_id, seller_id,
-			stripe_payment_intent_id,
 			listings!listing_id(id, title, type, image_url, price, price_unit),
 			buyer:profiles!buyer_id(id, full_name, username, avatar_url),
 			seller:profiles!seller_id(id, full_name, username, avatar_url)
@@ -23,7 +21,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	if (err || !tx) error(404, 'Booking not found');
 
-	// Has the current user already reviewed this?
 	const { data: review } = await locals.supabase
 		.from('reviews')
 		.select('id, rating, body')
@@ -31,11 +28,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		.eq('reviewer_id', user.id)
 		.maybeSingle();
 
-	return {
-		tx,
-		userId: user.id,
-		review
-	};
+	return { tx, userId: user.id, review };
 };
 
 export const actions: Actions = {
@@ -67,7 +60,7 @@ export const actions: Actions = {
 
 		const { data: tx } = await locals.supabase
 			.from('transactions')
-			.select('id, status, buyer_id, seller_id, type, deposit_amount, deposit_status, stripe_payment_intent_id, listings!listing_id(type)')
+			.select('id, status, buyer_id, seller_id, deposit_status')
 			.eq('id', params.id)
 			.single();
 
@@ -76,24 +69,8 @@ export const actions: Actions = {
 		if (tx.status !== 'confirmed') return fail(400, { error: 'Can only complete confirmed bookings' });
 
 		const updates: Record<string, unknown> = { status: 'completed' };
-
-		// Release tool rental deposit via Stripe refund
-		const listing = tx.listings as any;
-		if (
-			listing?.type === 'tool_rental' &&
-			tx.deposit_status === 'held' &&
-			tx.deposit_amount > 0 &&
-			tx.stripe_payment_intent_id
-		) {
-			try {
-				await stripe.refunds.create({
-					payment_intent: tx.stripe_payment_intent_id,
-					amount: tx.deposit_amount
-				});
-				updates.deposit_status = 'released';
-			} catch (e) {
-				console.error('Deposit refund failed:', e);
-			}
+		if (tx.deposit_status === 'held') {
+			updates.deposit_status = 'released';
 		}
 
 		await locals.supabase

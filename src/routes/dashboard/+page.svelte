@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { formatPrice } from '$lib/utils/format';
+	import * as m from '$lib/paraglide/messages';
+	import { languageTag } from '$lib/paraglide/runtime';
 
 	export let data: {
 		dashProfile: { neighborhood: string | null; full_name: string | null; username: string | null } | null;
@@ -11,9 +13,10 @@
 
 	$: user = $page.data.user;
 	$: layoutProfile = $page.data.profile;
+	$: lang = languageTag();
 
 	const hour = new Date().getHours();
-	const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+	$: greeting = hour < 12 ? m.dashboard_greeting_morning() : hour < 17 ? m.dashboard_greeting_afternoon() : m.dashboard_greeting_evening();
 
 	$: firstName = (data.dashProfile?.full_name ?? layoutProfile?.full_name ?? '').split(' ')[0] || 'there';
 	$: neighborhood = data.dashProfile?.neighborhood;
@@ -27,19 +30,31 @@
 	}
 
 	function formatDate(dateStr: string | null): string {
-		if (!dateStr) return 'TBD';
+		if (!dateStr) return m.dashboard_date_tbd();
 		const d = new Date(dateStr + 'T12:00:00');
-		return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+		return d.toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 	}
 
 	function timeAgo(ts: string): string {
 		const diff = Date.now() - new Date(ts).getTime();
 		const mins = Math.floor(diff / 60000);
-		if (mins < 1) return 'just now';
-		if (mins < 60) return `${mins}m ago`;
+		if (mins < 1) return m.dashboard_time_just_now();
+		if (mins < 60) return m.dashboard_time_mins({ mins: mins.toString() });
 		const hrs = Math.floor(mins / 60);
-		if (hrs < 24) return `${hrs}hr ago`;
-		return `${Math.floor(hrs / 24)}d ago`;
+		if (hrs < 24) return m.dashboard_time_hrs({ hrs: hrs.toString() });
+		return m.dashboard_time_days({ days: Math.floor(hrs / 24).toString() });
+	}
+
+	function statusLabel(booking: any): string {
+		if (booking.type === 'trade') return m.dashboard_status_trade();
+		const map: Record<string, () => string> = {
+			confirmed: m.dashboard_status_confirmed,
+			pending:   m.dashboard_status_pending,
+			completed: m.dashboard_status_completed,
+			cancelled: m.dashboard_status_cancelled,
+			disputed:  m.dashboard_status_disputed,
+		};
+		return map[booking.status]?.() ?? booking.status;
 	}
 
 	const statusStyles: Record<string, string> = {
@@ -68,7 +83,7 @@
 		</div>
 		<a href="/post"
 			class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors shrink-0">
-			+ Post a Listing
+			{m.dashboard_post_listing()}
 		</a>
 	</div>
 
@@ -81,12 +96,12 @@
 			<!-- Active bookings -->
 			<div class="bg-bg border border-border rounded-xl p-6">
 				<div class="flex items-center justify-between mb-4">
-					<h2 class="text-base font-bold text-text-primary">Active bookings</h2>
-					<a href="/my-bookings" class="text-xs text-primary hover:underline">See all</a>
+					<h2 class="text-base font-bold text-text-primary">{m.dashboard_active_bookings()}</h2>
+					<a href="/my-bookings" class="text-xs text-primary hover:underline">{m.dashboard_see_all()}</a>
 				</div>
 
 				{#if data.bookings.length === 0}
-					<p class="text-sm text-text-muted py-4 text-center">No active bookings yet.</p>
+					<p class="text-sm text-text-muted py-4 text-center">{m.dashboard_no_bookings()}</p>
 				{:else}
 					<div class="flex flex-col divide-y divide-border">
 						{#each data.bookings as booking}
@@ -110,14 +125,14 @@
 									<p class="text-xs text-text-muted mt-0.5">
 										{formatDate(booking.scheduled_date)}
 										{#if booking.type !== 'trade' && booking.amount}
-											· {(booking.amount / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+											· {(booking.amount / 100).toLocaleString(lang === 'es' ? 'es-MX' : 'en-US', { style: 'currency', currency: 'USD' })}
 										{/if}
 									</p>
 								</div>
 
 								<!-- Status -->
 								<span class="text-xs font-semibold shrink-0 {booking.type === 'trade' ? 'text-blue-600' : (statusStyles[booking.status] ?? 'text-text-muted')}">
-									{booking.type === 'trade' ? 'Trade' : booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+									{statusLabel(booking)}
 								</span>
 							</a>
 						{/each}
@@ -128,11 +143,11 @@
 			<!-- Trade matches — Phase 2 stub -->
 			<div class="bg-bg border border-border rounded-xl p-6">
 				<div class="flex items-center justify-between mb-1">
-					<h2 class="text-base font-bold text-text-primary">Trade matches for you</h2>
-					<span class="text-xs bg-orange-100 text-primary font-semibold px-2.5 py-1 rounded-full">Coming soon</span>
+					<h2 class="text-base font-bold text-text-primary">{m.dashboard_trade_matches()}</h2>
+					<span class="text-xs bg-orange-100 text-primary font-semibold px-2.5 py-1 rounded-full">{m.dashboard_coming_soon()}</span>
 				</div>
 				<p class="text-sm text-text-muted">
-					We'll surface neighbors whose skills match what you're looking for — and vice versa. Launching with AI matching soon.
+					{m.dashboard_trade_matches_body()}
 				</p>
 			</div>
 
@@ -144,12 +159,12 @@
 			<!-- Messages -->
 			<div class="bg-bg border border-border rounded-xl p-5">
 				<div class="flex items-center justify-between mb-4">
-					<h2 class="text-base font-bold text-text-primary">Messages</h2>
-					<a href="/messages" class="text-xs text-primary hover:underline">See all</a>
+					<h2 class="text-base font-bold text-text-primary">{m.dashboard_messages()}</h2>
+					<a href="/messages" class="text-xs text-primary hover:underline">{m.dashboard_see_all()}</a>
 				</div>
 
 				{#if data.threads.length === 0}
-					<p class="text-sm text-text-muted text-center py-3">No messages yet.</p>
+					<p class="text-sm text-text-muted text-center py-3">{m.dashboard_no_messages()}</p>
 				{:else}
 					<div class="flex flex-col divide-y divide-border">
 						{#each data.threads as thread}
@@ -184,13 +199,13 @@
 				<div class="bg-bg border border-border rounded-xl p-5">
 					<div class="flex items-center justify-between mb-4">
 						<h2 class="text-base font-bold text-text-primary">
-							New in {neighborhood} 📍
+							{m.dashboard_new_in({ neighborhood: neighborhood ?? '' })}
 						</h2>
-						<a href="/browse?neighborhood={encodeURIComponent(neighborhood)}" class="text-xs text-primary hover:underline">See all</a>
+						<a href="/browse?neighborhood={encodeURIComponent(neighborhood)}" class="text-xs text-primary hover:underline">{m.dashboard_see_all()}</a>
 					</div>
 
 					{#if data.nearbyListings.length === 0}
-						<p class="text-sm text-text-muted text-center py-3">No new listings nearby yet.</p>
+						<p class="text-sm text-text-muted text-center py-3">{m.dashboard_no_nearby()}</p>
 					{:else}
 						<div class="flex flex-col divide-y divide-border">
 							{#each data.nearbyListings as listing}

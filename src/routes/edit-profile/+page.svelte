@@ -4,9 +4,55 @@
 	import { i18n } from '$lib/i18n';
 	import { page } from '$app/stores';
 	import * as m from '$lib/paraglide/messages';
+	import ProBadge from '$lib/components/ui/ProBadge.svelte';
 
-	export let data: { profile: any; provider: string; email: string; neighborhoods: readonly string[] };
+	export let data: {
+		profile: any;
+		provider: string;
+		email: string;
+		neighborhoods: readonly string[];
+		activeListingCount: number;
+	};
 	export let form: { error?: string; success?: boolean; pwError?: string; pwSuccess?: boolean } | null = null;
+
+	$: isPro = data.profile?.subscription_tier === 'pro';
+	$: proActivated = $page.url.searchParams.get('pro') === 'activated';
+	$: slotPurchased = $page.url.searchParams.get('slot') === 'purchased';
+	$: additionalSlots = data.profile?.additional_listing_slots ?? 0;
+	$: totalAllowed = isPro ? '∞' : String(1 + additionalSlots);
+	$: hasStripeCustomer = !!data.profile?.stripe_customer_id;
+
+	let portalLoading = false;
+	let upgradeLoading = false;
+	let slotLoading = false;
+	let billingError = '';
+
+	async function openPortal() {
+		portalLoading = true;
+		billingError = '';
+		const res = await fetch('/api/stripe/portal', { method: 'POST' });
+		const data = await res.json();
+		if (data.url) { window.location.href = data.url; }
+		else { billingError = data.error ?? 'Could not open billing portal.'; portalLoading = false; }
+	}
+
+	async function upgradePro() {
+		upgradeLoading = true;
+		billingError = '';
+		const res = await fetch('/api/stripe/checkout-pro', { method: 'POST' });
+		const data = await res.json();
+		if (data.url) { window.location.href = data.url; }
+		else { billingError = data.error ?? 'Could not start upgrade.'; upgradeLoading = false; }
+	}
+
+	async function buySlot() {
+		slotLoading = true;
+		billingError = '';
+		const res = await fetch('/api/stripe/checkout-listing', { method: 'POST' });
+		const data = await res.json();
+		if (data.url) { window.location.href = data.url; }
+		else { billingError = data.error ?? 'Could not start checkout.'; slotLoading = false; }
+	}
 
 	$: profile = data.profile;
 
@@ -46,6 +92,20 @@
 	<div class="max-w-2xl mx-auto">
 
 		<h1 class="text-2xl font-bold text-text-primary mb-6">{m.edit_profile_heading()}</h1>
+
+		{#if proActivated}
+			<div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
+				<svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+				Welcome to Pro! Your listings never expire and you now have the Pro badge.
+			</div>
+		{/if}
+
+		{#if slotPurchased}
+			<div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
+				<svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+				Listing slot purchased! Head to Post a Listing to publish your next listing.
+			</div>
+		{/if}
 
 		{#if form?.success}
 			<div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
@@ -358,6 +418,63 @@
 						</button>
 					</div>
 				</form>
+			{/if}
+		</div>
+
+		<!-- Subscription / Plan -->
+		<div class="bg-bg border border-border rounded-2xl p-8 mt-6">
+			<div class="flex items-center justify-between mb-1">
+				<h2 class="text-base font-semibold text-text-primary">{m.plan_heading()}</h2>
+				{#if isPro}
+					<ProBadge />
+				{:else}
+					<span class="text-sm font-medium text-text-muted">{m.plan_free()}</span>
+				{/if}
+			</div>
+
+			<!-- Slot usage -->
+			<p class="text-sm text-text-muted mb-1">
+				{isPro
+					? m.plan_pro_perks()
+					: m.plan_slots_used({ used: String(data.activeListingCount), allowed: totalAllowed })}
+			</p>
+			{#if !isPro}
+				<p class="text-xs text-text-muted mb-5">{m.plan_one_free()}</p>
+			{:else}
+				<div class="mb-5"></div>
+			{/if}
+
+			{#if billingError}
+				<p class="text-xs text-error mb-3">{billingError}</p>
+			{/if}
+
+			{#if isPro && hasStripeCustomer}
+				<!-- Pro: manage subscription -->
+				<button
+					on:click={openPortal}
+					disabled={portalLoading}
+					class="w-full border border-border text-text-primary font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-bg-secondary transition-colors disabled:opacity-50"
+				>
+					{portalLoading ? '…' : m.plan_manage()}
+				</button>
+			{:else if !isPro}
+				<!-- Free: upgrade or buy slot -->
+				<div class="flex flex-col gap-2">
+					<button
+						on:click={upgradePro}
+						disabled={upgradeLoading || slotLoading}
+						class="w-full bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50"
+					>
+						{upgradeLoading ? '…' : m.plan_upgrade_pro()}
+					</button>
+					<button
+						on:click={buySlot}
+						disabled={upgradeLoading || slotLoading}
+						class="w-full border border-border text-text-primary font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-bg-secondary transition-colors disabled:opacity-50"
+					>
+						{slotLoading ? '…' : m.plan_buy_slot()}
+					</button>
+				</div>
 			{/if}
 		</div>
 

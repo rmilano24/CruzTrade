@@ -41,9 +41,8 @@
 		if (listing.price_unit === 'flat') return listing.price;
 		return Math.round(listing.price * quantity);
 	})();
-	$: platformFee = isTrade ? 0 : Math.round(subtotal * 0.07);
 	$: deposit = isRental && !isTrade ? Math.round(subtotal * 0.2) : 0;
-	$: total = subtotal + platformFee;
+	$: total = subtotal;
 
 	let submitting = false;
 	let bookingTermsAccepted = false;
@@ -360,11 +359,6 @@
 								<span>{formatPrice(subtotal, 'flat')}</span>
 							</div>
 						{/if}
-
-						<div class="flex justify-between text-text-muted text-xs">
-							<span>{m.book_summary_platform_fee()}</span>
-							<span>{formatPrice(platformFee, 'flat')}</span>
-						</div>
 
 						{#if deposit > 0}
 							<div class="flex justify-between text-amber-600 text-xs">

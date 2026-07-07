@@ -55,9 +55,44 @@ export const actions: Actions = {
 			});
 		}
 
+		// Check listing gate
+		const { data: subData } = await locals.supabase
+			.from('profiles')
+			.select('subscription_tier, additional_listing_slots')
+			.eq('id', user.id)
+			.single();
+
+		const tier = subData?.subscription_tier ?? 'free';
+		const additionalSlots = subData?.additional_listing_slots ?? 0;
+		const totalAllowed = 1 + additionalSlots;
+
+		let listingExpiresAt: string | null = null;
+
+		if (tier !== 'pro') {
+			const { count: activeCount } = await locals.supabase
+				.from('listings')
+				.select('id', { count: 'exact', head: true })
+				.eq('user_id', user.id)
+				.eq('is_active', true);
+
+			const active = activeCount ?? 0;
+
+			if (active >= totalAllowed) {
+				return fail(403, {
+					gated: true,
+					additionalSlots,
+					values: { type, title, description, category, price: priceRaw, price_unit, neighborhood, language, accepts_trade, trade_description }
+				});
+			}
+
+			// First active listing uses the free slot (no expiry); extras use paid slots (30-day expiry)
+			if (active > 0) {
+				listingExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+			}
+		}
+
 		const priceCents = Math.round(priceNum * 100);
 
-		// Upload all images
 		const imageFiles = (form.getAll('images') as File[]).filter(f => f.size > 0);
 		const featuredIndex = Math.max(0, parseInt(form.get('featured_index') as string || '0', 10));
 
@@ -85,7 +120,8 @@ export const actions: Actions = {
 				user_id: user.id, type, title, description, category,
 				price: priceCents, price_unit, neighborhood, language,
 				accepts_trade, trade_description: accepts_trade ? trade_description : null,
-				image_url, region: 'santa-cruz', is_active: true
+				image_url, region: 'santa-cruz', is_active: true,
+				listing_expires_at: listingExpiresAt
 			})
 			.select('id')
 			.single();

@@ -4,13 +4,18 @@
 	import { CATEGORY_LABELS, SERVICE_CATEGORY_SLUGS, RENTAL_CATEGORY_SLUGS } from '$lib/utils/format';
 	import * as m from '$lib/paraglide/messages';
 	import TermsModal from '$lib/components/ui/TermsModal.svelte';
+	import UpsellModal from '$lib/components/listings/UpsellModal.svelte';
 
 	export let data: { neighborhoods: readonly string[] };
 	export let form: {
 		errors?: Record<string, string>;
 		values?: Record<string, any>;
 		error?: string;
+		gated?: boolean;
 	} | null = null;
+
+	let showUpsell = false;
+	$: if (form?.gated) showUpsell = true;
 
 	$: v = form?.values ?? {};
 	$: errors = form?.errors ?? {};
@@ -97,7 +102,7 @@
 		<!-- Sticky header -->
 		<div class="shrink-0 flex items-center justify-between px-6 py-4 border-b border-border rounded-t-xl">
 			<div class="w-8" />
-			<h2 class="text-base font-bold text-text-primary">Post a listing</h2>
+			<h2 class="text-base font-bold text-text-primary">{m.post_heading()}</h2>
 			<button
 				type="button"
 				on:click={close}
@@ -372,3 +377,5 @@
 		</form>
 	</div>
 </div>
+
+<UpsellModal bind:open={showUpsell} />

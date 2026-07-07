@@ -9,17 +9,24 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	const { data: profile, error: err } = await locals.supabase
 		.from('profiles')
-		.select('id, username, full_name, bio, neighborhood, language_preference, avatar_url')
+		.select('id, username, full_name, bio, neighborhood, language_preference, avatar_url, subscription_tier, additional_listing_slots, stripe_customer_id')
 		.eq('id', user.id)
 		.single();
 
 	if (err || !profile) error(404, 'Profile not found');
 
+	const { count: activeListingCount } = await locals.supabase
+		.from('listings')
+		.select('id', { count: 'exact', head: true })
+		.eq('user_id', user.id)
+		.eq('is_active', true);
+
 	return {
 		profile,
 		email: user.email ?? '',
 		provider: (user.app_metadata?.provider ?? 'email') as string,
-		neighborhoods: SANTA_CRUZ_NEIGHBORHOODS
+		neighborhoods: SANTA_CRUZ_NEIGHBORHOODS,
+		activeListingCount: activeListingCount ?? 0
 	};
 };
 
@@ -42,7 +49,6 @@ export const actions: Actions = {
 		let resolvedUsername = username;
 
 		if (!resolvedUsername || !/^[a-z0-9_]+$/.test(resolvedUsername)) {
-			// Auto-generate from full_name (same logic as onboarding)
 			const base = full_name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) || 'user';
 			let attempt = base;
 			let suffix = 1;
@@ -58,7 +64,6 @@ export const actions: Actions = {
 			}
 			if (!resolvedUsername) return fail(500, { error: 'Could not generate a username. Please try again.' });
 		} else {
-			// Validate uniqueness for manually provided username
 			const { data: existing } = await locals.supabase
 				.from('profiles')
 				.select('id')
@@ -68,7 +73,6 @@ export const actions: Actions = {
 			if (existing) return fail(400, { error: 'That username is already taken' });
 		}
 
-		// Handle optional avatar upload
 		const avatarFile = form.get('avatar') as File | null;
 		let avatar_url: string | undefined = undefined;
 
@@ -129,7 +133,6 @@ export const actions: Actions = {
 		if (newPassword !== confirmPassword)
 			return fail(400, { pwError: 'Passwords do not match' });
 
-		// Verify current password by re-authenticating
 		const { error: signInErr } = await locals.supabase.auth.signInWithPassword({
 			email: user.email,
 			password: currentPassword
