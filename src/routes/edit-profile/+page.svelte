@@ -3,6 +3,7 @@
 	import { availableLanguageTags, languageTag } from '$lib/paraglide/runtime';
 	import { i18n } from '$lib/i18n';
 	import { page } from '$app/stores';
+	import * as m from '$lib/paraglide/messages';
 
 	export let data: { profile: any; provider: string; email: string; neighborhoods: readonly string[] };
 	export let form: { error?: string; success?: boolean; pwError?: string; pwSuccess?: boolean } | null = null;
@@ -29,7 +30,7 @@
 		avatarError = '';
 		if (!file) return;
 		if (file.size > 5 * 1024 * 1024) {
-			avatarError = 'Image must be under 5 MB.';
+			avatarError = m.edit_profile_photo_size_error();
 			input.value = '';
 			return;
 		}
@@ -44,14 +45,14 @@
 <div class="min-h-screen bg-bg-card px-6 py-10">
 	<div class="max-w-2xl mx-auto">
 
-		<h1 class="text-2xl font-bold text-text-primary mb-6">Edit Profile</h1>
+		<h1 class="text-2xl font-bold text-text-primary mb-6">{m.edit_profile_heading()}</h1>
 
 		{#if form?.success}
 			<div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
 				<svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
 					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
 				</svg>
-				Profile saved.
+				{m.edit_profile_saved()}
 			</div>
 		{/if}
 
@@ -93,7 +94,7 @@
 					</div>
 					<div class="flex flex-col gap-1.5">
 						<label class="cursor-pointer border border-border rounded-md px-4 py-2 text-sm font-medium text-text-primary hover:bg-bg-secondary transition-colors inline-block">
-							Change photo
+							{m.edit_profile_change_photo()}
 							<input
 								type="file"
 								name="avatar"
@@ -105,7 +106,7 @@
 						{#if avatarError}
 							<p class="text-xs text-error">{avatarError}</p>
 						{:else}
-							<p class="text-xs text-text-muted">JPG or PNG, max 5MB</p>
+							<p class="text-xs text-text-muted">{m.edit_profile_photo_hint()}</p>
 						{/if}
 					</div>
 				</div>
@@ -115,7 +116,7 @@
 				<!-- First + Last name -->
 				<div class="grid grid-cols-2 gap-4">
 					<div class="flex flex-col gap-1.5">
-						<label for="first_name" class="text-sm font-medium text-text-primary">First name</label>
+						<label for="first_name" class="text-sm font-medium text-text-primary">{m.edit_profile_first_name()}</label>
 						<input
 							id="first_name"
 							name="first_name"
@@ -127,7 +128,7 @@
 						/>
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<label for="last_name" class="text-sm font-medium text-text-primary">Last name</label>
+						<label for="last_name" class="text-sm font-medium text-text-primary">{m.edit_profile_last_name()}</label>
 						<input
 							id="last_name"
 							name="last_name"
@@ -141,7 +142,7 @@
 
 				<!-- Email (read-only) -->
 				<div class="flex flex-col gap-1.5">
-					<label class="text-sm font-medium text-text-primary">Email</label>
+					<label class="text-sm font-medium text-text-primary">{m.edit_profile_email()}</label>
 					<div class="flex items-center gap-2 bg-bg-secondary border border-border rounded-md px-3.5 py-2.5">
 						<span class="flex-1 text-base text-text-muted">{data.email}</span>
 						<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -153,7 +154,7 @@
 
 				<!-- Username -->
 				<div class="flex flex-col gap-1.5">
-					<label for="username" class="text-sm font-medium text-text-primary">Username</label>
+					<label for="username" class="text-sm font-medium text-text-primary">{m.edit_profile_username()}</label>
 					<div class="flex items-center border border-border rounded-md overflow-hidden focus-within:border-primary transition-colors bg-bg">
 						<span class="px-3 py-2.5 text-base text-text-muted bg-bg-secondary border-r border-border select-none shrink-0">
 							cruztrade.com/profile/
@@ -169,20 +170,20 @@
 							class="flex-1 px-3 py-2.5 text-base text-text-primary bg-bg focus:outline-none"
 						/>
 					</div>
-					<p class="text-xs text-text-muted">Letters, numbers, and underscores only</p>
+					<p class="text-xs text-text-muted">{m.edit_profile_username_hint()}</p>
 				</div>
 
 				<!-- Bio -->
 				<div class="flex flex-col gap-1.5">
 					<label for="bio" class="text-sm font-medium text-text-primary">
-						Bio <span class="text-text-muted font-normal">(optional)</span>
+						{m.edit_profile_bio()} <span class="text-text-muted font-normal">{m.edit_profile_bio_optional()}</span>
 					</label>
 					<textarea
 						id="bio"
 						name="bio"
 						rows="4"
 						maxlength="200"
-						placeholder="Tell neighbors a bit about yourself…"
+						placeholder={m.edit_profile_bio_placeholder()}
 						bind:value={bio}
 						class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors resize-none"
 					></textarea>
@@ -191,14 +192,14 @@
 
 				<!-- Neighborhood -->
 				<div class="flex flex-col gap-1.5">
-					<label for="neighborhood" class="text-sm font-medium text-text-primary">Neighborhood</label>
+					<label for="neighborhood" class="text-sm font-medium text-text-primary">{m.edit_profile_neighborhood()}</label>
 					<div class="relative">
 						<select
 							id="neighborhood"
 							name="neighborhood"
 							class="appearance-none w-full bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
 						>
-							<option value="">Select your neighborhood</option>
+							<option value="">{m.auth_onboarding_neighborhood_placeholder()}</option>
 							{#each data.neighborhoods as hood}
 								<option value={hood} selected={profile.neighborhood === hood}>{hood}</option>
 							{/each}
@@ -209,7 +210,7 @@
 
 				<!-- Language -->
 				<div class="flex flex-col gap-2">
-					<p class="text-sm font-medium text-text-primary">Preferred language</p>
+					<p class="text-sm font-medium text-text-primary">{m.auth_onboarding_language_preference()}</p>
 					<div class="grid grid-cols-2 gap-3">
 						{#each availableLanguageTags as lang}
 							<a
@@ -235,14 +236,14 @@
 						href={profile.username ? `/profile/${profile.username}` : '/'}
 						class="border border-border text-text-primary text-sm font-medium px-5 py-2.5 rounded-md hover:bg-bg-secondary transition-colors"
 					>
-						Back to profile
+						{m.edit_profile_back()}
 					</a>
 					<button
 						type="submit"
 						disabled={saving}
 						class="bg-primary text-white font-semibold px-6 py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 					>
-						{saving ? '…' : 'Save changes'}
+						{saving ? '…' : m.settings_save()}
 					</button>
 				</div>
 
@@ -251,19 +252,19 @@
 
 		<!-- Security -->
 		<div class="bg-bg border border-border rounded-2xl p-8 mt-6">
-			<h2 class="text-base font-semibold text-text-primary mb-1">Security</h2>
-			<p class="text-sm text-text-muted mb-5">Change the password on your account.</p>
+			<h2 class="text-base font-semibold text-text-primary mb-1">{m.edit_profile_security_heading()}</h2>
+			<p class="text-sm text-text-muted mb-5">{m.edit_profile_security_subheading()}</p>
 
 			{#if data.provider !== 'email'}
 				<p class="text-sm text-text-muted">
-					Your account uses Google Sign-In. Password changes are managed through Google.
+					{m.edit_profile_google_signin()}
 				</p>
 			{:else if form?.pwSuccess}
 				<div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
 					<svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
 						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
 					</svg>
-					Password updated successfully.
+					{m.edit_profile_pw_success()}
 				</div>
 			{:else}
 				{#if form?.pwError}
@@ -285,7 +286,7 @@
 				>
 					<!-- Current password -->
 					<div class="flex flex-col gap-1.5">
-						<label for="current_password" class="text-sm font-medium text-text-primary">Current password</label>
+						<label for="current_password" class="text-sm font-medium text-text-primary">{m.edit_profile_current_pw()}</label>
 						<div class="relative">
 							<input
 								id="current_password"
@@ -309,7 +310,7 @@
 
 					<!-- New password -->
 					<div class="flex flex-col gap-1.5">
-						<label for="new_password" class="text-sm font-medium text-text-primary">New password</label>
+						<label for="new_password" class="text-sm font-medium text-text-primary">{m.edit_profile_new_pw()}</label>
 						<div class="relative">
 							<input
 								id="new_password"
@@ -330,12 +331,12 @@
 								{/if}
 							</button>
 						</div>
-						<p class="text-xs text-text-muted">Minimum 8 characters</p>
+						<p class="text-xs text-text-muted">{m.edit_profile_pw_min()}</p>
 					</div>
 
 					<!-- Confirm password -->
 					<div class="flex flex-col gap-1.5">
-						<label for="confirm_password" class="text-sm font-medium text-text-primary">Confirm new password</label>
+						<label for="confirm_password" class="text-sm font-medium text-text-primary">{m.edit_profile_confirm_pw()}</label>
 						<input
 							id="confirm_password"
 							name="confirm_password"
@@ -353,7 +354,7 @@
 							disabled={savingPw}
 							class="bg-primary text-white font-semibold px-6 py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 						>
-							{savingPw ? '…' : 'Update password'}
+							{savingPw ? '…' : m.edit_profile_update_pw()}
 						</button>
 					</div>
 				</form>

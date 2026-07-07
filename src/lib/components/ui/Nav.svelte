@@ -3,8 +3,11 @@
 	import { enhance } from '$app/forms';
 	import { onDestroy } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
+	import { languageTag } from '$lib/paraglide/runtime';
 	import { notifications } from '$lib/stores/notifications';
+	import { i18n } from '$lib/i18n';
 
+	$: canonicalPath = i18n.route($page.url.pathname);
 	$: user = $page.data.user;
 	$: profile = $page.data.profile;
 	$: displayName = profile?.full_name ?? profile?.username ?? 'Account';
@@ -24,10 +27,9 @@
 
 
 	// Typewriter placeholder
-	const twPhrases: Record<string, string[]> = {
-		'/':       ['Find a handyman…', 'Book a music lesson…', 'Rent a pressure washer…', 'Trade skills with a neighbor…', 'Hire an electrician…', 'Find a dog walker…'],
-		'/browse': ['Find a handyman…', 'Book a music lesson…', 'Rent a pressure washer…', 'Trade skills with a neighbor…', 'Hire an electrician…', 'Find a dog walker…'],
-	};
+	const twPhrasesEn = ['Find a handyman…', 'Book a music lesson…', 'Rent a pressure washer…', 'Trade skills with a neighbor…', 'Hire an electrician…', 'Find a dog walker…'];
+	const twPhrasesEs = ['Busca un manitas…', 'Reserva una clase de música…', 'Renta una lavadora a presión…', 'Intercambia habilidades con un vecino…', 'Contrata un electricista…', 'Busca un paseador de perros…'];
+	$: twActivePhrases = languageTag() === 'es' ? twPhrasesEs : twPhrasesEn;
 
 	const TYPE_MS = 70;
 	const DELETE_MS = 35;
@@ -43,7 +45,7 @@
 	let twCursorInterval: ReturnType<typeof setInterval> | null = null;
 
 	function twTick() {
-		const phrases = twPhrases[$page.url.pathname] ?? twPhrases['/'];
+		const phrases = twActivePhrases;
 		const word = phrases[twPhrase % phrases.length];
 		if (!twDeleting) {
 			twChar++;
@@ -76,7 +78,7 @@
 		twTimeout = setTimeout(twTick, PAUSE_EMPTY_MS);
 	}
 
-	$: { $page.url.pathname; twReset(); }
+	$: { $page.url.pathname; twActivePhrases; twReset(); }
 
 	twCursorInterval = setInterval(() => { twCursor = !twCursor; }, 530);
 	onDestroy(() => {
@@ -91,26 +93,22 @@
 
 	// Search submits to the current tab's route so results stay in context
 	$: searchAction = (() => {
-		const path = $page.url.pathname;
-		if (path === '/trade' || path === '/hire' || path === '/rent') return path;
+		if (canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent') return canonicalPath;
 		return '/browse';
 	})();
 
-	$: navItems = (() => {
-		const path = $page.url.pathname;
-		return [
-			{ label: m.nav_tab_trade(), icon: '🤝', href: '/trade', active: path === '/trade' || path.startsWith('/trade/') },
-			{ label: m.nav_tab_hire(),  icon: '🛠️', href: '/hire',  active: path === '/hire'  || path.startsWith('/hire/') },
-			{ label: m.nav_tab_rent(),  icon: '🏄', href: '/rent',  active: path === '/rent'  || path.startsWith('/rent/') },
-		];
-	})();
+	$: navItems = [
+		{ label: m.nav_tab_trade(), icon: '🤝', href: '/trade', active: canonicalPath === '/trade' || canonicalPath.startsWith('/trade/') },
+		{ label: m.nav_tab_hire(),  icon: '🛠️', href: '/hire',  active: canonicalPath === '/hire'  || canonicalPath.startsWith('/hire/') },
+		{ label: m.nav_tab_rent(),  icon: '🏄', href: '/rent',  active: canonicalPath === '/rent'  || canonicalPath.startsWith('/rent/') },
+	];
 </script>
 
 <svelte:window on:scroll={onScroll} />
 
 <header class="bg-bg border-b border-border sticky top-0 z-30 transition-shadow duration-200"
 	class:shadow-modal={scrolled}
-	class:pb-3={$page.url.pathname === '/' || $page.url.pathname.startsWith('/browse') || $page.url.pathname === '/trade' || $page.url.pathname === '/hire' || $page.url.pathname === '/rent'}>
+	class:pb-3={canonicalPath === '/' || canonicalPath.startsWith('/browse') || canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent'}>
 	<div class="h-16 flex items-center px-6">
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
 
@@ -121,8 +119,8 @@
 
 		<!-- Category nav (hidden on auth pages) -->
 		<nav class="hidden md:flex items-center gap-1"
-			class:invisible={$page.url.pathname.startsWith('/auth')}
-			class:pointer-events-none={$page.url.pathname.startsWith('/auth')}>
+			class:invisible={canonicalPath.startsWith('/auth')}
+			class:pointer-events-none={canonicalPath.startsWith('/auth')}>
 			{#each navItems as cat}
 				<a href={cat.href}
 					class="relative flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors
@@ -333,7 +331,7 @@
 	</div>
 
 	<!-- Search bar — homepage + browse + dedicated tab pages -->
-	{#if $page.url.pathname === '/' || $page.url.pathname.startsWith('/browse') || $page.url.pathname === '/trade' || $page.url.pathname === '/hire' || $page.url.pathname === '/rent'}
+	{#if canonicalPath === '/' || canonicalPath.startsWith('/browse') || canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent'}
 		<div class="px-6">
 			<div class="max-w-[640px] mx-auto">
 				<form action={searchAction} method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">

@@ -2,6 +2,11 @@
 	import { page } from '$app/stores';
 	import CarouselSection from './CarouselSection.svelte';
 	import ListingCard from './ListingCard.svelte';
+	import { categoryLabel } from '$lib/utils/format';
+	import { languageTag } from '$lib/paraglide/runtime';
+	import * as m from '$lib/paraglide/messages';
+
+	$: lang = languageTag() as 'en' | 'es';
 
 	export let listings: any[];
 	export let categories: { slug: string; label: string; icon: string; examples: string[] }[];
@@ -41,14 +46,14 @@
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
 					</svg>
-					All {$page.url.pathname === '/hire' ? 'services' : $page.url.pathname === '/rent' ? 'rentals' : 'listings'}
+					{$page.url.pathname === '/hire' ? m.hire_browse_all() : $page.url.pathname === '/rent' ? m.rent_browse_all() : m.trade_browse_all()}
 				</a>
 
 				<!-- Heading -->
 				<div class="flex items-center justify-between mb-6">
 					<div class="flex items-center gap-2.5">
 						<span class="text-2xl">{activecat.icon}</span>
-						<h1 class="text-2xl font-bold text-text-primary">{activecat.label}</h1>
+						<h1 class="text-2xl font-bold text-text-primary">{categoryLabel(activecat.slug, lang)}</h1>
 					</div>
 					<span class="text-sm text-text-muted">{gridListings.length} listing{gridListings.length !== 1 ? 's' : ''}</span>
 				</div>
@@ -85,7 +90,7 @@
 				{#each categories as cat}
 					<CarouselSection
 						slug={cat.slug}
-						title={cat.label}
+						title={categoryLabel(cat.slug, lang)}
 						icon={cat.icon}
 						listings={grouped[cat.slug] ?? []}
 						href={catHref(cat.slug)}

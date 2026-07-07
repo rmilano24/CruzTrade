@@ -197,13 +197,13 @@
 				<p class="text-xs font-semibold text-text-primary uppercase tracking-wider">{m.footer_account()}</p>
 				<nav class="flex flex-col gap-2">
 					{#if user}
-						<a href="/my-listings" class="text-sm text-text-muted hover:text-text-primary transition-colors">My listings</a>
-						<a href="/my-bookings" class="text-sm text-text-muted hover:text-text-primary transition-colors">My bookings</a>
-						<a href="/messages" class="text-sm text-text-muted hover:text-text-primary transition-colors">Messages</a>
-						<a href="/edit-profile" class="text-sm text-text-muted hover:text-text-primary transition-colors">Edit profile</a>
+						<a href="/my-listings" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_my_listings()}</a>
+						<a href="/my-bookings" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_my_bookings()}</a>
+						<a href="/messages" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_messages()}</a>
+						<a href="/edit-profile" class="text-sm text-text-muted hover:text-text-primary transition-colors">{m.nav_edit_profile()}</a>
 						<form method="POST" action="/auth/logout">
 							<button type="submit" class="text-sm text-text-muted hover:text-text-primary transition-colors">
-								Log out
+								{m.nav_logout()}
 							</button>
 						</form>
 					{:else}

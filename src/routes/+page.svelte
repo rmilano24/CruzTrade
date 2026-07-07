@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import * as m from '$lib/paraglide/messages';
+	import { languageTag } from '$lib/paraglide/runtime';
 	import CarouselSection from '$lib/components/listings/CarouselSection.svelte';
+
+	$: lang = languageTag() as 'en' | 'es';
 
 	export let data: {
 		listings: any[];
@@ -56,7 +59,7 @@
 			<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
 			Now live in Santa Cruz County
 		</div>
-		<p class="text-sm text-text-muted hidden sm:block">Your neighborhood marketplace for skills, tools, and trades.</p>
+		<p class="text-sm text-text-muted hidden sm:block">{m.home_hero_subheadline()}</p>
 	</div>
 </section>
 {/if}
@@ -75,7 +78,7 @@
 
 		<CarouselSection
 			slug="trade"
-			title="Trade Skills"
+			title={m.home_section_trade()}
 			icon="🤝"
 			listings={tradeListings}
 			href="/trade"
@@ -84,7 +87,7 @@
 
 		<CarouselSection
 			slug="hire"
-			title="Hire a Neighbor"
+			title={m.home_section_hire()}
 			icon="🛠️"
 			listings={hireListings}
 			href="/hire"
@@ -93,7 +96,7 @@
 
 		<CarouselSection
 			slug="rent"
-			title="Rent Gear & Tools"
+			title={m.home_section_rent()}
 			icon="🏄"
 			listings={rentListings}
 			href="/rent"
