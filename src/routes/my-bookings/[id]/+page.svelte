@@ -192,10 +192,12 @@
 					<span>Service</span>
 					<span>{formatPrice(tx.amount, 'flat')}</span>
 				</div>
+				{#if tx.platform_fee > 0}
 				<div class="flex justify-between text-xs text-text-muted">
 					<span>Platform fee</span>
 					<span>{formatPrice(tx.platform_fee, 'flat')}</span>
 				</div>
+				{/if}
 				{#if tx.deposit_amount > 0}
 					<div class="flex justify-between text-xs
 						{tx.deposit_status === 'released' ? 'text-success' : 'text-amber-600'}">

@@ -83,11 +83,13 @@
 						<span class="text-sm text-text-muted">{m.book_summary_subtotal()}</span>
 						<span class="text-sm text-text-primary">{formatPrice(tx.amount, 'flat')}</span>
 					</div>
-					<!-- Platform fee -->
+					<!-- Platform fee (hidden when zero) -->
+					{#if tx.platform_fee > 0}
 					<div class="flex items-center justify-between">
 						<span class="text-sm text-text-muted">{m.book_summary_platform_fee()}</span>
 						<span class="text-sm text-text-primary">{formatPrice(tx.platform_fee, 'flat')}</span>
 					</div>
+					{/if}
 					<!-- Deposit if rental -->
 					{#if isRental && tx.deposit_amount > 0}
 						<div class="flex items-center justify-between">

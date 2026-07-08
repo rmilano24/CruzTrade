@@ -43,6 +43,38 @@ export async function createProCheckoutSession(
 	return session.url!;
 }
 
+export async function createBookingCheckoutSession(
+	transactionId: string,
+	buyerId: string,
+	listingTitle: string,
+	amountCents: number,
+	origin: string,
+	listingId: string
+): Promise<string> {
+	const session = await stripe.checkout.sessions.create({
+		mode: 'payment',
+		line_items: [{
+			quantity: 1,
+			price_data: {
+				currency: 'usd',
+				unit_amount: amountCents,
+				product_data: { name: listingTitle }
+			}
+		}],
+		metadata: {
+			user_id: buyerId,
+			purchase_type: 'booking',
+			transaction_id: transactionId
+		},
+		payment_intent_data: {
+			metadata: { transaction_id: transactionId }
+		},
+		success_url: `${origin}/listings/${listingId}/book/confirmation?tx=${transactionId}`,
+		cancel_url: `${origin}/listings/${listingId}`
+	});
+	return session.url!;
+}
+
 export async function createPortalSession(
 	stripeCustomerId: string,
 	returnUrl: string

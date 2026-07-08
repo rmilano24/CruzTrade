@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, locals, params }) => {
+	default: async ({ request, locals, params, url }) => {
 		const { user } = await locals.safeGetSession();
 		if (!user || !locals.supabase) return fail(401, { error: 'Not authenticated' });
 
@@ -110,6 +110,20 @@ export const actions: Actions = {
 			original_language: 'en'
 		});
 
-		redirect(303, `/listings/${params.id}/book/confirmation?tx=${transaction.id}`);
+		// Trades go straight to confirmation; paid bookings go through Stripe Checkout
+		if (mode === 'trade') {
+			redirect(303, `/listings/${params.id}/book/confirmation?tx=${transaction.id}`);
+		}
+
+		const { createBookingCheckoutSession } = await import('$lib/server/stripe');
+		const checkoutUrl = await createBookingCheckoutSession(
+			transaction.id,
+			user.id,
+			listing.title,
+			amount,
+			url.origin,
+			params.id
+		);
+		redirect(303, checkoutUrl);
 	}
 };

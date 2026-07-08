@@ -34,7 +34,15 @@ export const POST: RequestHandler = async ({ request }) => {
 				const purchaseType = session.metadata?.purchase_type;
 				if (!userId) break;
 
-				if (purchaseType === 'listing_slot') {
+				if (purchaseType === 'booking') {
+					const transactionId = session.metadata?.transaction_id;
+					if (transactionId) {
+						await supabase
+							.from('transactions')
+							.update({ stripe_payment_intent_id: session.payment_intent ?? null })
+							.eq('id', transactionId);
+					}
+				} else if (purchaseType === 'listing_slot') {
 					const { data: profile } = await supabase
 						.from('profiles')
 						.select('additional_listing_slots, stripe_customer_id')
