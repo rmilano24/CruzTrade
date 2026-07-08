@@ -45,6 +45,18 @@
 	let uploadingPhotos = false;
 	let photoError = '';
 	let photoFiles: FileList | null = null;
+
+	function handlePhotoEnhance() {
+		uploadingPhotos = true;
+		photoError = '';
+		return async ({ result, update }: { result: any; update: () => Promise<void> }) => {
+			uploadingPhotos = false;
+			if (result.type === 'failure' && result.data?.photoError) {
+				photoError = result.data.photoError;
+			}
+			await update();
+		};
+	}
 </script>
 
 <svelte:head>
@@ -228,17 +240,7 @@
 					method="POST"
 					action="?/uploadPickupPhotos"
 					enctype="multipart/form-data"
-					use:enhance={() => {
-						uploadingPhotos = true;
-						photoError = '';
-						return async ({ result, update }) => {
-							uploadingPhotos = false;
-							if (result.type === 'failure' && result.data?.photoError) {
-								photoError = result.data.photoError as string;
-							}
-							await update();
-						};
-					}}
+					use:enhance={handlePhotoEnhance}
 				>
 					{#if photoError}
 						<p class="text-xs text-error mb-2">{photoError}</p>
