@@ -37,8 +37,10 @@
 	};
 
 	$: pickupPhotos = (tx.pickup_photos ?? []) as string[];
-	$: hasPickupPhotos = pickupPhotos.length > 0;
-	$: canUploadPickupPhotos = isRental && !isBuyer && tx.status === 'confirmed';
+	$: providerPhotos = pickupPhotos.filter((url: string) => url.includes(tx.seller_id));
+	$: renterPhotos = pickupPhotos.filter((url: string) => url.includes(tx.buyer_id));
+	$: myPhotos = isBuyer ? renterPhotos : providerPhotos;
+	$: canUploadPickupPhotos = isRental && tx.status === 'confirmed' && myPhotos.length < 3;
 
 	let submitting = false;
 	let confirmCancel = false;
@@ -214,28 +216,39 @@
 	</div>
 
 	<!-- Rental condition photos -->
-	{#if isRental && (hasPickupPhotos || canUploadPickupPhotos)}
+	{#if isRental && (pickupPhotos.length > 0 || canUploadPickupPhotos)}
 		<div class="bg-bg border border-border rounded-xl p-5 mb-4">
-			<p class="text-sm font-semibold text-text-primary mb-1">Tool condition at pickup</p>
-			<p class="text-xs text-text-muted mb-4">
-				{#if hasPickupPhotos}
-					Documented by the provider before handoff.
-				{:else}
-					Document the tool's condition before handing it off. Up to 3 photos.
-				{/if}
-			</p>
+			<p class="text-sm font-semibold text-text-primary mb-0.5">Tool condition at pickup</p>
+			<p class="text-xs text-text-muted mb-4">Photos are timestamped at upload and visible to both parties as a shared record.</p>
 
-			{#if hasPickupPhotos}
-				<div class="grid grid-cols-3 gap-2 mb-3">
-					{#each pickupPhotos as url}
+			<!-- Provider photos -->
+			{#if providerPhotos.length > 0}
+				<p class="text-xs font-semibold text-text-muted uppercase tracking-wide mb-2">Provider's photos</p>
+				<div class="grid grid-cols-3 gap-2 mb-4">
+					{#each providerPhotos as url}
 						<a href={url} target="_blank" rel="noopener noreferrer">
-							<img src={url} alt="Condition photo" class="w-full aspect-square object-cover rounded-lg border border-border hover:opacity-90 transition-opacity" />
+							<img src={url} alt="Provider condition photo" class="w-full aspect-square object-cover rounded-lg border border-border hover:opacity-90 transition-opacity" />
 						</a>
 					{/each}
 				</div>
 			{/if}
 
-			{#if canUploadPickupPhotos && pickupPhotos.length < 3}
+			<!-- Renter photos -->
+			{#if renterPhotos.length > 0}
+				<p class="text-xs font-semibold text-text-muted uppercase tracking-wide mb-2">Renter's photos</p>
+				<div class="grid grid-cols-3 gap-2 mb-4">
+					{#each renterPhotos as url}
+						<a href={url} target="_blank" rel="noopener noreferrer">
+							<img src={url} alt="Renter condition photo" class="w-full aspect-square object-cover rounded-lg border border-border hover:opacity-90 transition-opacity" />
+						</a>
+					{/each}
+				</div>
+			{/if}
+
+			{#if canUploadPickupPhotos}
+				<p class="text-xs font-semibold text-text-muted uppercase tracking-wide mb-2">
+					{isBuyer ? "Your photos (renter)" : "Your photos (provider)"}
+				</p>
 				<form
 					method="POST"
 					action="?/uploadPickupPhotos"
@@ -264,7 +277,7 @@
 						disabled={uploadingPhotos || !photoFiles?.length}
 						class="mt-3 w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-40 text-sm"
 					>
-						{uploadingPhotos ? 'Uploading…' : 'Save condition photos'}
+						{uploadingPhotos ? 'Uploading…' : 'Save my condition photos'}
 					</button>
 				</form>
 			{/if}

@@ -9,14 +9,9 @@
 	const tabs = ['upcoming', 'completed', 'cancelled'] as const;
 	type Tab = (typeof tabs)[number];
 
-	let role: 'buyer' | 'seller' = 'buyer';
 	let tab: Tab = 'upcoming';
 
-	$: roleFiltered = transactions.filter((tx) =>
-		role === 'buyer' ? tx.buyer_id === userId : tx.seller_id === userId
-	);
-
-	$: filtered = roleFiltered.filter((tx) => {
+	$: filtered = transactions.filter((tx) => {
 		if (tab === 'upcoming') return tx.status === 'pending' || tx.status === 'confirmed';
 		if (tab === 'completed') return tx.status === 'completed';
 		if (tab === 'cancelled') return tx.status === 'cancelled';
@@ -24,7 +19,7 @@
 	});
 
 	function tabCount(t: Tab) {
-		return roleFiltered.filter((tx) => {
+		return transactions.filter((tx) => {
 			if (t === 'upcoming') return tx.status === 'pending' || tx.status === 'confirmed';
 			if (t === 'completed') return tx.status === 'completed';
 			if (t === 'cancelled') return tx.status === 'cancelled';
@@ -32,7 +27,11 @@
 	}
 
 	function otherParty(tx: any) {
-		return role === 'buyer' ? tx.seller : tx.buyer;
+		return tx.buyer_id === userId ? tx.seller : tx.buyer;
+	}
+
+	function isProvider(tx: any) {
+		return tx.seller_id === userId;
 	}
 
 	$: lang = languageTag() as 'en' | 'es';
@@ -61,12 +60,6 @@
 		return m.bookings_tab_cancelled();
 	}
 
-	function emptyLabel(t: Tab, r: 'buyer' | 'seller'): string {
-		if (t === 'upcoming')  return r === 'buyer' ? m.bookings_empty_upcoming_buyer()  : m.bookings_empty_upcoming_seller();
-		if (t === 'completed') return r === 'buyer' ? m.bookings_empty_completed_buyer() : m.bookings_empty_completed_seller();
-		return r === 'buyer' ? m.bookings_empty_cancelled_buyer() : m.bookings_empty_cancelled_seller();
-	}
-
 	const statusColor: Record<string, string> = {
 		pending: 'text-warning',
 		confirmed: 'text-success',
@@ -83,25 +76,7 @@
 <div class="min-h-screen bg-bg-card">
 <div class="max-w-content mx-auto px-6 py-8">
 
-	<div class="flex items-center justify-between mb-6">
-		<h1 class="text-2xl font-bold text-text-primary">{m.bookings_heading()}</h1>
-
-		<!-- Role toggle -->
-		<div class="flex rounded-md border border-border overflow-hidden text-sm font-semibold">
-			<button
-				on:click={() => { role = 'buyer'; tab = 'upcoming'; }}
-				class="px-4 py-2 transition-colors
-					{role === 'buyer' ? 'bg-primary text-white' : 'text-text-muted hover:bg-bg-secondary'}">
-				{m.bookings_as_buyer()}
-			</button>
-			<button
-				on:click={() => { role = 'seller'; tab = 'upcoming'; }}
-				class="px-4 py-2 border-l border-border transition-colors
-					{role === 'seller' ? 'bg-primary text-white' : 'text-text-muted hover:bg-bg-secondary'}">
-				{m.bookings_as_provider()}
-			</button>
-		</div>
-	</div>
+	<h1 class="text-2xl font-bold text-text-primary mb-6">{m.bookings_heading()}</h1>
 
 	<!-- Tabs -->
 	<div class="flex gap-1 mb-6">
@@ -122,10 +97,8 @@
 	<!-- Booking rows -->
 	{#if filtered.length === 0}
 		<div class="text-center py-16">
-			<p class="text-text-muted text-sm">
-				{emptyLabel(tab, role)}
-			</p>
-			{#if tab === 'upcoming' && role === 'buyer'}
+			<p class="text-text-muted text-sm">No {tab} bookings.</p>
+			{#if tab === 'upcoming'}
 				<a href="/browse"
 					class="inline-block mt-4 bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors">
 					{m.messages_browse_cta()}
@@ -138,6 +111,7 @@
 				{@const other = otherParty(tx)}
 				{@const listing = tx.listings}
 				{@const dateStr = formatDate(tx)}
+				{@const provider = isProvider(tx)}
 				<div class="bg-bg border border-border rounded-lg p-4 flex items-center gap-4">
 
 					<!-- Thumbnail -->
@@ -149,9 +123,15 @@
 
 					<!-- Info -->
 					<div class="flex-1 min-w-0">
-						<p class="text-sm font-semibold text-text-primary truncate mb-0.5">
-							{listing?.title ?? 'Listing'}
-						</p>
+						<div class="flex items-center gap-2 mb-0.5">
+							<p class="text-sm font-semibold text-text-primary truncate">
+								{listing?.title ?? 'Listing'}
+							</p>
+							<span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-full
+								{provider ? 'bg-orange-100 text-orange-700' : 'bg-bg-secondary text-text-muted'}">
+								{provider ? 'Provider' : 'Buyer'}
+							</span>
+						</div>
 						<div class="flex items-center gap-1.5 text-xs text-text-muted flex-wrap">
 							<span>{other?.full_name ?? other?.username ?? 'User'}</span>
 							{#if dateStr}

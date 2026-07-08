@@ -114,7 +114,7 @@ export const actions: Actions = {
 			.single();
 
 		if (!tx) return fail(404, { error: 'Booking not found' });
-		if (tx.seller_id !== user.id) return fail(403, { error: 'Only the provider can document condition' });
+		if (tx.buyer_id !== user.id && tx.seller_id !== user.id) return fail(403, { error: 'Not your booking' });
 		if (tx.status !== 'confirmed') return fail(400, { error: 'Can only document condition for confirmed bookings' });
 
 		const listing = Array.isArray(tx.listings) ? tx.listings[0] : tx.listings;
