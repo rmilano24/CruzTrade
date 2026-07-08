@@ -12,6 +12,7 @@
 	};
 
 	$: user = $page.data.user;
+	$: accountDeleted = $page.url.searchParams.get('account') === 'deleted';
 
 	// Split into the three homepage sections
 	$: hireListings  = data.listings.filter(l => l.type === 'service' && !l.accepts_trade);
@@ -50,6 +51,12 @@
 <svelte:head>
 	<title>Cruz Trade — Trade skills, rent tools, build community in Santa Cruz</title>
 </svelte:head>
+
+{#if accountDeleted}
+<div class="bg-green-50 border-b border-green-200 px-6 py-3 text-sm text-green-700 text-center">
+	Your account has been deleted. Sorry to see you go.
+</div>
+{/if}
 
 <!-- Hero (hidden during search) -->
 {#if !data.filters.q}

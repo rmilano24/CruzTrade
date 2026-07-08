@@ -15,7 +15,7 @@ export async function createListingCheckoutSession(
 		line_items: [{ quantity: 1, price: process.env.STRIPE_LISTING_PRICE_ID! }],
 		metadata: { user_id: userId, purchase_type: 'listing_slot' },
 		success_url: `${origin}/post?slot=purchased`,
-		cancel_url: `${origin}/post`
+		cancel_url: `${origin}/settings`
 	});
 	return session.url!;
 }
@@ -31,8 +31,8 @@ export async function createProCheckoutSession(
 		line_items: [{ quantity: 1, price: process.env.STRIPE_PRO_PRICE_ID! }],
 		metadata: { user_id: userId, purchase_type: 'pro_subscription' },
 		subscription_data: { metadata: { user_id: userId } },
-		success_url: `${origin}/edit-profile?pro=activated`,
-		cancel_url: `${origin}/post`
+		success_url: `${origin}/settings?pro=activated`,
+		cancel_url: `${origin}/settings`
 	};
 	if (stripeCustomerId) {
 		params.customer = stripeCustomerId;
