@@ -36,8 +36,15 @@
 		disputed:  { label: 'Disputed',  color: 'text-error' },
 	};
 
+	$: pickupPhotos = (tx.pickup_photos ?? []) as string[];
+	$: hasPickupPhotos = pickupPhotos.length > 0;
+	$: canUploadPickupPhotos = isRental && !isBuyer && tx.status === 'confirmed';
+
 	let submitting = false;
 	let confirmCancel = false;
+	let uploadingPhotos = false;
+	let photoError = '';
+	let photoFiles: FileList | null = null;
 </script>
 
 <svelte:head>
@@ -75,6 +82,10 @@
 	{:else if form?.success === 'cancelled'}
 		<div class="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg px-4 py-3 mb-6">
 			Booking cancelled.
+		</div>
+	{:else if form?.success === 'photos_uploaded'}
+		<div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-6">
+			Condition photos saved. Both parties can see them below.
 		</div>
 	{/if}
 
@@ -189,6 +200,74 @@
 			</div>
 		{/if}
 	</div>
+
+	<!-- Rental condition photos -->
+	{#if isRental && (hasPickupPhotos || canUploadPickupPhotos)}
+		<div class="bg-bg border border-border rounded-xl p-5 mb-4">
+			<p class="text-sm font-semibold text-text-primary mb-1">Tool condition at pickup</p>
+			<p class="text-xs text-text-muted mb-4">
+				{#if hasPickupPhotos}
+					Documented by the provider before handoff.
+				{:else}
+					Document the tool's condition before handing it off. Up to 3 photos.
+				{/if}
+			</p>
+
+			{#if hasPickupPhotos}
+				<div class="grid grid-cols-3 gap-2 mb-3">
+					{#each pickupPhotos as url}
+						<a href={url} target="_blank" rel="noopener noreferrer">
+							<img src={url} alt="Condition photo" class="w-full aspect-square object-cover rounded-lg border border-border hover:opacity-90 transition-opacity" />
+						</a>
+					{/each}
+				</div>
+			{/if}
+
+			{#if canUploadPickupPhotos && pickupPhotos.length < 3}
+				<form
+					method="POST"
+					action="?/uploadPickupPhotos"
+					enctype="multipart/form-data"
+					use:enhance={() => {
+						uploadingPhotos = true;
+						photoError = '';
+						return async ({ result, update }) => {
+							uploadingPhotos = false;
+							if (result.type === 'failure' && result.data?.photoError) {
+								photoError = result.data.photoError as string;
+							}
+							await update();
+						};
+					}}
+				>
+					{#if photoError}
+						<p class="text-xs text-error mb-2">{photoError}</p>
+					{/if}
+					<label class="block">
+						<span class="sr-only">Choose photos</span>
+						<input
+							type="file"
+							name="photos"
+							accept="image/*"
+							multiple
+							bind:files={photoFiles}
+							class="block w-full text-sm text-text-muted
+								file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0
+								file:text-sm file:font-semibold file:bg-bg-secondary file:text-text-primary
+								hover:file:bg-border cursor-pointer"
+						/>
+					</label>
+					<button
+						type="submit"
+						disabled={uploadingPhotos || !photoFiles?.length}
+						class="mt-3 w-full bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-40 text-sm"
+					>
+						{uploadingPhotos ? 'Uploading…' : 'Save condition photos'}
+					</button>
+				</form>
+			{/if}
+		</div>
+	{/if}
 
 	<!-- Action buttons -->
 	{#if canConfirm || canComplete || canCancel || (isCompleted && !review)}
