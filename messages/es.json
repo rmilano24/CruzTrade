@@ -150,6 +150,8 @@
 	"book_section_payment": "Pago",
 	"book_section_summary": "Resumen del pedido",
 	"book_job_description_label": "Describe el trabajo",
+	"book_rental_description_label": "¿Para qué lo usarás?",
+	"book_rental_description_placeholder": "Opcional — cuéntale al dueño para qué planeas usarlo.",
 	"book_job_description_placeholder": "¿Qué necesitas que se haga? Incluye detalles relevantes, información de acceso o requisitos especiales.",
 	"book_trade_offer_label": "¿Qué ofrecerás a cambio?",
 	"book_trade_offer_placeholder": "Describe lo que ofreces — una habilidad, servicio o artículo.",

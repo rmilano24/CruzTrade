@@ -150,6 +150,8 @@
 	"book_section_payment": "Payment",
 	"book_section_summary": "Order summary",
 	"book_job_description_label": "Describe the job",
+	"book_rental_description_label": "What will you use it for?",
+	"book_rental_description_placeholder": "Optional — let the owner know what you're planning to use it for.",
 	"book_job_description_placeholder": "What do you need done? Include any relevant details, access info, or special requirements.",
 	"book_trade_offer_label": "What will you offer in exchange?",
 	"book_trade_offer_placeholder": "Describe what you're offering — a skill, service, or item.",

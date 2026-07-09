@@ -48,7 +48,11 @@ export const actions: Actions = {
 		if (mode === 'trade') {
 			if (!trade_offer || trade_offer.length < 10) errors.trade_offer = 'Please describe your trade offer (at least 10 characters)';
 		} else {
-			if (!job_description || job_description.length < 10) errors.job_description = 'Please describe the job (at least 10 characters)';
+			const { data: listingCheck } = await locals.supabase
+				.from('listings').select('type').eq('id', params.id).single();
+			const isRental = listingCheck?.type === 'tool_rental';
+			if (!isRental && (!job_description || job_description.length < 10))
+				errors.job_description = 'Please describe the job (at least 10 characters)';
 		}
 		if (!scheduled_date) errors.scheduled_date = 'Please pick a date';
 		if (!neighborhood) errors.neighborhood = 'Please select your neighborhood';
@@ -79,7 +83,9 @@ export const actions: Actions = {
 				: Math.round(listing.price * quantityNum);
 		}
 
-		const body_text = mode === 'trade' ? `Trade offer: ${trade_offer}` : job_description!;
+		const body_text = mode === 'trade'
+			? `Trade offer: ${trade_offer}`
+			: (job_description?.trim() || 'Rental request');
 
 		const { data: transaction, error: txErr } = await locals.supabase
 			.from('transactions')
