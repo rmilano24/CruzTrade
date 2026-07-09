@@ -37,10 +37,8 @@ function buildHtml(subject: string, body: string): string {
 
 				<!-- Header -->
 				<tr>
-					<td style="background:#f97316;border-radius:10px 10px 0 0;padding:24px 32px;">
-						<span style="font-family:Arial,sans-serif;font-size:22px;font-weight:900;color:#ffffff;letter-spacing:-0.5px;">
-							Cruz Trade
-						</span>
+					<td style="background:#f97316;border-radius:10px 10px 0 0;padding:20px 32px;">
+						<img src="https://cruz-trade.vercel.app/cruztrade.png" alt="Cruz Trade" width="160" style="display:block;height:auto;max-width:160px;">
 					</td>
 				</tr>
 
