@@ -23,12 +23,12 @@
 				{
 					icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z',
 					title: 'Browse your neighborhood',
-					body: 'Filter by skill, listing type, or neighborhood. Every provider is a verified Santa Cruz County resident with a public review history.',
+					body: 'Filter by skill, listing type, or neighborhood. Every provider is a Santa Cruz County neighbor with a public review history.',
 				},
 				{
 					icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
 					title: 'Message and agree',
-					body: 'Chat directly in the app. Ask questions, agree on timing and price, and confirm the details — all before any money moves. Spanish auto-translation built in.',
+					body: 'Chat directly in the app. Ask questions, agree on timing and price, and confirm the details — all before any money moves.',
 				},
 				{
 					icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z',
@@ -42,9 +42,9 @@
 				},
 			],
 			trust: [
-				{ icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', text: 'Secure payments — funds held until job complete' },
-				{ icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', text: 'Verified neighbors — SC County residents only' },
-				{ icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', text: 'Bilingual chat — English + Spanish auto-translation' },
+				{ icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', text: 'Secure payments — paid via Stripe, released when job is done' },
+				{ icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', text: 'Local neighbors — Santa Cruz County only' },
+				{ icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', text: 'Bilingual — browse and post in English or Spanish' },
 				{ icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064', text: 'Dispute protection — Cruz Trade mediates if needed' },
 			],
 			cta: {
@@ -65,12 +65,12 @@
 				{
 					icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z',
 					title: 'Get discovered locally',
-					body: 'Neighbors searching your area see your listing. Pro members also get a public profile page indexed on Google and AI search tools like ChatGPT and Perplexity.',
+					body: 'Neighbors searching your area see your listing. The more detail and photos you add, the more bookings you get.',
 				},
 				{
 					icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-					title: 'Accept and show up',
-					body: 'Chat with the client to confirm details, accept the booking, and do great work. Mark the job complete when you\'re done — no paperwork, no invoicing.',
+					title: 'Show up and do great work',
+					body: 'Once a booking is confirmed, show up and do great work. Mark the job complete when you\'re done — no paperwork, no invoicing.',
 				},
 				{
 					icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
@@ -79,16 +79,16 @@
 				},
 			],
 			trust: [
-				{ icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', text: '5–8% fee — only on paid transactions' },
+				{ icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', text: '5–8% fee — only on completed paid transactions' },
 				{ icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', text: 'You\'re protected — dispute resolution if anything goes wrong' },
 				{ icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z', text: 'Build reputation — reviews grow your local business' },
-				{ icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15', text: 'Recurring bookings — clients can rehire on a schedule' },
+				{ icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', text: 'Trade/barter — offer skills or items instead of cash' },
 			],
 			cta: {
 				headline: 'READY TO EARN IN YOUR NEIGHBORHOOD?',
 				sub: 'Free to post a listing. No subscription required to get started.',
 				primary: { label: 'Post a listing free', href: '/post' },
-				secondary: { label: 'See how Pro works', href: '/pro' },
+				secondary: { label: 'Browse the marketplace', href: '/browse' },
 			},
 		},
 		renting: {
@@ -101,8 +101,8 @@
 				},
 				{
 					icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
-					title: 'Set availability and deposit',
-					body: 'Block out dates when your tool isn\'t available. Set a refundable deposit amount — it\'s held on the renter\'s card and protects you if anything goes wrong.',
+					title: 'Renter books and pays',
+					body: 'The renter submits a booking request with dates and what they\'ll use it for. Payment goes through Stripe — you get paid after the rental is confirmed complete.',
 				},
 				{
 					icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
@@ -111,14 +111,14 @@
 				},
 				{
 					icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
-					title: 'Tool returned, deposit released, you get paid',
-					body: 'Confirm the return is in good shape and the deposit releases automatically. Your rental fee hits your account within 2–5 business days.',
+					title: 'Tool returned, you get paid',
+					body: 'Confirm the return and mark the rental complete. Your payout hits your bank account within 2–5 business days. No invoicing, no awkward cash collection.',
 				},
 			],
 			trust: [
-				{ icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', text: 'Deposit held — not released until you confirm return' },
+				{ icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', text: 'Secure payment — paid upfront via Stripe, released on completion' },
 				{ icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z', text: 'Photo documentation — timestamped at pickup and return' },
-				{ icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', text: 'Availability calendar — block dates when it\'s not available' },
+				{ icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', text: 'Tool condition on record — no he-said-she-said disputes' },
 				{ icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', text: 'Dispute mediation — Cruz Trade steps in if anything\'s disputed' },
 			],
 			cta: {
