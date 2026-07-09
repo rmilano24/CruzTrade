@@ -1,5 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { sendEmail } from '$lib/server/email';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { user } = await locals.safeGetSession();
@@ -60,7 +61,12 @@ export const actions: Actions = {
 
 		const { data: tx } = await locals.supabase
 			.from('transactions')
-			.select('id, status, buyer_id, seller_id, deposit_status')
+			.select(`
+				id, status, buyer_id, seller_id, deposit_status,
+				listings!listing_id(title),
+				buyer:profiles!buyer_id(full_name, username),
+				seller:profiles!seller_id(full_name, username)
+			`)
 			.eq('id', params.id)
 			.single();
 
@@ -78,6 +84,37 @@ export const actions: Actions = {
 			.update(updates)
 			.eq('id', params.id);
 
+		// Email both parties to leave a review
+		try {
+			const { createSupabaseAdminClient } = await import('$lib/server/db');
+			const admin = createSupabaseAdminClient();
+			const listing = Array.isArray(tx.listings) ? tx.listings[0] : tx.listings as any;
+			const buyer = Array.isArray(tx.buyer) ? tx.buyer[0] : tx.buyer as any;
+			const seller = Array.isArray(tx.seller) ? tx.seller[0] : tx.seller as any;
+			const listingTitle = listing?.title ?? 'your listing';
+			const reviewUrl = `https://cruz-trade.vercel.app/reviews/${params.id}`;
+
+			const [{ data: buyerAuth }, { data: sellerAuth }] = await Promise.all([
+				admin.auth.admin.getUserById(tx.buyer_id),
+				admin.auth.admin.getUserById(tx.seller_id)
+			]);
+
+			if (buyerAuth?.user?.email) {
+				await sendEmail(
+					buyerAuth.user.email,
+					`How did it go? Leave a review for ${seller?.full_name ?? seller?.username ?? 'your provider'}`,
+					`Your booking for "${listingTitle}" is complete — nice work!\n\nTake 30 seconds to leave a review. It helps your neighbors know who to trust.\n\n${reviewUrl}`
+				);
+			}
+			if (sellerAuth?.user?.email) {
+				await sendEmail(
+					sellerAuth.user.email,
+					`Job complete! Ask ${buyer?.full_name ?? buyer?.username ?? 'your client'} for a review`,
+					`Your booking for "${listingTitle}" has been marked complete.\n\n${buyer?.full_name ?? buyer?.username ?? 'Your client'} can leave you a review here:\n\n${reviewUrl}\n\nThank you for being part of Cruz Trade!`
+				);
+			}
+		} catch { /* non-fatal */ }
+
 		return { success: 'completed' };
 	},
 
@@ -87,7 +124,12 @@ export const actions: Actions = {
 
 		const { data: tx } = await locals.supabase
 			.from('transactions')
-			.select('id, status, buyer_id, seller_id')
+			.select(`
+				id, status, buyer_id, seller_id, scheduled_date,
+				listings!listing_id(title),
+				buyer:profiles!buyer_id(full_name, username),
+				seller:profiles!seller_id(full_name, username)
+			`)
 			.eq('id', params.id)
 			.single();
 
@@ -99,6 +141,28 @@ export const actions: Actions = {
 			.from('transactions')
 			.update({ status: 'cancelled' })
 			.eq('id', params.id);
+
+		// Notify the other party
+		try {
+			const isCancelledByBuyer = tx.buyer_id === user.id;
+			const otherPartyId = isCancelledByBuyer ? tx.seller_id : tx.buyer_id;
+			const listing = Array.isArray(tx.listings) ? tx.listings[0] : tx.listings;
+			const canceller = isCancelledByBuyer
+				? (Array.isArray(tx.buyer) ? tx.buyer[0] : tx.buyer)
+				: (Array.isArray(tx.seller) ? tx.seller[0] : tx.seller);
+			const cancellerName = (canceller as any)?.full_name ?? (canceller as any)?.username ?? 'Someone';
+
+			const { createSupabaseAdminClient } = await import('$lib/server/db');
+			const admin = createSupabaseAdminClient();
+			const { data: otherAuth } = await admin.auth.admin.getUserById(otherPartyId);
+			if (otherAuth?.user?.email) {
+				await sendEmail(
+					otherAuth.user.email,
+					`Booking cancelled: ${(listing as any)?.title ?? 'your listing'}`,
+					`${cancellerName} has cancelled the booking for "${(listing as any)?.title ?? 'your listing'}" on Cruz Trade.\n\nDate was: ${tx.scheduled_date ?? 'TBD'}\n\nView your bookings: https://cruz-trade.vercel.app/my-bookings`
+				);
+			}
+		} catch { /* non-fatal */ }
 
 		return { success: 'cancelled' };
 	},

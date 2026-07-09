@@ -44,6 +44,33 @@ export const POST: RequestHandler = async ({ request }) => {
 								stripe_payment_intent_id: session.payment_intent ?? null
 							})
 							.eq('id', transactionId);
+
+						// Notify provider
+						const { data: tx } = await supabase
+							.from('transactions')
+							.select(`
+								scheduled_date,
+								listings!listing_id(title),
+								buyer:profiles!buyer_id(full_name, username),
+								seller:profiles!seller_id(id)
+							`)
+							.eq('id', transactionId)
+							.single();
+
+						if (tx) {
+							const listing = Array.isArray(tx.listings) ? tx.listings[0] : tx.listings;
+							const buyer = Array.isArray(tx.buyer) ? tx.buyer[0] : tx.buyer;
+							const seller = Array.isArray(tx.seller) ? tx.seller[0] : tx.seller;
+							const buyerName = buyer?.full_name ?? buyer?.username ?? 'Someone';
+							const { data: sellerAuth } = await supabase.auth.admin.getUserById(seller?.id);
+							if (sellerAuth?.user?.email) {
+								await sendEmail(
+									sellerAuth.user.email,
+									`New booking: ${listing?.title ?? 'your listing'}`,
+									`Hi! ${buyerName} just booked "${listing?.title ?? 'your listing'}" on Cruz Trade.\n\nDate: ${tx.scheduled_date ?? 'TBD'}\n\nLog in to view the booking: https://cruz-trade.vercel.app/my-bookings`
+								);
+							}
+						}
 					}
 				} else if (purchaseType === 'listing_slot') {
 					const { data: profile } = await supabase

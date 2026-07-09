@@ -188,7 +188,7 @@
 			<div class="ml-auto">
 				<select
 					on:change={handleNeighborhoodChange}
-					class="text-xs bg-bg-secondary border border-border rounded-md px-3 py-1.5 text-text-primary focus:border-primary focus:outline-none"
+					class="text-xs bg-bg-secondary border border-border rounded-md pl-3 pr-7 py-1.5 text-text-primary focus:border-primary focus:outline-none"
 				>
 					<option value="">{m.browse_filter_all_neighborhoods()}</option>
 					{#each neighborhoods as hood}

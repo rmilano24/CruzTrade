@@ -2,6 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { randomUUID } from 'node:crypto';
 import type { Actions, PageServerLoad } from './$types';
 import { stripe } from '$lib/server/stripe';
+import { sendEmail } from '$lib/server/email';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const { user } = await locals.safeGetSession();
@@ -149,6 +150,39 @@ export const actions: Actions = {
 
 		if (insertErr) return fail(500, { error: insertErr.message });
 
+		// Notify recipient — only if they have no other unread messages in this thread
+		// (avoids spamming on fast reply threads)
+		try {
+			const { count: unreadCount } = await locals.supabase
+				.from('messages')
+				.select('id', { count: 'exact', head: true })
+				.eq('thread_id', thread_id)
+				.eq('recipient_id', recipient_id)
+				.eq('is_read', false);
+
+			if ((unreadCount ?? 0) <= 1) {
+				const { data: sender } = await locals.supabase
+					.from('profiles')
+					.select('full_name, username')
+					.eq('id', user.id)
+					.single();
+
+				const { createSupabaseAdminClient } = await import('$lib/server/db');
+				const admin = createSupabaseAdminClient();
+				const { data: recipientAuth } = await admin.auth.admin.getUserById(recipient_id);
+
+				if (recipientAuth?.user?.email) {
+					const senderName = sender?.full_name ?? sender?.username ?? 'Someone';
+					const preview = body.length > 200 ? body.slice(0, 200) + '…' : body;
+					await sendEmail(
+						recipientAuth.user.email,
+						`New message from ${senderName}`,
+						`${senderName} sent you a message on Cruz Trade:\n\n"${preview}"\n\nReply here: https://cruz-trade.vercel.app/messages?thread=${thread_id}`
+					);
+				}
+			}
+		} catch { /* non-fatal */ }
+
 		return { sent: true };
 	},
 
@@ -193,6 +227,50 @@ export const actions: Actions = {
 			.eq('id', transaction_id);
 
 		if (updateErr) return fail(500, { error: updateErr.message });
+
+		// Email both parties to leave a review
+		try {
+			const { data: txFull } = await locals.supabase
+				.from('transactions')
+				.select(`
+					buyer_id, seller_id,
+					listings!listing_id(title),
+					buyer:profiles!buyer_id(full_name, username),
+					seller:profiles!seller_id(full_name, username)
+				`)
+				.eq('id', transaction_id)
+				.single();
+
+			if (txFull) {
+				const { createSupabaseAdminClient } = await import('$lib/server/db');
+				const admin = createSupabaseAdminClient();
+				const listing = Array.isArray(txFull.listings) ? txFull.listings[0] : txFull.listings as any;
+				const buyer = Array.isArray(txFull.buyer) ? txFull.buyer[0] : txFull.buyer as any;
+				const seller = Array.isArray(txFull.seller) ? txFull.seller[0] : txFull.seller as any;
+				const listingTitle = listing?.title ?? 'your listing';
+				const reviewUrl = `https://cruz-trade.vercel.app/reviews/${transaction_id}`;
+
+				const [{ data: buyerAuth }, { data: sellerAuth }] = await Promise.all([
+					admin.auth.admin.getUserById(txFull.buyer_id),
+					admin.auth.admin.getUserById(txFull.seller_id)
+				]);
+
+				if (buyerAuth?.user?.email) {
+					await sendEmail(
+						buyerAuth.user.email,
+						`How did it go? Leave a review for ${seller?.full_name ?? seller?.username ?? 'your provider'}`,
+						`Your booking for "${listingTitle}" is complete — nice work!\n\nTake 30 seconds to leave a review. It helps your neighbors know who to trust.\n\n${reviewUrl}`
+					);
+				}
+				if (sellerAuth?.user?.email) {
+					await sendEmail(
+						sellerAuth.user.email,
+						`Job complete! Ask ${buyer?.full_name ?? buyer?.username ?? 'your client'} for a review`,
+						`Your booking for "${listingTitle}" has been marked complete.\n\n${buyer?.full_name ?? buyer?.username ?? 'Your client'} can leave you a review here:\n\n${reviewUrl}\n\nThank you for being part of Cruz Trade!`
+					);
+				}
+			}
+		} catch { /* non-fatal */ }
 
 		redirect(303, `/reviews/${transaction_id}`);
 	},
