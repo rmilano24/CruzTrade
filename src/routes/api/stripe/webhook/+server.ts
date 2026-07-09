@@ -39,7 +39,10 @@ export const POST: RequestHandler = async ({ request }) => {
 					if (transactionId) {
 						await supabase
 							.from('transactions')
-							.update({ stripe_payment_intent_id: session.payment_intent ?? null })
+							.update({
+								status: 'confirmed',
+								stripe_payment_intent_id: session.payment_intent ?? null
+							})
 							.eq('id', transactionId);
 					}
 				} else if (purchaseType === 'listing_slot') {

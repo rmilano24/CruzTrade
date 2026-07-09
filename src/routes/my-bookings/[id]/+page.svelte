@@ -297,7 +297,7 @@
 				}}>
 					<button type="submit" disabled={submitting}
 						class="w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60">
-						Confirm booking
+						Accept trade proposal
 					</button>
 				</form>
 			{/if}
@@ -309,7 +309,7 @@
 				}}>
 					<button type="submit" disabled={submitting}
 						class="w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60">
-						Mark as complete{isRental && tx.deposit_amount > 0 ? ' & release deposit' : ''}
+						{isRental ? 'Confirm tool returned' : 'Mark as complete'}
 					</button>
 				</form>
 			{/if}
