@@ -154,28 +154,24 @@
 						<div class="fixed inset-0 z-10" on:click={closeDropdown} role="none"></div>
 					{/if}
 
-					<!-- Avatar → dashboard + chevron → dropdown -->
-					<div class="flex items-center gap-1">
-						<a href="/dashboard" class="relative shrink-0">
-							{#if profile?.avatar_url}
-								<img src={profile.avatar_url} alt={displayName} class="w-8 h-8 rounded-full object-cover" />
-							{:else}
-								<div class="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-xs font-semibold text-text-muted">
-									{initials}
-								</div>
-							{/if}
-							{#if unread > 0}
-								<span class="absolute -top-1 -right-1 min-w-[16px] h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none pointer-events-none">
-									{unread > 9 ? '9+' : unread}
-								</span>
-							{/if}
-						</a>
-						<button type="button" on:click={toggleDropdown} class="text-text-muted hover:text-text-primary transition-colors p-0.5">
-							<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-							</svg>
-						</button>
-					</div>
+					<!-- Avatar → opens dropdown -->
+					<button type="button" on:click={toggleDropdown} class="relative flex items-center gap-1 shrink-0">
+						{#if profile?.avatar_url}
+							<img src={profile.avatar_url} alt={displayName} class="w-8 h-8 rounded-full object-cover" />
+						{:else}
+							<div class="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-xs font-semibold text-text-muted">
+								{initials}
+							</div>
+						{/if}
+						{#if unread > 0}
+							<span class="absolute -top-1 -right-1 min-w-[16px] h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none pointer-events-none">
+								{unread > 9 ? '9+' : unread}
+							</span>
+						{/if}
+						<svg class="w-3.5 h-3.5 text-text-muted" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+						</svg>
+					</button>
 
 					<!-- Dropdown -->
 					{#if dropdownOpen}
@@ -203,11 +199,38 @@
 							<!-- Nav links -->
 							<nav class="py-1">
 								<a
+									href="/messages"
+									on:click={closeDropdown}
+									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
+								>
+									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+										<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+									</svg>
+									{m.nav_messages()}
+									{#if unread > 0}
+										<span class="ml-auto min-w-[20px] h-5 bg-primary text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1.5 leading-none">
+											{unread > 99 ? '99+' : unread}
+										</span>
+									{/if}
+								</a>
+								<a
+									href="/my-bookings"
+									on:click={closeDropdown}
+									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
+								>
+									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+										<rect x="3" y="4" width="18" height="18" rx="2"/>
+										<line x1="16" y1="2" x2="16" y2="6"/>
+										<line x1="8" y1="2" x2="8" y2="6"/>
+										<line x1="3" y1="10" x2="21" y2="10"/>
+									</svg>
+									{m.nav_my_bookings()}
+								</a>
+								<a
 									href="/my-listings"
 									on:click={closeDropdown}
 									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
 								>
-									<!-- Grid icon -->
 									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
 										<rect x="3" y="3" width="7" height="7" rx="1"/>
 										<rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -217,42 +240,15 @@
 									{m.nav_my_listings()}
 								</a>
 								<a
-									href="/my-bookings"
-									on:click={closeDropdown}
-									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
-								>
-									<!-- Calendar icon -->
-									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-										<rect x="3" y="4" width="18" height="18" rx="2"/>
-										<line x1="16" y1="2" x2="16" y2="6"/>
-										<line x1="8" y1="2" x2="8" y2="6"/>
-										<line x1="3" y1="10" x2="21" y2="10"/>
-									</svg>
-									{m.nav_my_bookings()}
-								</a>
-								{#if username}
-									<a
-										href="/profile/{username}"
-										on:click={closeDropdown}
-										class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
-									>
-										<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-											<circle cx="12" cy="8" r="4"/>
-											<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-										</svg>
-										{m.nav_view_profile()}
-									</a>
-								{/if}
-								<a
-									href="/edit-profile"
+									href={username ? `/profile/${username}` : '/edit-profile'}
 									on:click={closeDropdown}
 									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
 								>
 									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-										<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-										<path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+										<circle cx="12" cy="8" r="4"/>
+										<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
 									</svg>
-									{m.nav_edit_profile()}
+									My Profile
 								</a>
 								<a
 									href="/settings"
@@ -264,22 +260,6 @@
 										<path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
 									</svg>
 									{m.nav_settings()}
-								</a>
-								<a
-									href="/messages"
-									on:click={closeDropdown}
-									class="flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-card transition-colors"
-								>
-									<!-- Chat icon -->
-									<svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-										<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-									</svg>
-									{m.nav_messages()}
-									{#if unread > 0}
-										<span class="ml-auto min-w-[20px] h-5 bg-primary text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1.5 leading-none">
-											{unread > 99 ? '99+' : unread}
-										</span>
-									{/if}
 								</a>
 							</nav>
 

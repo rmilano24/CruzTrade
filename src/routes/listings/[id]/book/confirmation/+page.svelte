@@ -132,4 +132,15 @@
 		</a>
 	</div>
 
+	<!-- Rental photo reminder -->
+	{#if isRental}
+		<div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+			<p class="text-xs text-amber-700 leading-relaxed">
+				<strong>Reminder:</strong> When you pick up the tool, both you and the owner should photograph its condition in
+				<a href="/my-bookings/{tx.id}" class="underline font-medium">My Bookings</a>.
+				Timestamped photos protect both parties if there's any dispute.
+			</p>
+		</div>
+	{/if}
+
 </div>

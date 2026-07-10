@@ -86,6 +86,16 @@
 		</p>
 	</div>
 
+	{#if isTrade}
+		<div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 mb-6">
+			<p class="text-xs text-blue-700 leading-relaxed">
+				<strong>No payment involved.</strong> Describe what you're offering in exchange and suggest a date.
+				{provider?.full_name ?? provider?.username ?? 'The provider'} will review your proposal and accept or decline.
+				You won't be charged anything.
+			</p>
+		</div>
+	{/if}
+
 	{#if cancelled}
 		<div class="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
 			<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
