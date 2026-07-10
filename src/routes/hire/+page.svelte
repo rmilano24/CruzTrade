@@ -4,6 +4,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { categoryLabel } from '$lib/utils/format';
 	import { languageTag } from '$lib/paraglide/runtime';
+	import { page } from '$app/stores';
 	$: lang = languageTag() as 'en' | 'es';
 	export let data: { listings: any[]; allListings: any[]; filters: any };
 
@@ -35,7 +36,18 @@
 		: data.allListings;
 </script>
 
-<svelte:head><title>Hire a Neighbor · Cruz Trade</title></svelte:head>
+<svelte:head>
+	<title>Hire a Neighbor · Cruz Trade</title>
+	<meta name="description" content="Hire local neighbors in Santa Cruz County for home repair, gardening, tech help, tutoring, creative work, and more. Support your community while getting things done." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="Hire a Neighbor · Cruz Trade" />
+	<meta property="og:description" content="Hire local neighbors in Santa Cruz County for home repair, gardening, tech help, tutoring, creative work, and more. Support your community while getting things done." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="Hire a Neighbor · Cruz Trade" />
+	<meta name="twitter:description" content="Hire local neighbors in Santa Cruz County for home repair, gardening, tech help, tutoring, creative work, and more. Support your community while getting things done." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
+</svelte:head>
 
 {#if q}
 	<div class="px-6">

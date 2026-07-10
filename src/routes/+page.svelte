@@ -46,10 +46,33 @@
 		{ slug: 'costumes_seasonal',  label: '🎃 Costumes & Seasonal' },
 		{ slug: 'party_events',       label: '🎊 Party & Events' },
 	];
+
+	$: websiteLd = {
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		name: 'Cruz Trade',
+		url: $page.url.origin + '/',
+		description: 'Cruz Trade is a hyperlocal skill trade and tool rental marketplace for Santa Cruz County, CA.',
+		potentialAction: {
+			'@type': 'SearchAction',
+			target: { '@type': 'EntryPoint', urlTemplate: $page.url.origin + '/browse?q={search_term_string}' },
+			'query-input': 'required name=search_term_string'
+		}
+	};
 </script>
 
 <svelte:head>
 	<title>Cruz Trade — Trade skills, rent tools, build community in Santa Cruz</title>
+	<meta name="description" content="Cruz Trade is a hyperlocal marketplace for Santa Cruz County. Hire neighbors for home repair, tech help, and more — or rent tools, trade skills, and barter services. Free to join." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="Cruz Trade — Trade skills, rent tools, build community in Santa Cruz" />
+	<meta property="og:description" content="Cruz Trade is a hyperlocal marketplace for Santa Cruz County. Hire neighbors for home repair, tech help, and more — or rent tools, trade skills, and barter services. Free to join." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="Cruz Trade — Trade skills, rent tools, build community in Santa Cruz" />
+	<meta name="twitter:description" content="Cruz Trade is a hyperlocal marketplace for Santa Cruz County. Hire neighbors for home repair, tech help, and more — or rent tools, trade skills, and barter services. Free to join." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
+	{@html `<script type="application/ld+json">${JSON.stringify(websiteLd).replace(/<\//g, '<\\/')}</script>`}
 </svelte:head>
 
 {#if accountDeleted}

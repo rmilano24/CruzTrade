@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+Disallow: /auth/
+Disallow: /api/
+Disallow: /my-bookings/
+Disallow: /my-listings/
+Disallow: /messages/
+Disallow: /settings/
+Disallow: /edit-profile/
+Disallow: /dashboard/
+Disallow: /onboarding/
+
+Sitemap: https://cruz-trade.vercel.app/sitemap.xml
+LLMs: https://cruz-trade.vercel.app/llms.txt

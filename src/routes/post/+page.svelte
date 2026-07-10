@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { CATEGORY_LABELS, SERVICE_CATEGORY_SLUGS, RENTAL_CATEGORY_SLUGS } from '$lib/utils/format';
 	import * as m from '$lib/paraglide/messages';
 	import TermsModal from '$lib/components/ui/TermsModal.svelte';
@@ -80,6 +81,15 @@
 
 <svelte:head>
 	<title>{m.page_post_title()} · Cruz Trade</title>
+	<meta name="description" content="List your service or tool rental on Cruz Trade. Reach neighbors in Santa Cruz County who are looking for exactly what you offer." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="Post a Listing · Cruz Trade" />
+	<meta property="og:description" content="List your service or tool rental on Cruz Trade. Reach neighbors in Santa Cruz County who are looking for exactly what you offer." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="Post a Listing · Cruz Trade" />
+	<meta name="twitter:description" content="List your service or tool rental on Cruz Trade. Reach neighbors in Santa Cruz County who are looking for exactly what you offer." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
 </svelte:head>
 
 <!-- Backdrop -->

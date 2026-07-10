@@ -136,6 +136,15 @@
 
 <svelte:head>
 	<title>How Cruz Trade Works · Cruz Trade</title>
+	<meta name="description" content="Learn how Cruz Trade works — whether you want to hire a neighbor, offer a service, rent out a tool, or trade skills with someone in Santa Cruz County." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="How Cruz Trade Works · Cruz Trade" />
+	<meta property="og:description" content="Learn how Cruz Trade works — whether you want to hire a neighbor, offer a service, rent out a tool, or trade skills with someone in Santa Cruz County." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="How Cruz Trade Works · Cruz Trade" />
+	<meta name="twitter:description" content="Learn how Cruz Trade works — whether you want to hire a neighbor, offer a service, rent out a tool, or trade skills with someone in Santa Cruz County." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
 </svelte:head>
 
 <!-- ─── Header ───────────────────────────────────────────────────────────── -->

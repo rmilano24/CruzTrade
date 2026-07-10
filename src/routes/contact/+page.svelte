@@ -1,5 +1,18 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+</script>
+
 <svelte:head>
 	<title>Contact · Cruz Trade</title>
+	<meta name="description" content="Get in touch with the Cruz Trade team. We'd love to hear from you — whether you have a question, feedback, or want to partner with us." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="Contact · Cruz Trade" />
+	<meta property="og:description" content="Get in touch with the Cruz Trade team. We'd love to hear from you — whether you have a question, feedback, or want to partner with us." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="Contact · Cruz Trade" />
+	<meta name="twitter:description" content="Get in touch with the Cruz Trade team. We'd love to hear from you — whether you have a question, feedback, or want to partner with us." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
 </svelte:head>
 
 <div class="max-w-lg mx-auto px-6 py-16">

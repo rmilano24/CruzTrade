@@ -1,5 +1,18 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+</script>
+
 <svelte:head>
 	<title>About · Cruz Trade</title>
+	<meta name="description" content="Cruz Trade was built to bring the skill trades and neighborly exchanges that already happen in Santa Cruz County into one trusted, bilingual marketplace." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="About · Cruz Trade" />
+	<meta property="og:description" content="Cruz Trade was built to bring the skill trades and neighborly exchanges that already happen in Santa Cruz County into one trusted, bilingual marketplace." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="About · Cruz Trade" />
+	<meta name="twitter:description" content="Cruz Trade was built to bring the skill trades and neighborly exchanges that already happen in Santa Cruz County into one trusted, bilingual marketplace." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
 </svelte:head>
 
 <div class="max-w-2xl mx-auto px-6 py-16">

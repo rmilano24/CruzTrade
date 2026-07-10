@@ -1,5 +1,18 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+</script>
+
 <svelte:head>
 	<title>Terms and Conditions · Cruz Trade</title>
+	<meta name="description" content="Read the Cruz Trade terms and conditions governing your use of the platform, including payments, listings, and community standards." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="Terms and Conditions · Cruz Trade" />
+	<meta property="og:description" content="Read the Cruz Trade terms and conditions governing your use of the platform, including payments, listings, and community standards." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="Terms and Conditions · Cruz Trade" />
+	<meta name="twitter:description" content="Read the Cruz Trade terms and conditions governing your use of the platform, including payments, listings, and community standards." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
 </svelte:head>
 
 <div class="max-w-2xl mx-auto px-6 py-16">

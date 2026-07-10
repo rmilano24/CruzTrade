@@ -116,6 +116,15 @@
 
 <svelte:head>
 	<title>{m.page_browse_title()} · Cruz Trade</title>
+	<meta name="description" content="Browse all service and tool rental listings in Santa Cruz County. Filter by category, neighborhood, and listing type to find the help you need." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="Browse Listings · Cruz Trade" />
+	<meta property="og:description" content="Browse all service and tool rental listings in Santa Cruz County. Filter by category, neighborhood, and listing type to find the help you need." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="Browse Listings · Cruz Trade" />
+	<meta name="twitter:description" content="Browse all service and tool rental listings in Santa Cruz County. Filter by category, neighborhood, and listing type to find the help you need." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
 </svelte:head>
 
 <div class="max-w-content mx-auto px-6 py-8">

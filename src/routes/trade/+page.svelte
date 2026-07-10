@@ -4,6 +4,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { categoryLabel } from '$lib/utils/format';
 	import { languageTag } from '$lib/paraglide/runtime';
+	import { page } from '$app/stores';
 	$: lang = languageTag() as 'en' | 'es';
 	export let data: { listings: any[]; allListings: any[]; filters: any };
 
@@ -35,7 +36,18 @@
 		: data.allListings;
 </script>
 
-<svelte:head><title>Trade Skills · Cruz Trade</title></svelte:head>
+<svelte:head>
+	<title>Trade Skills · Cruz Trade</title>
+	<meta name="description" content="Browse neighbors in Santa Cruz County who are open to skill trades and barter. Exchange your time and talents — no money required." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="Trade Skills · Cruz Trade" />
+	<meta property="og:description" content="Browse neighbors in Santa Cruz County who are open to skill trades and barter. Exchange your time and talents — no money required." />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta name="twitter:title" content="Trade Skills · Cruz Trade" />
+	<meta name="twitter:description" content="Browse neighbors in Santa Cruz County who are open to skill trades and barter. Exchange your time and talents — no money required." />
+	<meta name="twitter:image" content={$page.url.origin + '/og-image.png'} />
+</svelte:head>
 
 {#if q}
 	<div class="px-6">

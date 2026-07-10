@@ -76,6 +76,12 @@
 	});
 </script>
 
+<svelte:head>
+	<meta property="og:site_name" content="Cruz Trade" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<link rel="canonical" href={$page.url.origin + $page.url.pathname} />
+</svelte:head>
+
 <ParaglideJS {i18n}>
 	<div class="flex flex-col min-h-screen">
 		<Nav />

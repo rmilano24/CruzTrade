@@ -40,10 +40,38 @@
 		.map((w: string) => w[0])
 		.join('')
 		.toUpperCase();
+	$: metaDesc = listing.description
+		? (listing.description.length > 155 ? listing.description.slice(0, 152) + '...' : listing.description)
+		: `${listing.type === 'tool_rental' ? 'Rent' : 'Hire'} ${listing.title} in ${listing.neighborhood ?? 'Santa Cruz County'} — find local services on Cruz Trade.`;
+	$: jsonLd = listing.type === 'tool_rental'
+		? {
+				'@context': 'https://schema.org', '@type': 'Product',
+				name: listing.title, description: listing.description,
+				offers: { '@type': 'Offer', price: (listing.price / 100).toFixed(2), priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
+				...(avgRating ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: avgRating, reviewCount: reviews.length, bestRating: 5, worstRating: 1 } } : {})
+			}
+		: {
+				'@context': 'https://schema.org', '@type': 'Service',
+				name: listing.title, description: listing.description,
+				provider: { '@type': 'Person', name: provider?.full_name ?? provider?.username ?? '' },
+				areaServed: { '@type': 'AdministrativeArea', name: (listing.neighborhood ?? 'Santa Cruz County') + ', CA' },
+				offers: { '@type': 'Offer', price: (listing.price / 100).toFixed(2), priceCurrency: 'USD' },
+				...(avgRating ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: avgRating, reviewCount: reviews.length, bestRating: 5, worstRating: 1 } } : {})
+			};
 </script>
 
 <svelte:head>
 	<title>{listing.title} · Cruz Trade</title>
+	<meta name="description" content={metaDesc} />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content={listing.title + ' · Cruz Trade'} />
+	<meta property="og:description" content={metaDesc} />
+	<meta property="og:image" content={allImages[0]?.url || ($page.url.origin + '/og-image.png')} />
+	<meta name="twitter:title" content={listing.title + ' · Cruz Trade'} />
+	<meta name="twitter:description" content={metaDesc} />
+	<meta name="twitter:image" content={allImages[0]?.url || ($page.url.origin + '/og-image.png')} />
+	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/<\//g, '<\\/')}</script>`}
 </svelte:head>
 
 <div class="min-h-screen bg-bg-card">

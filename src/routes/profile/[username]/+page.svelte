@@ -23,10 +23,22 @@
 		.map((w: string) => w[0])
 		.join('')
 		.toUpperCase();
+	$: metaDesc = profile.bio
+		? (profile.bio.length > 155 ? profile.bio.slice(0, 152) + '...' : profile.bio)
+		: `${profile.full_name ?? profile.username} offers services on Cruz Trade in ${profile.neighborhood ?? 'Santa Cruz County, CA'}.`;
 </script>
 
 <svelte:head>
 	<title>{profile.full_name ?? profile.username} · Cruz Trade</title>
+	<meta name="description" content={metaDesc} />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content={(profile.full_name ?? profile.username) + ' · Cruz Trade'} />
+	<meta property="og:description" content={metaDesc} />
+	<meta property="og:image" content={profile.avatar_url || ($page.url.origin + '/og-image.png')} />
+	<meta name="twitter:title" content={(profile.full_name ?? profile.username) + ' · Cruz Trade'} />
+	<meta name="twitter:description" content={metaDesc} />
+	<meta name="twitter:image" content={profile.avatar_url || ($page.url.origin + '/og-image.png')} />
 </svelte:head>
 
 <div class="max-w-content mx-auto px-6 py-8">

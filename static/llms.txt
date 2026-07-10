@@ -1,0 +1,31 @@
+# Cruz Trade
+
+> Cruz Trade is a hyperlocal skill trade and tool rental marketplace for Santa Cruz County, California. Neighbors hire each other for services, rent tools and equipment, or trade skills directly (barter). The platform is bilingual in English and Spanish.
+
+Cruz Trade connects Santa Cruz County residents who want to hire local people for services like home repair, gardening, tech help, tutoring, creative work, and more — as well as neighbors who want to rent tools and equipment instead of buying them. Users can also propose skill trades (barter) with no money exchanged.
+
+Cruz Trade is free to join. Providers list their first service for free. Payments are processed securely through Stripe and released to the provider after the job is marked complete.
+
+## Key pages
+
+- [Browse listings](https://cruz-trade.vercel.app/browse): Search and filter all active service and tool rental listings in Santa Cruz County
+- [How it works](https://cruz-trade.vercel.app/how-it-works): Step-by-step guide to hiring a neighbor, offering a service, or renting out a tool
+- [Post a listing](https://cruz-trade.vercel.app/post): List a service or tool rental (free for first listing)
+- [Sign up](https://cruz-trade.vercel.app/auth/signup): Create a free account
+- [Trade tab](https://cruz-trade.vercel.app/trade): Browse listings that accept skill trades / barter
+- [Hire tab](https://cruz-trade.vercel.app/hire): Browse service providers available for hire
+- [Rent tab](https://cruz-trade.vercel.app/rent): Browse tools and equipment available to rent
+
+## Service categories
+
+Home & Garden, Tech & Electronics, Tools & Equipment, Wellness & Fitness, Creative & Design, Transport & Moving
+
+## Coverage area
+
+Santa Cruz County, California — including Santa Cruz, Watsonville, Capitola, Scotts Valley, Aptos, Soquel, Live Oak, Felton, Boulder Creek, and surrounding neighborhoods.
+
+## About
+
+Cruz Trade was built by a Santa Cruz designer and developer who wanted a real home for the skill-trading and neighborly exchange that already happens informally in the community. The platform is designed for the Santa Cruz County community specifically — not a national app that happens to include the area.
+
+Contact: hello@nmbl.digital
