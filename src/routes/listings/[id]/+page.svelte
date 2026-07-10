@@ -307,8 +307,9 @@
 							</a>
 							{#if listing.type === 'service' && listing.accepts_trade}
 								<a href="/listings/{listing.id}/book?mode=trade"
-									class="block w-full text-center border border-primary text-primary font-semibold px-5 py-3 rounded-lg hover:bg-orange-50 transition-colors text-sm">
-									{m.listing_propose_trade()}
+									class="block w-full text-center border border-primary text-primary px-5 py-3 rounded-lg hover:bg-orange-50 transition-colors">
+									<span class="block text-sm font-semibold">{m.listing_propose_trade()}</span>
+									<span class="block text-xs font-normal opacity-70 mt-0.5">{m.listing_propose_trade_sub()}</span>
 								</a>
 							{/if}
 							<a href="/messages?to={listing.profiles?.id}&listing={listing.id}"

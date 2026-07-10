@@ -223,6 +223,7 @@
 	"listing_hire": "Hire",
 	"listing_book": "Book This",
 	"listing_propose_trade": "Propose a Trade",
+	"listing_propose_trade_sub": "No money — offer your skills in exchange",
 	"listing_message": "Message Provider",
 	"listing_accepts_trade": "Open to trades",
 	"listing_trade_for": "Trade for",

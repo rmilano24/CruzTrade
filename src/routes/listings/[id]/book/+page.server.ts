@@ -26,7 +26,13 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
 
 	const mode = url.searchParams.get('mode') === 'trade' && listing.type === 'service' && listing.accepts_trade ? 'trade' : 'pay';
 
-	return { listing, mode, neighborhoods: SANTA_CRUZ_NEIGHBORHOODS };
+	const { data: profile } = await locals.supabase
+		.from('profiles')
+		.select('neighborhood')
+		.eq('id', user.id)
+		.single();
+
+	return { listing, mode, neighborhoods: SANTA_CRUZ_NEIGHBORHOODS, userNeighborhood: profile?.neighborhood ?? null };
 };
 
 export const actions: Actions = {

@@ -9,6 +9,7 @@
 		listing: any;
 		mode: 'pay' | 'trade';
 		neighborhoods: readonly string[];
+		userNeighborhood: string | null;
 	};
 	export let form: {
 		errors?: Record<string, string>;
@@ -16,7 +17,8 @@
 		error?: string;
 	} | null = null;
 
-	$: ({ listing, mode, neighborhoods } = data);
+	$: ({ listing, mode, neighborhoods, userNeighborhood } = data);
+	$: defaultNeighborhood = v.neighborhood ?? userNeighborhood ?? '';
 	$: cancelled = $page.url.searchParams.get('cancelled') === '1';
 	$: isTrade = mode === 'trade';
 	$: isRental = listing.type === 'tool_rental';
@@ -256,9 +258,9 @@
 								class="appearance-none w-full bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
 									{errors.neighborhood ? 'border-red-400' : 'border-border'}"
 							>
-								<option value="" disabled selected={!v.neighborhood}>{m.book_neighborhood_placeholder()}</option>
+								<option value="" disabled selected={!defaultNeighborhood}>{m.book_neighborhood_placeholder()}</option>
 								{#each neighborhoods as hood}
-									<option value={hood} selected={v.neighborhood === hood}>{hood}</option>
+									<option value={hood} selected={defaultNeighborhood === hood}>{hood}</option>
 								{/each}
 							</select>
 							<svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
