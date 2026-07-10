@@ -2,6 +2,8 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { sendEmail } from '$lib/server/email';
 
+const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://cruz-trade.vercel.app';
+
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { user } = await locals.safeGetSession();
 	if (!user) redirect(303, '/auth/login?next=/my-bookings');
@@ -92,7 +94,7 @@ export const actions: Actions = {
 			const buyer = Array.isArray(tx.buyer) ? tx.buyer[0] : tx.buyer as any;
 			const seller = Array.isArray(tx.seller) ? tx.seller[0] : tx.seller as any;
 			const listingTitle = listing?.title ?? 'your listing';
-			const reviewUrl = `https://cruz-trade.vercel.app/reviews/${params.id}`;
+			const reviewUrl = `${SITE_URL}/reviews/${params.id}`;
 
 			const [{ data: buyerAuth }, { data: sellerAuth }] = await Promise.all([
 				admin.auth.admin.getUserById(tx.buyer_id),
@@ -159,7 +161,7 @@ export const actions: Actions = {
 				await sendEmail(
 					otherAuth.user.email,
 					`Booking cancelled: ${(listing as any)?.title ?? 'your listing'}`,
-					`${cancellerName} has cancelled the booking for "${(listing as any)?.title ?? 'your listing'}" on Cruz Trade.\n\nDate was: ${tx.scheduled_date ?? 'TBD'}\n\nView your bookings: https://cruz-trade.vercel.app/my-bookings`
+					`${cancellerName} has cancelled the booking for "${(listing as any)?.title ?? 'your listing'}" on Cruz Trade.\n\nDate was: ${tx.scheduled_date ?? 'TBD'}\n\nView your bookings: ${SITE_URL}/my-bookings`
 				);
 			}
 		} catch { /* non-fatal */ }
@@ -173,7 +175,7 @@ export const actions: Actions = {
 
 		const { data: tx } = await locals.supabase
 			.from('transactions')
-			.select('id, status, seller_id, pickup_photos, listings!listing_id(type)')
+			.select('id, status, buyer_id, seller_id, pickup_photos, listings!listing_id(type)')
 			.eq('id', params.id)
 			.single();
 

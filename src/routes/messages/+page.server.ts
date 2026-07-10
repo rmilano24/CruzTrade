@@ -4,6 +4,8 @@ import type { Actions, PageServerLoad } from './$types';
 import { stripe } from '$lib/server/stripe';
 import { sendEmail } from '$lib/server/email';
 
+const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://cruz-trade.vercel.app';
+
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const { user } = await locals.safeGetSession();
 	if (!user) redirect(303, '/auth/login?next=/messages');
@@ -177,7 +179,7 @@ export const actions: Actions = {
 					await sendEmail(
 						recipientAuth.user.email,
 						`New message from ${senderName}`,
-						`${senderName} sent you a message on Cruz Trade:\n\n"${preview}"\n\nReply here: https://cruz-trade.vercel.app/messages?thread=${thread_id}`
+						`${senderName} sent you a message on Cruz Trade:\n\n"${preview}"\n\nReply here: ${SITE_URL}/messages?thread=${thread_id}`
 					);
 				}
 			}
@@ -248,7 +250,7 @@ export const actions: Actions = {
 				const buyer = Array.isArray(txFull.buyer) ? txFull.buyer[0] : txFull.buyer as any;
 				const seller = Array.isArray(txFull.seller) ? txFull.seller[0] : txFull.seller as any;
 				const listingTitle = listing?.title ?? 'your listing';
-				const reviewUrl = `https://cruz-trade.vercel.app/reviews/${transaction_id}`;
+				const reviewUrl = `${SITE_URL}/reviews/${transaction_id}`;
 
 				const [{ data: buyerAuth }, { data: sellerAuth }] = await Promise.all([
 					admin.auth.admin.getUserById(txFull.buyer_id),

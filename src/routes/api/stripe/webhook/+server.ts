@@ -3,6 +3,8 @@ import { stripe } from '$lib/server/stripe';
 import { createSupabaseAdminClient } from '$lib/server/db';
 import { sendEmail } from '$lib/server/email';
 
+const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://cruz-trade.vercel.app';
+
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const body = await request.text();
@@ -67,7 +69,7 @@ export const POST: RequestHandler = async ({ request }) => {
 								await sendEmail(
 									sellerAuth.user.email,
 									`New booking: ${listing?.title ?? 'your listing'}`,
-									`Hi! ${buyerName} just booked "${listing?.title ?? 'your listing'}" on Cruz Trade.\n\nDate: ${tx.scheduled_date ?? 'TBD'}\n\nLog in to view the booking: https://cruz-trade.vercel.app/my-bookings`
+									`Hi! ${buyerName} just booked "${listing?.title ?? 'your listing'}" on Cruz Trade.\n\nDate: ${tx.scheduled_date ?? 'TBD'}\n\nLog in to view the booking: ${SITE_URL}/my-bookings`
 								);
 							}
 						}

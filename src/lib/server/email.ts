@@ -1,3 +1,5 @@
+const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://cruz-trade.vercel.app';
+
 function buildHtml(subject: string, body: string): string {
 	// Convert plain text body to HTML paragraphs, turning bare URLs into buttons
 	const paragraphs = body
@@ -38,7 +40,7 @@ function buildHtml(subject: string, body: string): string {
 				<!-- Header -->
 				<tr>
 					<td style="background:#f97316;border-radius:10px 10px 0 0;padding:20px 32px;">
-						<img src="https://cruz-trade.vercel.app/cruztrade.png" alt="Cruz Trade" width="160" style="display:block;height:auto;max-width:160px;">
+						<img src="${SITE_URL}/cruztrade.png" alt="Cruz Trade" width="160" style="display:block;height:auto;max-width:160px;">
 					</td>
 				</tr>
 
@@ -57,7 +59,7 @@ function buildHtml(subject: string, body: string): string {
 					<td style="background:#f0f0f0;border-radius:0 0 10px 10px;border:1px solid #e0e0e0;border-top:none;padding:16px 32px;">
 						<p style="margin:0;font-size:12px;color:#888888;line-height:1.5;">
 							You're receiving this because you have an account on
-							<a href="https://cruz-trade.vercel.app" style="color:#f97316;text-decoration:none;">Cruz Trade</a>,
+							<a href="${SITE_URL}" style="color:#f97316;text-decoration:none;">Cruz Trade</a>,
 							the hyperlocal skill trade and tool rental marketplace for Santa Cruz County.
 						</p>
 					</td>
