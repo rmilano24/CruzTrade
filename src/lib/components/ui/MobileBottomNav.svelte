@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { showPostModal } from '$lib/stores/postModal';
+	import * as m from '$lib/paraglide/messages';
 
 	$: activeTrade  = $page.url.pathname === '/trade'  || $page.url.pathname.startsWith('/trade/');
 	$: activeHire   = $page.url.pathname === '/hire'   || $page.url.pathname.startsWith('/hire/');
@@ -22,7 +23,7 @@
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🤝</span>
-			<span class="text-[10px] font-medium">Trade</span>
+			<span class="text-[10px] font-medium">{m.nav_tab_trade()}</span>
 		</a>
 
 		<!-- Hire -->
@@ -33,7 +34,7 @@
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🛠️</span>
-			<span class="text-[10px] font-medium">Hire</span>
+			<span class="text-[10px] font-medium">{m.nav_tab_hire()}</span>
 		</a>
 
 		<!-- Post — circle floats above the nav bar -->
@@ -45,7 +46,7 @@
 					</svg>
 				</div>
 			</button>
-			<span class="text-[10px] font-medium text-text-muted">Post</span>
+			<span class="text-[10px] font-medium text-text-muted">{m.nav_post()}</span>
 		</div>
 
 		<!-- Rent -->
@@ -56,7 +57,7 @@
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">🏄</span>
-			<span class="text-[10px] font-medium">Rent</span>
+			<span class="text-[10px] font-medium">{m.nav_tab_rent()}</span>
 		</a>
 
 		<!-- Browse -->
@@ -67,7 +68,7 @@
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
 			<span class="text-xl leading-none">👀</span>
-			<span class="text-[10px] font-medium">Browse</span>
+			<span class="text-[10px] font-medium">{m.nav_browse()}</span>
 		</a>
 
 	</div>
