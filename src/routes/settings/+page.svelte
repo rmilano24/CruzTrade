@@ -7,15 +7,15 @@
 	export let data: {
 		email: string;
 		provider: string;
-		profile: any;
+		settingsProfile: any;
 		activeListingCount: number;
 	};
 	export let form: { pwError?: string; pwSuccess?: boolean; deleteError?: string } | null = null;
 
-	$: isPro = data.profile?.subscription_tier === 'pro';
-	$: additionalSlots = data.profile?.additional_listing_slots ?? 0;
+	$: isPro = data.settingsProfile?.subscription_tier === 'pro';
+	$: additionalSlots = data.settingsProfile?.additional_listing_slots ?? 0;
 	$: totalAllowed = isPro ? '∞' : String(1 + additionalSlots);
-	$: hasStripeCustomer = !!data.profile?.stripe_customer_id;
+	$: hasStripeCustomer = !!data.settingsProfile?.stripe_customer_id;
 	$: proActivated = $page.url.searchParams.get('pro') === 'activated';
 	$: slotPurchased = $page.url.searchParams.get('slot') === 'purchased';
 

@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		email: user.email ?? '',
 		provider: (user.app_metadata?.provider ?? 'email') as string,
-		profile,
+		settingsProfile: profile,
 		activeListingCount: activeListingCount ?? 0
 	};
 };
