@@ -3,7 +3,7 @@ import { stripe } from '$lib/server/stripe';
 import { createSupabaseAdminClient } from '$lib/server/db';
 import { sendEmail } from '$lib/server/email';
 
-const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://cruz-trade.vercel.app';
+const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://www.cruztrade.com';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -131,7 +131,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					await sendEmail(
 						authUser.user.email,
 						'Your Cruz Trade Pro subscription has ended',
-						`Your Pro subscription has ended. Your active listings will remain live for 30 days.\n\nVisit your account to choose which listing to keep for free: https://cruztrade.com/account/choose-free-listing`
+						`Your Pro subscription has ended. Your active listings will remain live for 30 days.\n\nVisit your settings to manage your listings: ${SITE_URL}/my-listings`
 					);
 				}
 				break;

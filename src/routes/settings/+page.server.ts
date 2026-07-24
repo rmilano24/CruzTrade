@@ -86,8 +86,14 @@ export const actions: Actions = {
 			}
 		}
 
-		// Deactivate all listings
-		await admin.from('listings').update({ is_active: false }).eq('user_id', user.id);
+		// Delete related data in dependency order before deleting auth user
+		await admin.from('reviews').delete().eq('reviewer_id', user.id);
+		await admin.from('reviews').delete().eq('reviewee_id', user.id);
+		await admin.from('messages').delete().eq('sender_id', user.id);
+		await admin.from('messages').delete().eq('recipient_id', user.id);
+		await admin.from('transactions').delete().eq('buyer_id', user.id);
+		await admin.from('transactions').delete().eq('seller_id', user.id);
+		await admin.from('listings').delete().eq('user_id', user.id);
 
 		// Delete the auth user (cascades to profile via FK)
 		const { error: deleteErr } = await admin.auth.admin.deleteUser(user.id);
