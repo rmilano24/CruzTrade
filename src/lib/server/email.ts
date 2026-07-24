@@ -86,7 +86,7 @@ export async function sendEmail(to: string, subject: string, body: string): Prom
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			from: 'Cruz Trade <hello@nmbl.digital>',
+			from: 'Cruz Trade <hello@cruztrade.com>',
 			to,
 			subject,
 			text: body,
