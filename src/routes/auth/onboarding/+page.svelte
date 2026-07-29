@@ -9,6 +9,10 @@
 	// Step 1
 	let avatarPreview: string | null = null;
 	let selectedLang: 'en' | 'es' = 'en';
+	const langOptions: { val: 'en' | 'es'; label: string }[] = [
+		{ val: 'en', label: 'EN' },
+		{ val: 'es', label: 'ES' },
+	];
 
 	// Step 2
 	let selectedHood: string | null = null;
@@ -196,7 +200,7 @@
 						<span class="text-sm font-medium text-text-primary">{t.langLabel}</span>
 						<div class="flex items-center justify-between">
 							<div class="flex items-center gap-0.5 bg-bg-secondary rounded-full p-0.5">
-								{#each [{ val: 'en' as const, label: 'EN' }, { val: 'es' as const, label: 'ES' }] as opt}
+								{#each langOptions as opt}
 									<label class="cursor-pointer">
 										<input type="radio" name="language_preference" value={opt.val}
 											checked={selectedLang === opt.val}
