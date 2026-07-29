@@ -8,7 +8,7 @@
 
 	// Step 1
 	let avatarPreview: string | null = null;
-	let selectedLang = 'en';
+	let selectedLang: 'en' | 'es' = 'en';
 
 	// Step 2
 	let selectedHood: string | null = null;
@@ -45,6 +45,67 @@
 		'Watsonville',
 		'Felton / Boulder Creek',
 	];
+
+	const strings = {
+		en: {
+			stepOf: (s: number) => `Step ${s} of 3`,
+			step1Title: 'Tell us about yourself',
+			step1Sub: 'This helps neighbors find and trust you.',
+			uploadPhoto: 'Upload photo',
+			fullName: 'Full name',
+			fullNamePh: 'Maria Gonzalez',
+			bio: 'Short bio',
+			optional: '(optional)',
+			bioPh: "I'm a carpenter and avid gardener in Westside SC…",
+			langLabel: 'Preferred language',
+			nextNeighborhood: 'Next: Your neighborhood →',
+			step2Title: 'Where are you in SC County?',
+			step2Sub: 'This helps us show you listings nearby.',
+			orType: 'Or type your neighborhood',
+			hoodPh: 'e.g. Seabright, Twin Lakes…',
+			back: '← Back',
+			nextInterests: 'Next: Your interests →',
+			step3Title: 'What are you here for?',
+			step3Sub: 'Pick everything that applies — most neighbors do all three.',
+			tradeName: 'Trade',
+			tradeSub: 'Swap skills with a neighbor, no money needed.',
+			rentName: 'Rent',
+			rentSub: 'Borrow or list tools and gear nearby.',
+			hireName: 'Hire',
+			hireSub: 'Find skilled locals for jobs big and small.',
+			dashboard: 'Go to my dashboard →',
+		},
+		es: {
+			stepOf: (s: number) => `Paso ${s} de 3`,
+			step1Title: 'Cuéntanos sobre ti',
+			step1Sub: 'Esto ayuda a los vecinos a encontrarte y confiar en ti.',
+			uploadPhoto: 'Subir foto',
+			fullName: 'Nombre completo',
+			fullNamePh: 'Maria González',
+			bio: 'Breve biografía',
+			optional: '(opcional)',
+			bioPh: 'Soy carpintero y jardinero en el Westside de SC…',
+			langLabel: 'Idioma preferido',
+			nextNeighborhood: 'Siguiente: Tu vecindario →',
+			step2Title: '¿Dónde estás en el condado de SC?',
+			step2Sub: 'Esto nos ayuda a mostrarte anuncios cercanos.',
+			orType: 'O escribe tu vecindario',
+			hoodPh: 'ej. Seabright, Twin Lakes…',
+			back: '← Atrás',
+			nextInterests: 'Siguiente: Tus intereses →',
+			step3Title: '¿Para qué estás aquí?',
+			step3Sub: 'Elige todo lo que aplica — la mayoría hace las tres cosas.',
+			tradeName: 'Intercambiar',
+			tradeSub: 'Intercambia habilidades con un vecino, sin dinero.',
+			rentName: 'Rentar',
+			rentSub: 'Toma prestado o publica equipo cercano.',
+			hireName: 'Contratar',
+			hireSub: 'Encuentra expertos locales para cualquier trabajo.',
+			dashboard: 'Ir a mi panel →',
+		},
+	} as const;
+
+	$: t = strings[selectedLang];
 </script>
 
 <svelte:head>
@@ -52,6 +113,12 @@
 </svelte:head>
 
 <div class="min-h-screen bg-bg-card flex flex-col items-center justify-center px-4 py-12">
+
+	<!-- Logo -->
+	<a href="/" class="flex flex-col items-center mb-6 hover:opacity-80 transition-opacity">
+		<span class="font-exile text-[28px] text-primary leading-none">Cruz Trade</span>
+		<span class="text-[11px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">Trade. Rent. Hire. Local.</span>
+	</a>
 
 	<!-- Card -->
 	<div class="w-full max-w-[480px] bg-bg border border-border rounded-2xl">
@@ -65,12 +132,12 @@
 		</div>
 
 		<div class="p-6 pt-5">
-			<p class="text-xs font-semibold text-primary uppercase tracking-widest mb-4">Step {step} of 3</p>
+			<p class="text-xs font-semibold text-primary uppercase tracking-widest mb-4">{t.stepOf(step)}</p>
 
 			<!-- ── Step 1: Profile ─────────────────────────────── -->
 			{#if step === 1}
-				<h1 class="text-xl font-bold text-text-primary mb-1">Tell us about yourself</h1>
-				<p class="text-sm text-text-muted mb-6">This helps neighbors find and trust you.</p>
+				<h1 class="text-xl font-bold text-text-primary mb-1">{t.step1Title}</h1>
+				<p class="text-sm text-text-muted mb-6">{t.step1Sub}</p>
 
 				{#if form?.error && form.step === 1}
 					<div class="bg-red-50 border border-red-200 text-error text-sm rounded-md px-3.5 py-2.5 mb-5">
@@ -101,59 +168,62 @@
 							{/if}
 						</div>
 						<label class="cursor-pointer border border-border text-text-primary text-sm font-medium px-4 py-2 rounded-md hover:bg-bg-secondary transition-colors">
-							Upload photo
+							{t.uploadPhoto}
 							<input type="file" name="avatar" accept="image/*" class="sr-only" on:change={handleAvatarChange} />
 						</label>
 					</div>
 
 					<!-- Full name -->
 					<div class="flex flex-col gap-1.5">
-						<label for="full_name" class="text-sm font-medium text-text-primary">Full name</label>
+						<label for="full_name" class="text-sm font-medium text-text-primary">{t.fullName}</label>
 						<input id="full_name" name="full_name" type="text" autocomplete="name" required
-							placeholder="Maria Gonzalez"
+							placeholder={t.fullNamePh}
 							class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors" />
 					</div>
 
 					<!-- Bio -->
 					<div class="flex flex-col gap-1.5">
 						<label for="bio" class="text-sm font-medium text-text-primary">
-							Short bio <span class="text-text-muted font-normal">(optional)</span>
+							{t.bio} <span class="text-text-muted font-normal">{t.optional}</span>
 						</label>
 						<textarea id="bio" name="bio" rows="3"
-							placeholder="I'm a carpenter and avid gardener in Westside SC…"
+							placeholder={t.bioPh}
 							class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors resize-none"></textarea>
 					</div>
 
-					<!-- Language toggle + Next button -->
-					<div class="flex items-center justify-between gap-4">
-						<div class="flex items-center gap-0.5 bg-bg-secondary rounded-full p-0.5">
-							{#each [{ val: 'en', label: 'EN' }, { val: 'es', label: 'ES' }] as opt}
-								<label class="cursor-pointer">
-									<input type="radio" name="language_preference" value={opt.val}
-										checked={selectedLang === opt.val}
-										on:change={() => selectedLang = opt.val}
-										class="sr-only" />
-									<span class="block px-4 py-1.5 rounded-full text-sm font-medium transition-colors
-										{selectedLang === opt.val
-											? 'bg-bg text-text-primary shadow-sm'
-											: 'text-text-muted hover:text-text-primary'}">
-										{opt.label}
-									</span>
-								</label>
-							{/each}
-						</div>
+					<!-- Language toggle -->
+					<div class="flex flex-col gap-2">
+						<span class="text-sm font-medium text-text-primary">{t.langLabel}</span>
+						<div class="flex items-center justify-between">
+							<div class="flex items-center gap-0.5 bg-bg-secondary rounded-full p-0.5">
+								{#each [{ val: 'en' as const, label: 'EN' }, { val: 'es' as const, label: 'ES' }] as opt}
+									<label class="cursor-pointer">
+										<input type="radio" name="language_preference" value={opt.val}
+											checked={selectedLang === opt.val}
+											on:change={() => selectedLang = opt.val}
+											class="sr-only" />
+										<span class="block px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+											{selectedLang === opt.val
+												? 'bg-bg text-text-primary shadow-sm'
+												: 'text-text-muted hover:text-text-primary'}">
+											{opt.label}
+										</span>
+									</label>
+								{/each}
+							</div>
 
-						<button type="submit" disabled={loading}
-							class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 whitespace-nowrap">
-							{loading ? '…' : 'Next: Your neighborhood →'}
-						</button>
+							<button type="submit" disabled={loading}
+								class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60 whitespace-nowrap">
+								{loading ? '…' : t.nextNeighborhood}
+							</button>
+						</div>
 					</div>
 				</form>
 
 			<!-- ── Step 2: Neighborhood ────────────────────────── -->
 			{:else if step === 2}
-				<h1 class="text-xl font-bold text-text-primary mb-1">Where are you in SC County?</h1>
-				<p class="text-sm text-text-muted mb-6">This helps us show you listings nearby.</p>
+				<h1 class="text-xl font-bold text-text-primary mb-1">{t.step2Title}</h1>
+				<p class="text-sm text-text-muted mb-6">{t.step2Sub}</p>
 
 				{#if form?.error && form.step === 2}
 					<div class="bg-red-50 border border-red-200 text-error text-sm rounded-md px-3.5 py-2.5 mb-5">
@@ -188,11 +258,11 @@
 
 					<!-- Custom text -->
 					<div class="flex flex-col gap-1.5">
-						<label for="custom_hood" class="text-sm font-medium text-text-primary">Or type your neighborhood</label>
+						<label for="custom_hood" class="text-sm font-medium text-text-primary">{t.orType}</label>
 						<input
 							id="custom_hood"
 							type="text"
-							placeholder="e.g. Seabright, Twin Lakes…"
+							placeholder={t.hoodPh}
 							bind:value={customHood}
 							on:input={() => { if (customHood) selectedHood = null; }}
 							class="bg-bg border border-border rounded-md px-3.5 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors"
@@ -203,19 +273,19 @@
 					<div class="flex items-center justify-between">
 						<button type="button" on:click={() => step = 1}
 							class="border border-border text-text-primary text-sm font-medium px-4 py-2.5 rounded-md hover:bg-bg-secondary transition-colors">
-							← Back
+							{t.back}
 						</button>
 						<button type="submit" disabled={loading || !neighborhoodValue}
 							class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60">
-							{loading ? '…' : 'Next: Your interests →'}
+							{loading ? '…' : t.nextInterests}
 						</button>
 					</div>
 				</form>
 
 			<!-- ── Step 3: Intent ──────────────────────────────── -->
 			{:else}
-				<h1 class="text-xl font-bold text-text-primary mb-1">What are you here for?</h1>
-				<p class="text-sm text-text-muted mb-6">Pick everything that applies — most neighbors do all three.</p>
+				<h1 class="text-xl font-bold text-text-primary mb-1">{t.step3Title}</h1>
+				<p class="text-sm text-text-muted mb-6">{t.step3Sub}</p>
 
 				<div class="flex flex-col gap-4">
 					<!-- Intent cards -->
@@ -227,8 +297,8 @@
 								{intentTrade ? 'border-primary bg-orange-50' : 'border-border hover:border-text-muted'}"
 						>
 							<span class="text-3xl">🤝</span>
-							<p class="text-sm font-bold text-text-primary leading-snug">Trade</p>
-							<p class="text-xs text-text-muted leading-relaxed">Swap skills with a neighbor, no money needed.</p>
+							<p class="text-sm font-bold text-text-primary leading-snug">{t.tradeName}</p>
+							<p class="text-xs text-text-muted leading-relaxed">{t.tradeSub}</p>
 						</button>
 
 						<button
@@ -238,8 +308,8 @@
 								{intentRent ? 'border-primary bg-orange-50' : 'border-border hover:border-text-muted'}"
 						>
 							<span class="text-3xl">🏄</span>
-							<p class="text-sm font-bold text-text-primary leading-snug">Rent</p>
-							<p class="text-xs text-text-muted leading-relaxed">Borrow or list tools and gear nearby.</p>
+							<p class="text-sm font-bold text-text-primary leading-snug">{t.rentName}</p>
+							<p class="text-xs text-text-muted leading-relaxed">{t.rentSub}</p>
 						</button>
 
 						<button
@@ -249,8 +319,8 @@
 								{intentHire ? 'border-primary bg-orange-50' : 'border-border hover:border-text-muted'}"
 						>
 							<span class="text-3xl">🛠️</span>
-							<p class="text-sm font-bold text-text-primary leading-snug">Hire</p>
-							<p class="text-xs text-text-muted leading-relaxed">Find skilled locals for jobs big and small.</p>
+							<p class="text-sm font-bold text-text-primary leading-snug">{t.hireName}</p>
+							<p class="text-xs text-text-muted leading-relaxed">{t.hireSub}</p>
 						</button>
 					</div>
 
@@ -258,11 +328,11 @@
 					<div class="flex items-center justify-between mt-2">
 						<button type="button" on:click={() => step = 2}
 							class="border border-border text-text-primary text-sm font-medium px-4 py-2.5 rounded-md hover:bg-bg-secondary transition-colors">
-							← Back
+							{t.back}
 						</button>
 						<a href="/dashboard"
 							class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors">
-							Go to my dashboard →
+							{t.dashboard}
 						</a>
 					</div>
 				</div>

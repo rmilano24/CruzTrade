@@ -84,11 +84,13 @@
 
 <ParaglideJS {i18n}>
 	<div class="flex flex-col min-h-screen">
-		<Nav />
+		{#if !$page.url.pathname.startsWith('/auth/onboarding')}
+			<Nav />
+		{/if}
 		<main class="bg-bg pb-16 md:pb-0">
 			<slot />
 		</main>
-		{#if !$page.url.pathname.startsWith('/messages')}
+		{#if !$page.url.pathname.startsWith('/messages') && !$page.url.pathname.startsWith('/auth/onboarding')}
 			<Footer />
 		{/if}
 		<!-- Logged-out mobile users: slim utility link strip (avatar dropdown not available) -->

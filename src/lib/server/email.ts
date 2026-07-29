@@ -1,4 +1,4 @@
-const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://cruz-trade.vercel.app';
+const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://www.cruztrade.com';
 
 function buildHtml(subject: string, body: string): string {
 	// Convert plain text body to HTML paragraphs, turning bare URLs into buttons
@@ -70,6 +70,19 @@ function buildHtml(subject: string, body: string): string {
 	</table>
 </body>
 </html>`;
+}
+
+/** Look up a user's language preference for bilingual email sends. */
+export async function getUserLang(
+	supabase: { from: (table: string) => any },
+	userId: string
+): Promise<'en' | 'es'> {
+	const { data } = await supabase
+		.from('profiles')
+		.select('language_preference')
+		.eq('id', userId)
+		.single();
+	return data?.language_preference === 'es' ? 'es' : 'en';
 }
 
 export async function sendEmail(to: string, subject: string, body: string): Promise<void> {

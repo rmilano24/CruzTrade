@@ -82,20 +82,40 @@ export const actions: Actions = {
 		const { error } = await locals.supabase.from('profiles').update({ neighborhood }).eq('id', user.id);
 		if (error) return fail(500, { step: 2, error: error.message });
 
-		// Send welcome email
+		// Send welcome email in user's chosen language
 		const { data: profile } = await locals.supabase
 			.from('profiles')
-			.select('full_name')
+			.select('full_name, language_preference')
 			.eq('id', user.id)
 			.single();
 
 		const firstName = profile?.full_name?.split(' ')[0] ?? 'neighbor';
+		const lang = profile?.language_preference === 'es' ? 'es' : 'en';
 
 		if (user.email) {
-			sendEmail(
-				user.email,
-				'Welcome to Cruz Trade 🤝',
-				`Hey ${firstName}!
+			const subject = lang === 'es'
+				? 'Bienvenido a Cruz Trade 🤝'
+				: 'Welcome to Cruz Trade 🤝';
+
+			const body = lang === 'es'
+				? `¡Hola ${firstName}!
+
+Bienvenido a Cruz Trade — el mercado local de Santa Cruz County. Ahora eres parte de una comunidad donde los vecinos se contratan, intercambian habilidades y comparten herramientas.
+
+Esto es lo que puedes hacer ahora mismo:
+
+Explora lo que tus vecinos ofrecen — desde electricistas y tutores hasta kayaks y lavadoras de presión:
+
+${SITE_URL}/browse
+
+¿Listo para ofrecer algo tú mismo? Publica tu primer anuncio gratis:
+
+${SITE_URL}/post
+
+Gracias por unirte. Construyamos algo bueno juntos.
+
+— El equipo de Cruz Trade`
+				: `Hey ${firstName}!
 
 Welcome to Cruz Trade — the hyperlocal marketplace for Santa Cruz County. You're now part of a community where neighbors hire each other, trade skills, and share tools.
 
@@ -111,9 +131,9 @@ ${SITE_URL}/post
 
 Thanks for joining. Let's build something good together.
 
-— The Cruz Trade team`
-			).catch(() => {}); // Non-fatal
+— The Cruz Trade team`;
 
+			sendEmail(user.email, subject, body).catch(() => {}); // Non-fatal
 		}
 
 		return { step: 2, success: true };
