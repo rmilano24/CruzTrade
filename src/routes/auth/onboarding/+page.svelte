@@ -16,8 +16,9 @@
 	$: neighborhoodValue = selectedHood ?? customHood.trim();
 
 	// Step 3
-	let intentOffer = false;
-	let intentNeed = false;
+	let intentTrade = false;
+	let intentRent = false;
+	let intentHire = false;
 
 	$: if (form?.success && form.step === 1) step = 2;
 	$: if (form?.success && form.step === 2) step = 3;
@@ -51,11 +52,6 @@
 </svelte:head>
 
 <div class="min-h-screen bg-bg-card flex flex-col items-center justify-center px-4 py-12">
-
-	<!-- Logo -->
-	<a href="/" class="font-exile text-[28px] text-primary mb-8 leading-none hover:opacity-80 transition-opacity">
-		Cruz Trade
-	</a>
 
 	<!-- Card -->
 	<div class="w-full max-w-[480px] bg-bg border border-border rounded-2xl">
@@ -211,76 +207,55 @@
 						</button>
 						<button type="submit" disabled={loading || !neighborhoodValue}
 							class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors disabled:opacity-60">
-							{loading ? '…' : 'Next: What do you offer? →'}
+							{loading ? '…' : 'Next: Your interests →'}
 						</button>
 					</div>
 				</form>
 
 			<!-- ── Step 3: Intent ──────────────────────────────── -->
 			{:else}
-				<h1 class="text-xl font-bold text-text-primary mb-1">What brings you to Cruz Trade?</h1>
-				<p class="text-sm text-text-muted mb-6">Pick everything that applies — you can do both.</p>
+				<h1 class="text-xl font-bold text-text-primary mb-1">What are you here for?</h1>
+				<p class="text-sm text-text-muted mb-6">Pick everything that applies — most neighbors do all three.</p>
 
 				<div class="flex flex-col gap-4">
 					<!-- Intent cards -->
-					<div class="grid grid-cols-2 gap-3">
+					<div class="grid grid-cols-3 gap-3">
 						<button
 							type="button"
-							on:click={() => intentOffer = !intentOffer}
-							class="flex flex-col gap-2 p-4 rounded-xl border-2 text-left transition-all
-								{intentOffer ? 'border-primary bg-orange-50' : 'border-border hover:border-text-muted'}"
+							on:click={() => intentTrade = !intentTrade}
+							class="flex flex-col items-center gap-2 p-4 rounded-xl border-2 text-center transition-all
+								{intentTrade ? 'border-primary bg-orange-50' : 'border-border hover:border-text-muted'}"
 						>
-							<span class="text-2xl">🔧</span>
-							<p class="text-sm font-bold text-text-primary leading-snug">I have skills or tools to offer</p>
-							<p class="text-xs text-text-muted leading-relaxed">I want to earn money, trade skills, or rent out my equipment to neighbors.</p>
-							<div class="flex items-center gap-1.5 mt-1">
-								<div class="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors
-									{intentOffer ? 'bg-primary border-primary' : 'border-border'}">
-									{#if intentOffer}
-										<svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-										</svg>
-									{/if}
-								</div>
-								<span class="text-xs font-medium {intentOffer ? 'text-primary' : 'text-text-muted'}">
-									{intentOffer ? 'Selected' : 'Tap to select'}
-								</span>
-							</div>
+							<span class="text-3xl">🤝</span>
+							<p class="text-sm font-bold text-text-primary leading-snug">Trade</p>
+							<p class="text-xs text-text-muted leading-relaxed">Swap skills with a neighbor, no money needed.</p>
 						</button>
 
 						<button
 							type="button"
-							on:click={() => intentNeed = !intentNeed}
-							class="flex flex-col gap-2 p-4 rounded-xl border-2 text-left transition-all
-								{intentNeed ? 'border-primary bg-orange-50' : 'border-border hover:border-text-muted'}"
+							on:click={() => intentRent = !intentRent}
+							class="flex flex-col items-center gap-2 p-4 rounded-xl border-2 text-center transition-all
+								{intentRent ? 'border-primary bg-orange-50' : 'border-border hover:border-text-muted'}"
 						>
-							<span class="text-2xl">🔍</span>
-							<p class="text-sm font-bold text-text-primary leading-snug">I need help or want to rent tools</p>
-							<p class="text-xs text-text-muted leading-relaxed">I want to find skilled neighbors, hire for jobs, or borrow equipment nearby.</p>
-							<div class="flex items-center gap-1.5 mt-1">
-								<div class="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors
-									{intentNeed ? 'bg-primary border-primary' : 'border-border'}">
-									{#if intentNeed}
-										<svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-										</svg>
-									{/if}
-								</div>
-								<span class="text-xs font-medium {intentNeed ? 'text-primary' : 'text-text-muted'}">
-									{intentNeed ? 'Selected' : 'Tap to select'}
-								</span>
-							</div>
+							<span class="text-3xl">🏄</span>
+							<p class="text-sm font-bold text-text-primary leading-snug">Rent</p>
+							<p class="text-xs text-text-muted leading-relaxed">Borrow or list tools and gear nearby.</p>
 						</button>
-					</div>
 
-					<!-- Hint -->
-					<div class="flex items-start gap-2 bg-bg-secondary rounded-xl px-4 py-3">
-						<span class="text-text-muted text-sm shrink-0">›</span>
-						<p class="text-xs text-text-muted leading-relaxed">Most Cruz Trade neighbors do both. Post a skill, find a trade. Your profile works for everything.</p>
+						<button
+							type="button"
+							on:click={() => intentHire = !intentHire}
+							class="flex flex-col items-center gap-2 p-4 rounded-xl border-2 text-center transition-all
+								{intentHire ? 'border-primary bg-orange-50' : 'border-border hover:border-text-muted'}"
+						>
+							<span class="text-3xl">🛠️</span>
+							<p class="text-sm font-bold text-text-primary leading-snug">Hire</p>
+							<p class="text-xs text-text-muted leading-relaxed">Find skilled locals for jobs big and small.</p>
+						</button>
 					</div>
 
 					<!-- Nav -->
-					<div class="flex items-center justify-between">
+					<div class="flex items-center justify-between mt-2">
 						<button type="button" on:click={() => step = 2}
 							class="border border-border text-text-primary text-sm font-medium px-4 py-2.5 rounded-md hover:bg-bg-secondary transition-colors">
 							← Back
