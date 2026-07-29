@@ -8,7 +8,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	const [{ data: profile }, { data: unreadMsgs }] = await Promise.all([
 		locals.supabase
 			.from('profiles')
-			.select('username, full_name, avatar_url')
+			.select('username, full_name, avatar_url, language_preference')
 			.eq('id', user.id)
 			.single(),
 		locals.supabase

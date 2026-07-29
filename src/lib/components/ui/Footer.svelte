@@ -5,6 +5,9 @@
 	import { page } from '$app/stores';
 
 	$: user = $page.data.user;
+	$: profile = $page.data.profile;
+	$: isEs = profile?.language_preference === 'es';
+	$: tagline = isEs ? 'Intercambia. Renta. Contrata. Local.' : 'Trade. Rent. Hire. Local.';
 
 	type IdeaType = 'trade' | 'hire' | 'rent';
 	type Tab = 'all' | IdeaType;
@@ -178,7 +181,7 @@
 			<div class="flex flex-col gap-3">
 				<a href="/" class="flex flex-col items-center w-fit hover:opacity-80 transition-opacity">
 					<span class="font-exile text-[24px] text-primary leading-none">Cruz Trade</span>
-					<span class="text-[10px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">Trade. Rent. Hire. Local.</span>
+					<span class="text-[10px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">{tagline}</span>
 				</a>
 				<p class="text-sm text-text-muted leading-relaxed">{m.footer_tagline()}</p>
 			</div>

@@ -98,6 +98,9 @@
 		return '/browse';
 	})();
 
+	$: isEs = profile?.language_preference === 'es';
+	$: tagline = isEs ? 'Intercambia. Renta. Contrata. Local.' : 'Trade. Rent. Hire. Local.';
+
 	$: navItems = [
 		{ label: m.nav_tab_trade(), icon: '🤝', href: '/trade', active: canonicalPath === '/trade' || canonicalPath.startsWith('/trade/') },
 		{ label: m.nav_tab_rent(),  icon: '🏄', href: '/rent',  active: canonicalPath === '/rent'  || canonicalPath.startsWith('/rent/') },
@@ -117,7 +120,7 @@
 		<!-- Logo -->
 		<a href="/" class="flex flex-col items-center hover:opacity-80 transition-opacity">
 			<span class="font-exile text-[24px] text-primary leading-none">Cruz Trade</span>
-			<span class="text-[10px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">Trade. Rent. Hire. Local.</span>
+			<span class="text-[10px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">{tagline}</span>
 		</a>
 
 		<!-- Category nav (hidden on auth pages) -->
