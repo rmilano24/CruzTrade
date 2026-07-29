@@ -83,7 +83,7 @@
 
 <!-- Hero (hidden during search) -->
 {#if !data.filters.q}
-<section class="bg-bg-card py-5 px-6">
+<section class="bg-bg py-5 px-6">
 	<div class="max-w-content mx-auto flex items-center gap-3">
 		<div class="inline-flex items-center gap-2 border border-orange-200 bg-orange-50 text-orange-700 text-sm font-medium px-3 py-1 rounded-full shrink-0">
 			<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
@@ -116,21 +116,21 @@
 		/>
 
 		<CarouselSection
-			slug="hire"
-			title={m.home_section_hire()}
-			icon="🛠️"
-			listings={hireListings}
-			href="/hire"
-			categories={serviceCategories}
-		/>
-
-		<CarouselSection
 			slug="rent"
 			title={m.home_section_rent()}
 			icon="🏄"
 			listings={rentListings}
 			href="/rent"
 			categories={rentalCategories}
+		/>
+
+		<CarouselSection
+			slug="hire"
+			title={m.home_section_hire()}
+			icon="🛠️"
+			listings={hireListings}
+			href="/hire"
+			categories={serviceCategories}
 		/>
 
 	</div>

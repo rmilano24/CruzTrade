@@ -100,8 +100,8 @@
 
 	$: navItems = [
 		{ label: m.nav_tab_trade(), icon: '🤝', href: '/trade', active: canonicalPath === '/trade' || canonicalPath.startsWith('/trade/') },
-		{ label: m.nav_tab_hire(),  icon: '🛠️', href: '/hire',  active: canonicalPath === '/hire'  || canonicalPath.startsWith('/hire/') },
 		{ label: m.nav_tab_rent(),  icon: '🏄', href: '/rent',  active: canonicalPath === '/rent'  || canonicalPath.startsWith('/rent/') },
+		{ label: m.nav_tab_hire(),  icon: '🛠️', href: '/hire',  active: canonicalPath === '/hire'  || canonicalPath.startsWith('/hire/') },
 	];
 </script>
 
@@ -109,13 +109,15 @@
 
 <header class="bg-bg border-b border-border sticky top-0 z-30 transition-shadow duration-200"
 	class:shadow-modal={scrolled}
-	class:pb-3={canonicalPath === '/' || canonicalPath.startsWith('/browse') || canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent'}>
-	<div class="h-16 flex items-center px-6">
+	class:bg-bg-card-alt={canonicalPath === '/' || canonicalPath.startsWith('/browse') || canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent'}
+	class:pb-6={canonicalPath === '/' || canonicalPath.startsWith('/browse') || canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent'}>
+	<div class="h-20 flex items-center px-6">
 	<div class="max-w-content mx-auto w-full flex items-center justify-between">
 
 		<!-- Logo -->
-		<a href="/" class="font-exile text-[24px] text-primary hover:opacity-80 transition-opacity leading-none">
-			Cruz Trade
+		<a href="/" class="flex flex-col items-center hover:opacity-80 transition-opacity">
+			<span class="font-exile text-[24px] text-primary leading-none">Cruz Trade</span>
+			<span class="text-[10px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">Trade. Rent. Hire. Local.</span>
 		</a>
 
 		<!-- Category nav (hidden on auth pages) -->
@@ -124,9 +126,9 @@
 			class:pointer-events-none={canonicalPath.startsWith('/auth')}>
 			{#each navItems as cat}
 				<a href={cat.href}
-					class="relative flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors
+					class="relative flex items-center gap-2 px-5 py-2 text-sm font-semibold rounded-md transition-colors
 						{cat.active ? 'text-primary' : 'text-text-muted hover:text-text-primary hover:bg-bg-secondary'}">
-					<span class="text-lg leading-none">{cat.icon}</span>
+					<span class="text-2xl leading-none">{cat.icon}</span>
 					<span>{cat.label}</span>
 					{#if cat.active}
 						<span class="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full"></span>
@@ -325,9 +327,9 @@
 
 	<!-- Search bar — homepage + browse + dedicated tab pages -->
 	{#if canonicalPath === '/' || canonicalPath.startsWith('/browse') || canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent'}
-		<div class="px-6">
+		<div class="px-6 pt-2">
 			<div class="max-w-[640px] mx-auto">
-				<form action={searchAction} method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden focus-within:border-primary transition-colors">
+				<form action={searchAction} method="GET" class="flex items-center bg-bg border border-border rounded-full overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
 					{#if $page.url.searchParams.get('type')}
 						<input type="hidden" name="type" value={$page.url.searchParams.get('type')} />
 					{/if}
@@ -340,19 +342,18 @@
 					{#if $page.url.searchParams.get('neighborhood')}
 						<input type="hidden" name="neighborhood" value={$page.url.searchParams.get('neighborhood')} />
 					{/if}
-					<svg class="w-4 h-4 text-text-muted shrink-0 ml-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-					</svg>
 					<input
 						type="text"
 						name="q"
 						value={$page.url.searchParams.get('q') ?? ''}
 						placeholder={placeholder}
-						class="flex-1 px-4 py-2.5 text-sm bg-transparent text-text-primary placeholder:text-text-muted placeholder:transition-opacity focus:outline-none"
+						class="flex-1 px-5 py-3.5 text-sm bg-transparent text-text-primary placeholder:text-text-muted placeholder:transition-opacity focus:outline-none"
 					/>
 					<button type="submit"
-						class="bg-primary text-white font-semibold text-sm px-5 py-2 rounded-full m-1 hover:bg-primary-hover transition-colors shrink-0">
-						{m.nav_search()}
+						class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center m-1.5 hover:bg-primary-hover transition-colors shrink-0">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+						</svg>
 					</button>
 				</form>
 			</div>

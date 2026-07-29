@@ -97,8 +97,8 @@
 	$: tabs = [
 		{ value: 'all',   label: m.browse_filter_all_types() },
 		{ value: 'trade', label: m.footer_type_trade() },
-		{ value: 'hire',  label: m.footer_type_hire() },
 		{ value: 'rent',  label: m.footer_type_rent() },
+		{ value: 'hire',  label: m.footer_type_hire() },
 	] as { value: Tab; label: string }[];
 
 	$: activeHref = activeTab === 'all' ? '/browse' : typeHref[activeTab];
@@ -106,10 +106,10 @@
 	$: activeIdeas = activeTab === 'all' ? [] : (showAll ? ideas[activeTab] : ideas[activeTab].slice(0, 6));
 </script>
 
-<footer class="hidden md:block bg-bg-card border-t border-border">
+<footer class="hidden md:block bg-bg-card-alt border-t border-border">
 
 	<!-- Inspiration section -->
-	<div class="border-b border-border bg-bg-card">
+	<div class="border-b border-border bg-bg-card-alt">
 		<div class="max-w-content mx-auto px-6 py-12">
 
 			<h2 class="font-exile text-3xl text-text-primary mb-6">{m.footer_inspiration_title()}</h2>
@@ -176,8 +176,9 @@
 
 			<!-- Brand -->
 			<div class="flex flex-col gap-3">
-				<a href="/" class="font-exile text-[24px] text-primary hover:opacity-80 transition-opacity leading-none">
-					Cruz Trade
+				<a href="/" class="flex flex-col items-center w-fit hover:opacity-80 transition-opacity">
+					<span class="font-exile text-[24px] text-primary leading-none">Cruz Trade</span>
+					<span class="text-[10px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">Trade. Rent. Hire. Local.</span>
 				</a>
 				<p class="text-sm text-text-muted leading-relaxed">{m.footer_tagline()}</p>
 			</div>

@@ -45,7 +45,7 @@
 	}
 </script>
 
-<section id={slug} class="py-8 first:pt-6 scroll-mt-6">
+<section id={slug} class="py-8 first:pt-12 scroll-mt-6">
 	<!-- Header -->
 	<div class="flex items-center justify-between mb-4">
 		<a {href} class="flex items-center gap-2.5 group">

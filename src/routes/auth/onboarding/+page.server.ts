@@ -1,5 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { sendEmail } from '$lib/server/email';
+
+const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://www.cruztrade.com';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user } = await locals.safeGetSession();
@@ -78,6 +81,40 @@ export const actions: Actions = {
 
 		const { error } = await locals.supabase.from('profiles').update({ neighborhood }).eq('id', user.id);
 		if (error) return fail(500, { step: 2, error: error.message });
+
+		// Send welcome email
+		const { data: profile } = await locals.supabase
+			.from('profiles')
+			.select('full_name')
+			.eq('id', user.id)
+			.single();
+
+		const firstName = profile?.full_name?.split(' ')[0] ?? 'neighbor';
+
+		if (user.email) {
+			sendEmail(
+				user.email,
+				'Welcome to Cruz Trade 🤝',
+				`Hey ${firstName}!
+
+Welcome to Cruz Trade — the hyperlocal marketplace for Santa Cruz County. You're now part of a community where neighbors hire each other, trade skills, and share tools.
+
+Here's what you can do right now:
+
+Browse what your neighbors are offering — from handymen and tutors to kayaks and pressure washers:
+
+${SITE_URL}/browse
+
+Ready to offer something yourself? Post your first listing free:
+
+${SITE_URL}/post
+
+Thanks for joining. Let's build something good together.
+
+— The Cruz Trade team`
+			).catch(() => {}); // Non-fatal
+
+		}
 
 		return { step: 2, success: true };
 	},

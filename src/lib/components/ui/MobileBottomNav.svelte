@@ -26,15 +26,15 @@
 			<span class="text-[10px] font-medium">{m.nav_tab_trade()}</span>
 		</a>
 
-		<!-- Hire -->
-		<a href="/hire"
+		<!-- Rent -->
+		<a href="/rent"
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
-				{activeHire ? 'text-primary' : 'text-text-muted'}">
-			{#if activeHire}
+				{activeRent ? 'text-primary' : 'text-text-muted'}">
+			{#if activeRent}
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
-			<span class="text-xl leading-none">🛠️</span>
-			<span class="text-[10px] font-medium">{m.nav_tab_hire()}</span>
+			<span class="text-xl leading-none">🏄</span>
+			<span class="text-[10px] font-medium">{m.nav_tab_rent()}</span>
 		</a>
 
 		<!-- Post — circle floats above the nav bar -->
@@ -49,15 +49,15 @@
 			<span class="text-[10px] font-medium text-text-muted">{m.nav_post()}</span>
 		</div>
 
-		<!-- Rent -->
-		<a href="/rent"
+		<!-- Hire -->
+		<a href="/hire"
 			class="relative flex-1 flex flex-col items-center justify-center gap-0.5 h-full
-				{activeRent ? 'text-primary' : 'text-text-muted'}">
-			{#if activeRent}
+				{activeHire ? 'text-primary' : 'text-text-muted'}">
+			{#if activeHire}
 				<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"></span>
 			{/if}
-			<span class="text-xl leading-none">🏄</span>
-			<span class="text-[10px] font-medium">{m.nav_tab_rent()}</span>
+			<span class="text-xl leading-none">🛠️</span>
+			<span class="text-[10px] font-medium">{m.nav_tab_hire()}</span>
 		</a>
 
 		<!-- Browse -->
