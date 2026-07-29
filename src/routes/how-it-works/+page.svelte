@@ -3,12 +3,12 @@
 	$: user = $page.data.user;
 
 	type TabId = 'hiring' | 'offering' | 'renting';
-	let activeTab: TabId = 'hiring';
+	let activeTab: TabId = 'offering';
 
 	const tabs: { id: TabId; label: string }[] = [
-		{ id: 'hiring', label: 'Hiring a neighbor' },
-		{ id: 'offering', label: 'Offering a service' },
+		{ id: 'offering', label: 'Trading a service' },
 		{ id: 'renting', label: 'Renting out a tool' },
+		{ id: 'hiring', label: 'Hiring a neighbor' },
 	];
 
 	type Step = { icon: string; title: string; body: string };
