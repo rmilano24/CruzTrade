@@ -115,7 +115,7 @@
 	class:bg-bg-card-alt={canonicalPath === '/' || canonicalPath.startsWith('/browse') || canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent'}
 	class:pb-6={canonicalPath === '/' || canonicalPath.startsWith('/browse') || canonicalPath === '/trade' || canonicalPath === '/hire' || canonicalPath === '/rent'}>
 	<div class="h-20 flex items-center px-6">
-	<div class="max-w-content mx-auto w-full flex items-center justify-between">
+	<div class="max-w-nav mx-auto w-full flex items-center justify-between">
 
 		<!-- Logo -->
 		<a href="/" class="flex flex-col items-center hover:opacity-80 transition-opacity">

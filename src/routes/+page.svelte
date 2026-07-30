@@ -87,7 +87,7 @@
 	<div class="max-w-content mx-auto flex items-center gap-3">
 		<div class="inline-flex items-center gap-2 border border-orange-200 bg-orange-50 text-orange-700 text-sm font-medium px-3 py-1 rounded-full shrink-0">
 			<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-			Now live in Santa Cruz County
+			Currently in Beta
 		</div>
 		<p class="text-sm text-text-muted hidden sm:block">{m.home_hero_subheadline()}</p>
 	</div>

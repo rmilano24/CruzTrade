@@ -128,8 +128,8 @@
 <footer class="hidden md:block bg-bg-card-alt border-t border-border">
 
 	<!-- Inspiration section -->
-	<div class="border-b border-border bg-bg-card-alt">
-		<div class="max-w-content mx-auto px-6 py-12">
+	<div class="border-b border-border bg-bg-card-alt px-6">
+		<div class="max-w-nav mx-auto py-12">
 
 			<h2 class="font-exile text-3xl text-text-primary mb-6">{m.footer_inspiration_title()}</h2>
 
@@ -190,7 +190,8 @@
 	</div>
 
 	<!-- Footer grid -->
-	<div class="max-w-content mx-auto px-6 py-12">
+	<div class="px-6">
+	<div class="max-w-nav mx-auto py-12">
 		<div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
 			<!-- Brand -->
@@ -265,5 +266,6 @@
 				{/each}
 			</div>
 		</div>
+	</div>
 	</div>
 </footer>
