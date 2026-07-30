@@ -52,6 +52,7 @@
 
 	const strings = {
 		en: {
+			tagline: 'Trade. Rent. Hire. Local.',
 			stepOf: (s: number) => `Step ${s} of 3`,
 			step1Title: 'Tell us about yourself',
 			step1Sub: 'This helps neighbors find and trust you.',
@@ -80,6 +81,7 @@
 			dashboard: 'Go to my dashboard →',
 		},
 		es: {
+			tagline: 'Intercambia. Renta. Contrata. Local.',
 			stepOf: (s: number) => `Paso ${s} de 3`,
 			step1Title: 'Cuéntanos sobre ti',
 			step1Sub: 'Esto ayuda a los vecinos a encontrarte y confiar en ti.',
@@ -121,7 +123,7 @@
 	<!-- Logo -->
 	<a href="/" class="flex flex-col items-center mb-6 hover:opacity-80 transition-opacity">
 		<span class="font-exile text-[28px] text-primary leading-none">Cruz Trade</span>
-		<span class="text-[11px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">Trade. Rent. Hire. Local.</span>
+		<span class="text-[11px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">{t.tagline}</span>
 	</a>
 
 	<!-- Card -->

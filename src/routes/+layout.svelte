@@ -11,12 +11,20 @@
 	import PostListingModal from '$lib/components/listings/PostListingModal.svelte';
 	import { notifications } from '$lib/stores/notifications';
 	import { showPostModal } from '$lib/stores/postModal';
+	import { langPref } from '$lib/stores/language';
+	import { setLanguageTag } from '$lib/paraglide/runtime';
+	import { browser } from '$app/environment';
 	import '../app.css';
 
 	export let data: { session: any; user: any; unreadCount: number; notifications: any[] };
 
 	// Sync from server on every navigation
 	$: notifications.set(data.notifications ?? []);
+	$: {
+		const lp = (data as any).profile?.language_preference;
+		if (lp === 'en' || lp === 'es') langPref.set(lp);
+	}
+	$: if (browser) setLanguageTag($langPref);
 
 	// Only remove the notification for the thread the user actually opened
 	$: {
@@ -83,6 +91,7 @@
 </svelte:head>
 
 <ParaglideJS {i18n}>
+	{#key $langPref}
 	<div class="flex flex-col min-h-screen">
 		{#if !$page.url.pathname.startsWith('/auth/onboarding')}
 			<Nav />
@@ -97,11 +106,11 @@
 		{#if !data.user && !$page.url.pathname.startsWith('/auth')}
 			<div class="md:hidden bg-bg border-t border-border px-6 py-4 pb-20">
 				<nav class="flex flex-wrap gap-x-5 gap-y-2">
-					<a href="/how-it-works" class="text-sm text-text-muted hover:text-text-primary transition-colors">How it works</a>
-					<a href="/about"        class="text-sm text-text-muted hover:text-text-primary transition-colors">About</a>
-					<a href="/contact"      class="text-sm text-text-muted hover:text-text-primary transition-colors">Contact</a>
-					<a href="/terms"        class="text-sm text-text-muted hover:text-text-primary transition-colors">Terms</a>
-					<a href="/privacy"      class="text-sm text-text-muted hover:text-text-primary transition-colors">Privacy</a>
+					<a href="/how-it-works" class="text-sm text-text-muted hover:text-text-primary transition-colors">{$langPref === 'es' ? 'Cómo funciona' : 'How it works'}</a>
+					<a href="/about"        class="text-sm text-text-muted hover:text-text-primary transition-colors">{$langPref === 'es' ? 'Acerca de' : 'About'}</a>
+					<a href="/contact"      class="text-sm text-text-muted hover:text-text-primary transition-colors">{$langPref === 'es' ? 'Contacto' : 'Contact'}</a>
+					<a href="/terms"        class="text-sm text-text-muted hover:text-text-primary transition-colors">{$langPref === 'es' ? 'Términos' : 'Terms'}</a>
+					<a href="/privacy"      class="text-sm text-text-muted hover:text-text-primary transition-colors">{$langPref === 'es' ? 'Privacidad' : 'Privacy'}</a>
 				</nav>
 			</div>
 		{/if}
@@ -109,5 +118,6 @@
 	{#if !$page.url.pathname.startsWith('/auth')}
 		<MobileBottomNav />
 	{/if}
+	{/key}
 	<PostListingModal bind:open={$showPostModal} />
 </ParaglideJS>

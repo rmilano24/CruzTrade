@@ -1,18 +1,34 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages';
-	import { availableLanguageTags, languageTag } from '$lib/paraglide/runtime';
+	import { availableLanguageTags, languageTag, setLanguageTag } from '$lib/paraglide/runtime';
 	import { i18n } from '$lib/i18n';
 	import { page } from '$app/stores';
+	import { langPref } from '$lib/stores/language';
 
 	$: user = $page.data.user;
-	$: profile = $page.data.profile;
-	$: isEs = profile?.language_preference === 'es';
-	$: tagline = isEs ? 'Intercambia. Renta. Contrata. Local.' : 'Trade. Rent. Hire. Local.';
+	$: tagline = $langPref === 'es' ? 'Intercambia. Renta. Contrata. Local.' : 'Trade. Rent. Hire. Local.';
+
+	const langOptions: { val: 'en' | 'es'; label: string }[] = [
+		{ val: 'en', label: 'English' },
+		{ val: 'es', label: 'Español' },
+	];
+
+	async function setLang(lang: 'en' | 'es') {
+		langPref.set(lang);
+		setLanguageTag(lang);
+		if (user) {
+			fetch('/api/user/language', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ lang })
+			}).catch(() => {});
+		}
+	}
 
 	type IdeaType = 'trade' | 'hire' | 'rent';
 	type Tab = 'all' | IdeaType;
 
-	$: lang = languageTag() as 'en' | 'es';
+	$: lang = $langPref;
 
 	const ideas: Record<IdeaType, { label: string; label_es: string; neighborhood: string }[]> = {
 		trade: [
@@ -234,18 +250,18 @@
 		<div class="border-t border-border mt-10 pt-6 flex items-center justify-between gap-4 flex-wrap">
 			<p class="text-xs text-text-muted">{m.footer_copyright({ year: new Date().getFullYear().toString() })}</p>
 			<!-- Language toggle -->
-			<div class="flex items-center gap-2">
-				{#each availableLanguageTags as lang}
-					<a
-						href={i18n.route($page.url.pathname)}
-						hreflang={lang}
-						class="text-xs px-2.5 py-1 rounded-full border transition-colors
-							{lang === languageTag()
-								? 'border-border text-text-primary font-semibold bg-bg-secondary'
-								: 'border-transparent text-text-muted hover:text-text-primary'}"
+			<div class="flex items-center gap-0.5 bg-bg-secondary rounded-full p-0.5">
+				{#each langOptions as opt}
+					<button
+						type="button"
+						on:click={() => setLang(opt.val)}
+						class="text-xs px-3 py-1.5 rounded-full transition-colors
+							{$langPref === opt.val
+								? 'bg-bg text-text-primary font-semibold shadow-sm'
+								: 'text-text-muted hover:text-text-primary'}"
 					>
-						{lang === 'en' ? 'English' : 'Español'}
-					</a>
+						{opt.label}
+					</button>
 				{/each}
 			</div>
 		</div>

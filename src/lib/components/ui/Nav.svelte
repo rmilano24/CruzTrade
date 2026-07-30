@@ -6,6 +6,7 @@
 	import { languageTag } from '$lib/paraglide/runtime';
 	import { notifications } from '$lib/stores/notifications';
 	import { showPostModal } from '$lib/stores/postModal';
+	import { langPref } from '$lib/stores/language';
 	import { i18n } from '$lib/i18n';
 
 	$: canonicalPath = i18n.route($page.url.pathname);
@@ -98,8 +99,7 @@
 		return '/browse';
 	})();
 
-	$: isEs = profile?.language_preference === 'es';
-	$: tagline = isEs ? 'Intercambia. Renta. Contrata. Local.' : 'Trade. Rent. Hire. Local.';
+	$: tagline = $langPref === 'es' ? 'Intercambia. Renta. Contrata. Local.' : 'Trade. Rent. Hire. Local.';
 
 	$: navItems = [
 		{ label: m.nav_tab_trade(), icon: '🤝', href: '/trade', active: canonicalPath === '/trade' || canonicalPath.startsWith('/trade/') },
