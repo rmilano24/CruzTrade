@@ -118,9 +118,9 @@
 	<div class="max-w-nav mx-auto w-full flex items-center justify-between">
 
 		<!-- Logo -->
-		<a href="/" class="flex flex-col items-center hover:opacity-80 transition-opacity">
+		<a href="/" class="flex flex-col items-start hover:opacity-80 transition-opacity">
 			<span class="font-exile text-[24px] text-primary leading-none">Cruz Trade</span>
-			<span class="text-[10px] text-text-muted font-medium tracking-wide leading-tight mt-0.5 text-center">{tagline}</span>
+			<span class="text-[10px] text-text-muted font-medium tracking-wide leading-tight mt-0.5">{tagline}</span>
 		</a>
 
 		<!-- Category nav (hidden on auth pages) -->
