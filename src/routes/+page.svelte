@@ -115,6 +115,8 @@
 			listings={tradeListings}
 			href="/trade"
 			categories={serviceCategories}
+			listingType="service"
+			acceptsTrade={true}
 		/>
 
 		<CarouselSection
@@ -124,6 +126,7 @@
 			listings={rentListings}
 			href="/rent"
 			categories={rentalCategories}
+			listingType="tool_rental"
 		/>
 
 		<CarouselSection
@@ -133,6 +136,7 @@
 			listings={hireListings}
 			href="/hire"
 			categories={serviceCategories}
+			listingType="service"
 		/>
 
 	</div>

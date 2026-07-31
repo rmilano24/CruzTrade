@@ -1,15 +1,29 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { tick } from 'svelte';
 	import { CATEGORY_LABELS, SERVICE_CATEGORY_SLUGS, RENTAL_CATEGORY_SLUGS } from '$lib/utils/format';
 	import { SANTA_CRUZ_NEIGHBORHOODS } from '$lib/neighborhoods';
 	import * as m from '$lib/paraglide/messages';
 	import TermsModal from '$lib/components/ui/TermsModal.svelte';
 	import UpsellModal from '$lib/components/listings/UpsellModal.svelte';
+	import { postModalParams } from '$lib/stores/postModal';
+	import { langPref } from '$lib/stores/language';
 
 	export let open = false;
 
 	function close() { open = false; reset(); }
+
+	// When the modal opens, pre-populate from params if provided
+	$: if (open) {
+		(async () => {
+			const p = $postModalParams;
+			listingType = (p.type === 'tool_rental' || p.type === 'service') ? p.type : 'service';
+			await tick(); // let categories reactive block update before setting category
+			if (p.category) category = p.category;
+			if (p.acceptsTrade) showTrade = true;
+		})();
+	}
 
 	let submitting = false;
 	let listingType = 'service';
@@ -209,35 +223,21 @@
 					{#if errors.description}<p class="text-xs text-red-600">{errors.description}</p>{/if}
 				</div>
 
-				<!-- Category + Language -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<div class="flex flex-col gap-1.5">
-						<label for="pm-category" class="text-sm font-medium text-text-primary">{m.post_category_label()}</label>
-						<div class="relative">
-							<select id="pm-category" name="category" bind:value={category}
-								class="appearance-none w-full bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
-									{errors.category ? 'border-red-400' : 'border-border'}">
-								<option value="">{m.post_category_placeholder()}</option>
-								{#each categories as [key, labels]}
-									<option value={key}>{labels.en}</option>
-								{/each}
-							</select>
-							<svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-						</div>
-						{#if errors.category}<p class="text-xs text-red-600">{errors.category}</p>{/if}
+				<!-- Category -->
+				<div class="flex flex-col gap-1.5">
+					<label for="pm-category" class="text-sm font-medium text-text-primary">{m.post_category_label()}</label>
+					<div class="relative">
+						<select id="pm-category" name="category" bind:value={category}
+							class="appearance-none w-full bg-bg-secondary border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors
+								{errors.category ? 'border-red-400' : 'border-border'}">
+							<option value="">{m.post_category_placeholder()}</option>
+							{#each categories as [key, labels]}
+								<option value={key}>{$langPref === 'es' ? labels.es : labels.en}</option>
+							{/each}
+						</select>
+						<svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
 					</div>
-					<div class="flex flex-col gap-1.5">
-						<label for="pm-language" class="text-sm font-medium text-text-primary">{m.post_language_label()}</label>
-						<div class="relative">
-							<select id="pm-language" name="language"
-								class="appearance-none w-full bg-bg-secondary border border-border rounded-md pl-3.5 pr-10 py-2.5 text-base text-text-primary focus:border-primary focus:outline-none transition-colors">
-								<option value="en">{m.post_language_en()}</option>
-								<option value="es">{m.post_language_es()}</option>
-								<option value="both">{m.post_language_both()}</option>
-							</select>
-							<svg class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-						</div>
-					</div>
+					{#if errors.category}<p class="text-xs text-red-600">{errors.category}</p>{/if}
 				</div>
 
 				<!-- Price + unit -->

@@ -32,7 +32,7 @@ export const actions: Actions = {
 		const priceRaw = form.get('price') as string;
 		const price_unit = form.get('price_unit') as string;
 		const neighborhood = (form.get('neighborhood') as string) || null;
-		const language = form.get('language') as string;
+		const language = 'both';
 		const accepts_trade = form.get('accepts_trade') === 'on';
 		const trade_description = (form.get('trade_description') as string)?.trim() || null;
 
@@ -52,7 +52,6 @@ export const actions: Actions = {
 		const priceNum = parseFloat(priceRaw);
 		if (isNaN(priceNum) || priceNum < 0) errors.price = 'Enter a valid price';
 		if (!['flat', 'per_hour', 'per_day'].includes(price_unit)) errors.price_unit = 'Please select a price unit';
-		if (!['en', 'es', 'both'].includes(language)) errors.language = 'Please select a language';
 
 		if (Object.keys(errors).length > 0) {
 			return fail(400, {

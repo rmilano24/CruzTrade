@@ -5,6 +5,7 @@
 	import { categoryLabel } from '$lib/utils/format';
 	import { languageTag } from '$lib/paraglide/runtime';
 	import * as m from '$lib/paraglide/messages';
+	import { openPostModal } from '$lib/stores/postModal';
 
 	$: lang = languageTag() as 'en' | 'es';
 
@@ -20,6 +21,9 @@
 	);
 
 	$: gridListings = activeCategory ? (grouped[activeCategory] ?? []) : [];
+
+	$: listingType = $page.url.pathname === '/rent' ? 'tool_rental' : 'service';
+	$: acceptsTrade = $page.url.pathname === '/trade';
 
 	function catHref(slug: string) {
 		const params = new URLSearchParams($page.url.searchParams);
@@ -69,9 +73,13 @@
 					<div class="text-center py-24">
 						<p class="text-lg font-semibold text-text-primary mb-2">{m.browse_no_listings()}</p>
 						<p class="text-sm text-text-muted mb-6">{m.browse_no_listings_hint()}</p>
-						<a href="/post" class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors">
+						<button
+							type="button"
+							on:click={() => openPostModal({ type: listingType, category: activeCategory ?? undefined, acceptsTrade })}
+							class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors"
+						>
 							{m.post_heading()}
-						</a>
+						</button>
 					</div>
 				{/if}
 			</div>
@@ -94,6 +102,8 @@
 						icon={cat.icon}
 						listings={grouped[cat.slug] ?? []}
 						href={catHref(cat.slug)}
+						{listingType}
+						{acceptsTrade}
 					/>
 				{/each}
 			</div>

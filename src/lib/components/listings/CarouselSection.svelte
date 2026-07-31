@@ -4,8 +4,11 @@
 	import * as m from '$lib/paraglide/messages';
 	import { categoryLabel } from '$lib/utils/format';
 	import { languageTag } from '$lib/paraglide/runtime';
+	import { langPref } from '$lib/stores/language';
+	import { openPostModal } from '$lib/stores/postModal';
 
 	$: lang = languageTag() as 'en' | 'es';
+	$: isEs = $langPref === 'es';
 
 	export let slug: string;
 	export let title: string;
@@ -13,11 +16,14 @@
 	export let listings: any[];
 	export let href: string;
 	export let categories: { slug: string; label: string }[] = [];
+	export let listingType: string = 'service';
+	export let acceptsTrade: boolean = false;
 
 	let activeCategory: string | null = null;
 	$: displayed = activeCategory
 		? listings.filter(l => l.category === activeCategory)
 		: listings;
+
 
 	let scrollEl: HTMLElement;
 	let atStart = true;
@@ -126,7 +132,18 @@
 
 		{#if displayed.length === 0}
 			<p class="text-sm text-text-muted py-8">
-				{m.carousel_empty()}
+				{isEs ? 'Tus vecinos están buscando.' : 'Your neighbors are looking.'}
+				<button
+					type="button"
+					on:click={() => openPostModal({
+						type: listingType,
+						category: activeCategory ?? (slug !== 'trade' && slug !== 'rent' && slug !== 'hire' ? slug : undefined),
+						acceptsTrade
+					})}
+					class="text-primary hover:underline font-medium"
+				>
+					{isEs ? 'Publica el primer anuncio →' : 'Post the first listing →'}
+				</button>
 			</p>
 		{/if}
 
