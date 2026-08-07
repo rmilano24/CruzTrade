@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import ListingCard from './ListingCard.svelte';
 	import * as m from '$lib/paraglide/messages';
 	import { categoryLabel } from '$lib/utils/format';
@@ -9,6 +11,7 @@
 
 	$: lang = languageTag() as 'en' | 'es';
 	$: isEs = $langPref === 'es';
+	$: user = $page.data.user;
 
 	export let slug: string;
 	export let title: string;
@@ -48,6 +51,18 @@
 
 	function selectCategory(s: string | null) {
 		activeCategory = activeCategory === s ? null : s;
+	}
+
+	function handlePostFirstListing() {
+		if (!user) {
+			goto('/auth/login');
+			return;
+		}
+		openPostModal({
+			type: listingType,
+			category: activeCategory ?? (slug !== 'trade' && slug !== 'rent' && slug !== 'hire' ? slug : undefined),
+			acceptsTrade
+		});
 	}
 </script>
 
@@ -135,11 +150,7 @@
 				{isEs ? 'Tus vecinos están buscando.' : 'Your neighbors are looking.'}
 				<button
 					type="button"
-					on:click={() => openPostModal({
-						type: listingType,
-						category: activeCategory ?? (slug !== 'trade' && slug !== 'rent' && slug !== 'hire' ? slug : undefined),
-						acceptsTrade
-					})}
+					on:click={handlePostFirstListing}
 					class="text-primary hover:underline font-medium"
 				>
 					{isEs ? 'Publica el primer anuncio →' : 'Post the first listing →'}

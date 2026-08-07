@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import CarouselSection from './CarouselSection.svelte';
 	import ListingCard from './ListingCard.svelte';
 	import { categoryLabel } from '$lib/utils/format';
@@ -8,6 +9,7 @@
 	import { openPostModal } from '$lib/stores/postModal';
 
 	$: lang = languageTag() as 'en' | 'es';
+	$: user = $page.data.user;
 
 	export let listings: any[];
 	export let categories: { slug: string; label: string; icon: string; examples: string[] }[];
@@ -36,6 +38,14 @@
 		params.delete('category');
 		const qs = params.toString();
 		return qs ? `${$page.url.pathname}?${qs}` : $page.url.pathname;
+	}
+
+	function handlePostListing() {
+		if (!user) {
+			goto('/auth/login');
+			return;
+		}
+		openPostModal({ type: listingType, category: activeCategory ?? undefined, acceptsTrade });
 	}
 </script>
 
@@ -75,7 +85,7 @@
 						<p class="text-sm text-text-muted mb-6">{m.browse_no_listings_hint()}</p>
 						<button
 							type="button"
-							on:click={() => openPostModal({ type: listingType, category: activeCategory ?? undefined, acceptsTrade })}
+							on:click={handlePostListing}
 							class="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-md hover:bg-primary-hover transition-colors"
 						>
 							{m.post_heading()}
